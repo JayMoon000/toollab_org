@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Real-Time Markdown Previewer & HTML Exporter | ToolLab</title>
+  <meta name="description" content="Instant client-side Markdown editor, real-time live previewer, and raw HTML converter. Write CommonMark documentation with zero server latency and total data privacy." />
+  <meta name="keywords" content="markdown previewer, markdown to html, live markdown editor, markdown viewer online, convert markdown, ToolLab" />
+  <link rel="canonical" href="https://toollab.org/tools/markdown-previewer.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Real-Time Markdown Editor & HTML Converter | ToolLab" />
+  <meta property="og:description" content="Write Markdown with instant side-by-side preview and raw HTML export. 100% private in-browser engine." />
+  <meta property="og:url" content="https://toollab.org/tools/markdown-previewer.html" />
+
+  <!-- Schema.org WebApplication + FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Markdown Previewer & HTML Exporter",
+        "url": "https://toollab.org/tools/markdown-previewer.html",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Are my confidential documents transmitted to a cloud server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The entire Markdown rendering and HTML conversion pipeline executes locally inside your browser runtime memory via JavaScript. No document content is ever sent over a network."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I export the compiled HTML output directly?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. The editor provides instant one-click copying for both compiled raw HTML markup and rendered rich content."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this editor support fenced code blocks?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Multi-line code blocks wrapped with triple backticks (```) are rendered inside formatted, syntax-ready containers with optional language tags."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
+  <div class="max-w-5xl mx-auto">
+    
+    <!-- Main Card -->
+    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 md:p-7">
+      
+      <!-- Top Navigation -->
+      <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="../index.html" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </a>
+          <div>
+            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Markdown Editor & HTML Exporter</h1>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="sampleBtn" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">Sample</button>
+          <button id="clearBtn" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition-colors">Clear</button>
+        </div>
+      </div>
+
+      <!-- Action & View Controls Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+        <div class="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
+          <button id="tabPreview" class="px-3 py-1.5 rounded-md text-xs font-bold transition-all bg-blue-600 text-white shadow-sm">Split View</button>
+          <button id="tabRawHtml" class="px-3 py-1.5 rounded-md text-xs font-bold transition-all text-slate-400 hover:text-slate-200">Raw HTML</button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="copyMarkdownBtn" class="px-2.5 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors">Copy MD</button>
+          <button id="copyHtmlBtn" class="px-3 py-1.5 rounded bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-800/60 text-xs font-bold transition-colors">Copy HTML</button>
+        </div>
+      </div>
+
+      <!-- Dual Workspace -->
+      <div id="splitWorkspace" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Markdown Input Area -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between items-center text-xs font-semibold text-slate-400 px-1">
+            <span>Markdown Input</span>
+            <span id="statChars" class="font-mono text-[11px] text-slate-500">0 Chars</span>
+          </div>
+          <textarea id="markdownInput" rows="18" spellcheck="false"
+            placeholder="Type or paste Markdown content here..." 
+            class="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 font-mono text-xs md:text-sm leading-relaxed resize-y"></textarea>
+        </div>
+
+        <!-- Rendered Output Area -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between items-center text-xs font-semibold text-blue-400 px-1">
+            <span id="previewTitle">Live Preview</span>
+            <span id="statWords" class="font-mono text-[11px] text-slate-500">0 Words</span>
+          </div>
+          <div id="htmlPreview" 
+            class="w-full h-[400px] md:h-full min-h-[400px] p-5 bg-slate-950 border border-slate-800 rounded-xl overflow-y-auto text-slate-200 text-xs md:text-sm leading-relaxed prose prose-invert max-w-none">
+          </div>
+          <!-- Raw HTML output container (hidden by default) -->
+          <textarea id="rawHtmlArea" rows="18" readonly spellcheck="false"
+            class="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl text-blue-300 font-mono text-xs md:text-sm leading-relaxed resize-y hidden"></textarea>
+        </div>
+      </div>
+
+      <!-- Live Metadata Summary -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-5 text-xs font-mono">
+        <div class="p-2.5 bg-slate-950/60 border border-slate-800 rounded-lg text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px] font-sans">Characters</span>
+          <span id="metaChars" class="font-bold text-slate-200">0</span>
+        </div>
+        <div class="p-2.5 bg-slate-950/60 border border-slate-800 rounded-lg text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px] font-sans">Word Count</span>
+          <span id="metaWords" class="font-bold text-blue-400">0</span>
+        </div>
+        <div class="p-2.5 bg-slate-950/60 border border-slate-800 rounded-lg text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px] font-sans">Total Lines</span>
+          <span id="metaLines" class="font-bold text-slate-200">0</span>
+        </div>
+        <div class="p-2.5 bg-slate-950/60 border border-slate-800 rounded-lg text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px] font-sans">Headings</span>
+          <span id="metaHeadings" class="font-bold text-indigo-400">0</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SEO & Technical Documentation -->
+    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
+      
+      <!-- Markdown Syntax Reference Table -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          CommonMark Markdown Syntax Quick Reference
+        </h2>
+        <p class="text-xs text-slate-400 mb-4">Standard formatting syntax across GitHub, Notion, and technical documentation engines.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
+                <th class="p-2.5">Element</th>
+                <th class="p-2.5 font-mono">Markdown Syntax</th>
+                <th class="p-2.5">HTML Equivalent</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300 font-mono">
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">Heading 1</td>
+                <td class="p-2.5 text-blue-400"># Title</td>
+                <td class="p-2.5 text-slate-400">&lt;h1&gt;Title&lt;/h1&gt;</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">Bold Weight</td>
+                <td class="p-2.5 text-blue-400">**bold text**</td>
+                <td class="p-2.5 text-slate-400">&lt;strong&gt;bold text&lt;/strong&gt;</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">Hyperlink</td>
+                <td class="p-2.5 text-blue-400">[ToolLab](https://toollab.org)</td>
+                <td class="p-2.5 text-slate-400">&lt;a href="..."&gt;ToolLab&lt;/a&gt;</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">Inline Code</td>
+                <td class="p-2.5 text-blue-400">`npm run build`</td>
+                <td class="p-2.5 text-slate-400">&lt;code&gt;npm run build&lt;/code&gt;</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">Blockquote</td>
+                <td class="p-2.5 text-blue-400">&gt; Quoted reference</td>
+                <td class="p-2.5 text-slate-400">&lt;blockquote&gt;Quoted reference&lt;/blockquote&gt;</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Practical Workflows -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
+        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          Technical Publishing Best Practices
+        </h2>
+        
+        <div class="space-y-2.5 text-xs leading-relaxed">
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">1. Semantic Heading Hierarchy</h3>
+            <p>Ensure documents contain a single primary <code># H1</code> for the document title, followed by sequentially nested <code>## H2</code> and <code>### H3</code> sub-headings to preserve accessibility and SEO indexing structure.</p>
+          </div>
+
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">2. Clean HTML Export</h3>
+            <p>Exporting compiled raw HTML enables direct pasting into static site generators, WordPress custom HTML blocks, or email newsletter templates without third-party plugin dependencies.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+          Frequently Asked Questions
+        </h2>
+
+        <div class="space-y-3.5 text-xs">
+          <div>
+            <h3 class="font-bold text-slate-200 mb-1">Q. Are my draft documents saved automatically?</h3>
+            <p class="text-slate-400">This client-side tool caches your active draft in browser <code>localStorage</code>, allowing you to reload the tab or restart your browser without losing edits.</p>
+          </div>
+          <div class="border-t border-slate-800 pt-3">
+            <h3 class="font-bold text-slate-200 mb-1">Q. Are my writings stored on an external database?</h3>
+            <p class="text-slate-400">Never. All parsing runs client-side via JavaScript. No telemetry or server-side logging occurs.</p>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- Footer -->
+    <footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+        <div class="space-y-0.5">
+          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
+        </div>
+        <div class="flex items-center gap-3 font-semibold text-slate-400">
+          <a href="../privacy.html" class="hover:text-blue-400 transition-colors">Privacy Policy</a>
+          <span>·</span>
+          <a href="../terms.html" class="hover:text-blue-400 transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../js/utils/markdownPreviewer.js"></script>
+  <script>
+    const markdownInput = document.getElementById("markdownInput");
+    const htmlPreview = document.getElementById("htmlPreview");
+    const rawHtmlArea = document.getElementById("rawHtmlArea");
+    const previewTitle = document.getElementById("previewTitle");
+
+    const tabPreview = document.getElementById("tabPreview");
+    const tabRawHtml = document.getElementById("tabRawHtml");
+
+    const statChars = document.getElementById("statChars");
+    const statWords = document.getElementById("statWords");
+    const metaChars = document.getElementById("metaChars");
+    const metaWords = document.getElementById("metaWords");
+    const metaLines = document.getElementById("metaLines");
+    const metaHeadings = document.getElementById("metaHeadings");
+
+    const copyMarkdownBtn = document.getElementById("copyMarkdownBtn");
+    const copyHtmlBtn = document.getElementById("copyHtmlBtn");
+    const sampleBtn = document.getElementById("sampleBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    let currentMode = "preview"; // "preview" | "raw"
+
+    function renderMarkdown() {
+      const text = markdownInput.value;
+      const html = MarkdownPreviewer.parse(text);
+
+      htmlPreview.innerHTML = html;
+      rawHtmlArea.value = html;
+
+      // Local storage persistence
+      localStorage.setItem("toollab_md_draft", text);
+
+      // Metrics update
+      const metrics = MarkdownPreviewer.getMetrics(text);
+      statChars.textContent = `${metrics.chars.toLocaleString()} Chars`;
+      statWords.textContent = `${metrics.words.toLocaleString()} Words`;
+      metaChars.textContent = metrics.chars.toLocaleString();
+      metaWords.textContent = metrics.words.toLocaleString();
+      metaLines.textContent = metrics.lines.toLocaleString();
+      metaHeadings.textContent = metrics.headings.toLocaleString();
+    }
+
+    tabPreview.addEventListener("click", () => {
+      currentMode = "preview";
+      tabPreview.className = "px-3 py-1.5 rounded-md text-xs font-bold transition-all bg-blue-600 text-white shadow-sm";
+      tabRawHtml.className = "px-3 py-1.5 rounded-md text-xs font-bold transition-all text-slate-400 hover:text-slate-200";
+      htmlPreview.classList.remove("hidden");
+      rawHtmlArea.classList.add("hidden");
+      previewTitle.textContent = "Live Preview";
+    });
+
+    tabRawHtml.addEventListener("click", () => {
+      currentMode = "raw";
+      tabRawHtml.className = "px-3 py-1.5 rounded-md text-xs font-bold transition-all bg-blue-600 text-white shadow-sm";
+      tabPreview.className = "px-3 py-1.5 rounded-md text-xs font-bold transition-all text-slate-400 hover:text-slate-200";
+      rawHtmlArea.classList.remove("hidden");
+      htmlPreview.classList.add("hidden");
+      previewTitle.textContent = "Raw HTML Markup";
+    });
+
+    copyMarkdownBtn.addEventListener("click", () => {
+      if (!markdownInput.value) return;
+      navigator.clipboard.writeText(markdownInput.value).then(() => {
+        const orig = copyMarkdownBtn.textContent;
+        copyMarkdownBtn.textContent = "Copied!";
+        setTimeout(() => (copyMarkdownBtn.textContent = orig), 1500);
+      });
+    });
+
+    copyHtmlBtn.addEventListener("click", () => {
+      const html = rawHtmlArea.value;
+      if (!html) return;
+      navigator.clipboard.writeText(html).then(() => {
+        const orig = copyHtmlBtn.textContent;
+        copyHtmlBtn.textContent = "Copied!";
+        setTimeout(() => (copyHtmlBtn.textContent = orig), 1500);
+      });
+    });
+
+    sampleBtn.addEventListener("click", () => {
+      markdownInput.value = `# ToolLab Micro Utilities\n\nFast, client-side, zero-server-cost developer tools.\n\n## Key Architectural Advantages\n\n* **Zero Latency:** 100% in-browser JavaScript execution\n* **Strict Privacy:** Zero server logging or transmission\n* **Portable Output:** Instant HTML and text export\n\n> "Simplicity is prerequisite for reliability."\n\n### Code Integration Example\n\n\`\`\`javascript\nconst tool = new ToolLabEngine();\ntool.run();\n\`\`\`\n\nVisit [ToolLab](https://toollab.org) for more utilities.`;
+      renderMarkdown();
+    });
+
+    clearBtn.addEventListener("click", () => {
+      markdownInput.value = "";
+      renderMarkdown();
+      markdownInput.focus();
+    });
+
+    markdownInput.addEventListener("input", renderMarkdown);
+
+    // Initial load: restore draft or default sample
+    const savedDraft = localStorage.getItem("toollab_md_draft");
+    if (savedDraft) {
+      markdownInput.value = savedDraft;
+    } else {
+      sampleBtn.click();
+    }
+    renderMarkdown();
+  </script>
+</body>
+</html>

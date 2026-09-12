@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fast Lorem Ipsum & Dummy Text Generator | Free Online - ToolLab</title>
+  <meta name="description" content="Instant client-side Lorem Ipsum placeholder text generator. Generate words, sentences, or paragraphs with optional HTML tags, zero server latency, and 100% privacy." />
+  <meta name="keywords" content="lorem ipsum generator, dummy text, placeholder text, generate lorem ipsum, lorem ipsum html, dummy paragraph, ToolLab" />
+  <link rel="canonical" href="https://toollab.org/tools/lorem-generator.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Fast Lorem Ipsum Generator | ToolLab" />
+  <meta property="og:description" content="Generate customizable placeholder dummy text locally in your browser with zero latency." />
+  <meta property="og:url" content="https://toollab.org/tools/lorem-generator.html" />
+
+  <!-- Schema.org WebApplication + FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Fast Lorem Ipsum Generator",
+        "url": "https://toollab.org/tools/lorem-generator.html",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is the historical origin of Lorem Ipsum text?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Lorem Ipsum is derived from sections 1.10.32 and 1.10.33 of Cicero's 45 BC philosophical treatise 'De Finibus Bonorum et Malorum' (On the Extremes of Good and Evil), adapted into standard typesetter dummy copy during the 1500s."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does generating large amounts of text consume network bandwidth?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. All text is generated 100% locally via client-side JavaScript algorithms inside your browser memory, incurring zero network requests and zero server load."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I automatically wrap paragraphs in HTML paragraph tags?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Toggle the 'Wrap with <p> tags' option to export ready-to-paste semantic markup for direct insertion into web templates and CMS editors."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Main Card -->
+    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 md:p-7">
+      
+      <!-- Header -->
+      <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="../index.html" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </a>
+          <div>
+            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Lorem Ipsum Generator</h1>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="copyBtn" class="px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-800/60 text-xs font-bold transition-colors">Copy Text</button>
+        </div>
+      </div>
+
+      <!-- Generator Configuration Bar -->
+      <div class="p-4 bg-slate-950/70 border border-slate-800 rounded-xl space-y-4 mb-5">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          
+          <!-- Generation Unit -->
+          <div class="space-y-1">
+            <label class="block text-xs font-semibold text-slate-400">Generate By</label>
+            <select id="typeSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs font-bold text-slate-200 outline-none focus:border-blue-500">
+              <option value="paragraphs">Paragraphs</option>
+              <option value="sentences">Sentences</option>
+              <option value="words">Words</option>
+            </select>
+          </div>
+
+          <!-- Quantity -->
+          <div class="space-y-1">
+            <label class="block text-xs font-semibold text-slate-400">Quantity</label>
+            <input type="number" id="quantityInput" value="3" min="1" max="100" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs font-bold text-slate-100 outline-none focus:border-blue-500" />
+          </div>
+
+          <!-- Action Button -->
+          <div class="flex items-end">
+            <button id="generateBtn" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-colors shadow-sm">
+              Generate Text
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Checkbox Options -->
+        <div class="flex flex-wrap items-center gap-4 pt-3 border-t border-slate-800/80 text-xs">
+          <label class="cursor-pointer flex items-center gap-1.5 text-slate-300 hover:text-white select-none">
+            <input type="checkbox" id="startLoremCheck" checked class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0">
+            Start with "Lorem ipsum..."
+          </label>
+          <label class="cursor-pointer flex items-center gap-1.5 text-slate-300 hover:text-white select-none" id="wrapHtmlLabel">
+            <input type="checkbox" id="wrapHtmlCheck" class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0">
+            Wrap with &lt;p&gt; tags
+          </label>
+        </div>
+      </div>
+
+      <!-- Output Display -->
+      <div class="space-y-1.5">
+        <div class="flex justify-between items-center text-xs font-semibold text-slate-400 px-1">
+          <span>Generated Output</span>
+          <span id="statSummary" class="font-mono text-[11px] text-slate-500">0 Words</span>
+        </div>
+        <textarea id="resultOutput" rows="12" spellcheck="false"
+          class="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-blue-500 font-sans text-xs md:text-sm leading-relaxed resize-y"></textarea>
+      </div>
+
+      <!-- Real-Time Metrics Strip -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-5 text-xs font-mono">
+        <div class="p-2.5 bg-slate-950/60 border border-slate-800 rounded-lg text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px] font-sans">Words</span>
+          <span id="statWords" class="font-bold text-blue-400">0</span>
+        </div>
+        <div class="p-2.5 bg-slate-950/60 border border-slate-800 rounded-lg text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px] font-sans">Characters</span>
+          <span id="statChars" class="font-bold text-slate-200">0</span>
+        </div>
+        <div class="p-2.5 bg-slate-950/60 border border-slate-800 rounded-lg text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px] font-sans">Paragraphs</span>
+          <span id="statParagraphs" class="font-bold text-slate-200">0</span>
+        </div>
+        <div class="p-2.5 bg-slate-950/60 border border-slate-800 rounded-lg text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px] font-sans">Byte Size</span>
+          <span id="statBytes" class="font-bold text-emerald-400">0 B</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SEO Reference Guide -->
+    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
+      
+      <!-- Reference Table -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          Dummy Copy Design Benchmarks
+        </h2>
+        <p class="text-xs text-slate-400 mb-4">Standard placeholder volumes across modern responsive layout components.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
+                <th class="p-2.5">Component Type</th>
+                <th class="p-2.5">Typical Volume</th>
+                <th class="p-2.5">Estimated Word Count</th>
+                <th class="p-2.5">Recommended Unit</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300">
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">Hero Section Subtitle</td>
+                <td class="p-2.5 text-blue-400 font-medium">1 Sentence</td>
+                <td class="p-2.5 text-slate-400">12 – 18 words</td>
+                <td class="p-2.5 text-slate-400">Sentences</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">Card / Teaser Description</td>
+                <td class="p-2.5 text-blue-400 font-medium">2 – 3 Sentences</td>
+                <td class="p-2.5 text-slate-400">25 – 40 words</td>
+                <td class="p-2.5 text-slate-400">Sentences</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">Blog Article Mockup</td>
+                <td class="p-2.5 text-blue-400 font-medium">4 – 6 Paragraphs</td>
+                <td class="p-2.5 text-slate-400">400 – 600 words</td>
+                <td class="p-2.5 text-slate-400">Paragraphs</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">Form Placeholder Input</td>
+                <td class="p-2.5 text-blue-400 font-medium">3 – 5 Words</td>
+                <td class="p-2.5 text-slate-400">3 – 5 words</td>
+                <td class="p-2.5 text-slate-400">Words</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Practical Usage Tips -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
+        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          Why Typesetters Use Lorem Ipsum
+        </h2>
+        
+        <div class="space-y-2.5 text-xs leading-relaxed">
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">1. Neutral Visual Weight Distribution</h3>
+            <p>Using readable English copy during UI design reviews distracts stakeholders into reading the copy rather than assessing font pairings, kerning, line heights, and visual hierarchy. Lorem Ipsum provides a natural, semi-realistic character distribution without readable distraction.</p>
+          </div>
+
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">2. Varied Word Lengths</h3>
+            <p>Unlike repeated words (e.g. "Content here, content here"), Latin dummy text contains a diverse spread of letter lengths, simulating realistic typographic rhythm across desktop and mobile screens.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+          Frequently Asked Questions
+        </h2>
+
+        <div class="space-y-3.5 text-xs">
+          <div>
+            <h3 class="font-bold text-slate-200 mb-1">Q. Does Lorem Ipsum have a literal English translation?</h3>
+            <p class="text-slate-400">Because words were intentionally truncated and scrambled by 16th-century printers, it cannot be translated coherently. It loosely translates to "pain itself" from Cicero's original phrase "dolorem ipsum".</p>
+          </div>
+          <div class="border-t border-slate-800 pt-3">
+            <h3 class="font-bold text-slate-200 mb-1">Q. Are my generated texts stored on an external server?</h3>
+            <p class="text-slate-400">Never. All generation runs locally in browser runtime memory via JavaScript. Zero telemetry or server-side logging occurs.</p>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- Standard Minimal Footer -->
+    <footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+        <div class="space-y-0.5">
+          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
+        </div>
+        <div class="flex items-center gap-3 font-semibold text-slate-400">
+          <a href="../privacy.html" class="hover:text-blue-400 transition-colors">Privacy Policy</a>
+          <span>·</span>
+          <a href="../terms.html" class="hover:text-blue-400 transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../js/utils/loremGenerator.js"></script>
+  <script>
+    const typeSelect = document.getElementById("typeSelect");
+    const quantityInput = document.getElementById("quantityInput");
+    const startLoremCheck = document.getElementById("startLoremCheck");
+    const wrapHtmlCheck = document.getElementById("wrapHtmlCheck");
+    const wrapHtmlLabel = document.getElementById("wrapHtmlLabel");
+    const generateBtn = document.getElementById("generateBtn");
+    const resultOutput = document.getElementById("resultOutput");
+    const copyBtn = document.getElementById("copyBtn");
+
+    const statSummary = document.getElementById("statSummary");
+    const statWords = document.getElementById("statWords");
+    const statChars = document.getElementById("statChars");
+    const statParagraphs = document.getElementById("statParagraphs");
+    const statBytes = document.getElementById("statBytes");
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return bytes + " B";
+      else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+      return (bytes / 1048576).toFixed(2) + " MB";
+    }
+
+    function runGeneration() {
+      const type = typeSelect.value;
+      const count = Math.max(1, parseInt(quantityInput.value, 10) || 1);
+      const startWithLorem = startLoremCheck.checked;
+      const wrapTags = wrapHtmlCheck.checked;
+
+      let result = "";
+
+      if (type === "paragraphs") {
+        result = LoremGenerator.generateParagraphs(count, 5, startWithLorem, wrapTags);
+      } else if (type === "sentences") {
+        result = LoremGenerator.generateSentences(count, startWithLorem);
+      } else {
+        result = LoremGenerator.generateWords(count, startWithLorem);
+      }
+
+      resultOutput.value = result;
+      updateMetrics();
+    }
+
+    function updateMetrics() {
+      const text = resultOutput.value;
+      const m = LoremGenerator.getMetrics(text);
+
+      statWords.textContent = m.words.toLocaleString();
+      statChars.textContent = m.chars.toLocaleString();
+      statParagraphs.textContent = m.paragraphs.toLocaleString();
+      statBytes.textContent = formatBytes(m.bytes);
+      statSummary.textContent = `${m.words.toLocaleString()} Words`;
+    }
+
+    typeSelect.addEventListener("change", () => {
+      if (typeSelect.value === "paragraphs") {
+        wrapHtmlLabel.classList.remove("hidden");
+      } else {
+        wrapHtmlLabel.classList.add("hidden");
+        wrapHtmlCheck.checked = false;
+      }
+      runGeneration();
+    });
+
+    generateBtn.addEventListener("click", runGeneration);
+    quantityInput.addEventListener("input", runGeneration);
+    startLoremCheck.addEventListener("change", runGeneration);
+    wrapHtmlCheck.addEventListener("change", runGeneration);
+    resultOutput.addEventListener("input", updateMetrics);
+
+    copyBtn.addEventListener("click", () => {
+      if (!resultOutput.value) return;
+      navigator.clipboard.writeText(resultOutput.value).then(() => {
+        const orig = copyBtn.textContent;
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => (copyBtn.textContent = orig), 1500);
+      });
+    });
+
+    // Initial Execution
+    runGeneration();
+  </script>
+</body>
+</html>

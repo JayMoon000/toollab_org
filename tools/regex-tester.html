@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Regex Tester & Debugger | Real-Time Regular Expression Tool - ToolLab</title>
+  <meta name="description" content="Instant client-side regular expression tester, string matcher, and text replacer. Real-time syntax validation, capture group inspection, and 100% private in-browser execution." />
+  <meta name="keywords" content="regex tester, regular expression debugger, regex match, regex replacer, test regex online, regex cheat sheet, ToolLab" />
+  <link rel="canonical" href="https://toollab.org/tools/regex-tester.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Regex Tester & String Debugger | ToolLab" />
+  <meta property="og:description" content="Test, match, and replace regular expressions in real-time with zero server latency." />
+  <meta property="og:url" content="https://toollab.org/tools/regex-tester.html" />
+
+  <!-- Schema.org WebApplication + FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Regex Tester & Debugger",
+        "url": "https://toollab.org/tools/regex-tester.html",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is my test text or regex pattern evaluated on a remote server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The entire regular expression compilation and matching engine executes 100% locally in your browser memory via native JavaScript RegExp. No inputs or string records are transmitted across the web."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What regex flags are supported in this tester?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "It supports all native JavaScript ECMAScript flags: g (global search), i (case-insensitive), m (multiline), and s (dotAll, allowing dots to match newlines)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How are zero-length and infinite match loops handled?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The underlying pure function engine enforces boundary checks and caps iteration cycles at 5,000 matches to protect against catastrophic backtracking and browser freezes."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Main Card -->
+    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 md:p-7">
+      
+      <!-- Top Bar Navigation -->
+      <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="../index.html" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </a>
+          <div>
+            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Regex Tester & Debugger</h1>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="clearBtn" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition-colors">Clear</button>
+        </div>
+      </div>
+
+      <!-- Regex Input Bar & Flags -->
+      <div class="space-y-3 mb-5">
+        <div class="p-3 bg-slate-950/80 border border-slate-800 rounded-xl flex items-center gap-2">
+          <span class="text-slate-500 font-mono text-lg select-none">/</span>
+          <input type="text" id="regexInput" value="([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})" placeholder="Insert regular expression pattern here..." 
+            class="w-full bg-transparent font-mono text-sm md:text-base text-slate-100 outline-none placeholder-slate-600 focus:text-blue-400" />
+          <span class="text-slate-500 font-mono text-lg select-none">/</span>
+          <div class="flex items-center gap-1.5 pl-2 border-l border-slate-800">
+            <label class="cursor-pointer text-xs font-mono font-bold flex items-center gap-1 text-slate-400 hover:text-slate-200">
+              <input type="checkbox" id="flagG" checked class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0"> g
+            </label>
+            <label class="cursor-pointer text-xs font-mono font-bold flex items-center gap-1 text-slate-400 hover:text-slate-200">
+              <input type="checkbox" id="flagI" class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0"> i
+            </label>
+            <label class="cursor-pointer text-xs font-mono font-bold flex items-center gap-1 text-slate-400 hover:text-slate-200">
+              <input type="checkbox" id="flagM" checked class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0"> m
+            </label>
+            <label class="cursor-pointer text-xs font-mono font-bold flex items-center gap-1 text-slate-400 hover:text-slate-200">
+              <input type="checkbox" id="flagS" class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0"> s
+            </label>
+          </div>
+        </div>
+
+        <!-- Pattern Quick Presets -->
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px]">
+          <span class="text-slate-500 font-medium mr-1">Presets:</span>
+          <button class="preset-btn px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono" data-pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}">Email</button>
+          <button class="preset-btn px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono" data-pattern="https?:\/\/[^\s/$.?#].[^\s]*">URL</button>
+          <button class="preset-btn px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono" data-pattern="\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b">IPv4</button>
+          <button class="preset-btn px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono" data-pattern="\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])">Date (YYYY-MM-DD)</button>
+          <button class="preset-btn px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono" data-pattern="#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})">Hex Color</button>
+        </div>
+      </div>
+
+      <!-- Live Match Status Banner -->
+      <div id="statusBanner" class="mb-4 p-3 rounded-xl text-xs font-mono flex items-center justify-between bg-emerald-950/40 border border-emerald-800 text-emerald-400">
+        <span id="statusText">Valid Expression</span>
+        <span id="matchBadge" class="font-bold">0 Matches</span>
+      </div>
+
+      <!-- Test String & Highlight Preview Layout -->
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1.5">Test String</label>
+          <textarea id="testInput" rows="5" spellcheck="false"
+            placeholder="Type or paste candidate test string here..." 
+            class="w-full p-3.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 font-mono text-xs md:text-sm leading-relaxed resize-y">Welcome to ToolLab! You can reach our developers at team@toollab.org or contact billing@toollab.org for license assistance.</textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1.5">Visual Match Highlight</label>
+          <div id="highlightViewer" class="w-full min-h-[90px] p-3.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 font-mono text-xs md:text-sm leading-relaxed whitespace-pre-wrap break-all overflow-y-auto"></div>
+        </div>
+
+        <!-- Optional Replace Engine -->
+        <div class="pt-3 border-t border-slate-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Find & Replace</span>
+            <button id="replaceToggle" class="text-xs text-blue-400 hover:text-blue-300">Show Replace Options</button>
+          </div>
+          <div id="replaceSection" class="space-y-3 hidden">
+            <div class="flex gap-2">
+              <input type="text" id="replaceInput" placeholder="Replacement text (e.g. [REDACTED], $1)..." 
+                class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg text-slate-100 text-xs font-mono outline-none focus:border-blue-500" />
+              <button id="copyReplaceBtn" class="px-3 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-800/60 rounded-lg text-xs font-bold transition-all whitespace-nowrap">Copy Replaced</button>
+            </div>
+            <div id="replacedResult" class="p-3 bg-slate-950/70 border border-slate-800 rounded-lg text-slate-300 font-mono text-xs whitespace-pre-wrap break-all"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Match Breakdown List -->
+      <div class="mt-6 pt-5 border-t border-slate-800">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">Capture Groups & Tokens</h3>
+        <div id="matchDetailsList" class="space-y-2 text-xs font-mono max-h-56 overflow-y-auto pr-1"></div>
+      </div>
+
+    </div>
+
+    <!-- SEO & Technical Documentation -->
+    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
+      
+      <!-- Regex Syntax Quick Reference -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          Regular Expression Common Syntax Reference
+        </h2>
+        <p class="text-xs text-slate-400 mb-4">Standard token reference for JavaScript ECMAScript Regular Expressions.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
+                <th class="p-2.5">Token</th>
+                <th class="p-2.5">Category</th>
+                <th class="p-2.5">Description</th>
+                <th class="p-2.5">Example</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300">
+              <tr>
+                <td class="p-2.5 font-bold text-blue-400 font-mono">\d / \D</td>
+                <td class="p-2.5 text-slate-400">Character Class</td>
+                <td class="p-2.5 text-slate-300">Matches any digit [0-9] / Non-digit</td>
+                <td class="p-2.5 text-slate-400 font-mono">\d{3} matches "123"</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-blue-400 font-mono">\w / \W</td>
+                <td class="p-2.5 text-slate-400">Character Class</td>
+                <td class="p-2.5 text-slate-300">Word character [a-zA-Z0-9_] / Non-word</td>
+                <td class="p-2.5 text-slate-400 font-mono">\w+ matches "admin_01"</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-blue-400 font-mono">^ and $</td>
+                <td class="p-2.5 text-slate-400">Anchor</td>
+                <td class="p-2.5 text-slate-300">Beginning and end of line/string</td>
+                <td class="p-2.5 text-slate-400 font-mono">^start.*end$</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-blue-400 font-mono">(...) vs (?:...)</td>
+                <td class="p-2.5 text-slate-400">Grouping</td>
+                <td class="p-2.5 text-slate-300">Capturing group vs Non-capturing group</td>
+                <td class="p-2.5 text-slate-400 font-mono">(abc)+</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Practical Usage Tips -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
+        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          Best Practices for Regular Expressions
+        </h2>
+        
+        <div class="space-y-2.5 text-xs leading-relaxed">
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">1. Greedy vs. Lazy Quantifiers</h3>
+            <p>Quantifiers like <code>*</code> and <code>+</code> are greedy by default, matching as much text as possible. Adding a question mark (<code>*?</code> or <code>+?</code>) forces lazy evaluation to capture minimal character spans.</p>
+          </div>
+
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">2. Catastrophic Backtracking Prevention</h3>
+            <p>Nested quantifiers such as <code>(a+)+$</code> cause exponential search times when matching against long failing strings. Always prefer specific character classes or atomic groups where supported.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+          Frequently Asked Questions
+        </h2>
+
+        <div class="space-y-3.5 text-xs">
+          <div>
+            <h3 class="font-bold text-slate-200 mb-1">Q. Does this regex tester match PCRE or Python flavor?</h3>
+            <p class="text-slate-400">This engine relies on native JavaScript (ECMAScript) RegExp. It natively supports lookaheads, lookbehinds, named capture groups, and unicode property escapes.</p>
+          </div>
+          <div class="border-t border-slate-800 pt-3">
+            <h3 class="font-bold text-slate-200 mb-1">Q. Are my confidential log files and strings stored?</h3>
+            <p class="text-slate-400">Never. Execution is strictly localized within browser runtime memory. Zero telemetry or input tracking occurs.</p>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- Standard Minimal Footer -->
+    <footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+        <div class="space-y-0.5">
+          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
+        </div>
+        <div class="flex items-center gap-3 font-semibold text-slate-400">
+          <a href="../privacy.html" class="hover:text-blue-400 transition-colors">Privacy Policy</a>
+          <span>·</span>
+          <a href="../terms.html" class="hover:text-blue-400 transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../js/utils/regexTester.js"></script>
+  <script>
+    const regexInput = document.getElementById("regexInput");
+    const testInput = document.getElementById("testInput");
+    const highlightViewer = document.getElementById("highlightViewer");
+    const statusBanner = document.getElementById("statusBanner");
+    const statusText = document.getElementById("statusText");
+    const matchBadge = document.getElementById("matchBadge");
+    const matchDetailsList = document.getElementById("matchDetailsList");
+
+    const flagG = document.getElementById("flagG");
+    const flagI = document.getElementById("flagI");
+    const flagM = document.getElementById("flagM");
+    const flagS = document.getElementById("flagS");
+
+    const replaceToggle = document.getElementById("replaceToggle");
+    const replaceSection = document.getElementById("replaceSection");
+    const replaceInput = document.getElementById("replaceInput");
+    const replacedResult = document.getElementById("replacedResult");
+    const copyReplaceBtn = document.getElementById("copyReplaceBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    function getFlags() {
+      let f = "";
+      if (flagG.checked) f += "g";
+      if (flagI.checked) f += "i";
+      if (flagM.checked) f += "m";
+      if (flagS.checked) f += "s";
+      return f;
+    }
+
+    function evaluateRegex() {
+      const pattern = regexInput.value;
+      const flags = getFlags();
+      const text = testInput.value;
+
+      if (!pattern) {
+        statusBanner.className = "mb-4 p-3 rounded-xl text-xs font-mono flex items-center justify-between bg-slate-950 border border-slate-800 text-slate-400";
+        statusText.textContent = "Enter a pattern to test";
+        matchBadge.textContent = "0 Matches";
+        highlightViewer.innerHTML = RegexTester.escapeHtml(text);
+        matchDetailsList.innerHTML = '<span class="text-slate-500">No pattern specified</span>';
+        updateReplace();
+        return;
+      }
+
+      const res = RegexTester.testMatches(pattern, flags, text);
+
+      if (!res.success) {
+        statusBanner.className = "mb-4 p-3 rounded-xl text-xs font-mono flex items-center justify-between bg-rose-950/40 border border-rose-800 text-rose-400";
+        statusText.textContent = `Pattern Error: ${res.error}`;
+        matchBadge.textContent = "Invalid";
+        highlightViewer.innerHTML = RegexTester.escapeHtml(text);
+        matchDetailsList.innerHTML = '<span class="text-rose-400">Regex compilation failed</span>';
+        updateReplace();
+        return;
+      }
+
+      statusBanner.className = "mb-4 p-3 rounded-xl text-xs font-mono flex items-center justify-between bg-emerald-950/40 border border-emerald-800 text-emerald-400";
+      statusText.textContent = "✔ Valid Expression";
+      matchBadge.textContent = `${res.count} Match${res.count === 1 ? "" : "es"}`;
+
+      highlightViewer.innerHTML = RegexTester.generateHighlightHtml(pattern, flags, text);
+
+      // Render Match Details
+      matchDetailsList.innerHTML = "";
+      if (res.matches.length === 0) {
+        matchDetailsList.innerHTML = '<span class="text-slate-500">No matches found in string</span>';
+      } else {
+        res.matches.forEach((m, idx) => {
+          const div = document.createElement("div");
+          div.className = "p-2 bg-slate-950/70 border border-slate-800/80 rounded flex flex-col gap-1";
+          let groupDetails = "";
+          if (m.groups && m.groups.length > 0) {
+            groupDetails = `<div class="text-[11px] text-slate-400 pl-2 border-l border-slate-800 mt-1">` +
+              m.groups.map((g, gi) => `<span>Group ${gi + 1}: <code class="text-blue-400">"${RegexTester.escapeHtml(g || "")}"</code></span>`).join(", ") +
+              `</div>`;
+          }
+          div.innerHTML = `
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-200">#${idx + 1}: <code class="text-blue-300">"${RegexTester.escapeHtml(m.matchText)}"</code></span>
+              <span class="text-slate-500 text-[11px]">Index: ${m.index} – ${m.index + m.length}</span>
+            </div>
+            ${groupDetails}
+          `;
+          matchDetailsList.appendChild(div);
+        });
+      }
+
+      updateReplace();
+    }
+
+    function updateReplace() {
+      if (replaceSection.classList.contains("hidden")) return;
+      const pattern = regexInput.value;
+      const flags = getFlags();
+      const text = testInput.value;
+      const repVal = replaceInput.value;
+
+      const repRes = RegexTester.replace(pattern, flags, text, repVal);
+      replacedResult.textContent = repRes.result;
+    }
+
+    // Event Listeners
+    [regexInput, testInput, flagG, flagI, flagM, flagS].forEach(el => {
+      el.addEventListener("input", evaluateRegex);
+      el.addEventListener("change", evaluateRegex);
+    });
+
+    replaceInput.addEventListener("input", updateReplace);
+
+    replaceToggle.addEventListener("click", () => {
+      const isHidden = replaceSection.classList.toggle("hidden");
+      replaceToggle.textContent = isHidden ? "Show Replace Options" : "Hide Replace Options";
+      if (!isHidden) updateReplace();
+    });
+
+    copyReplaceBtn.addEventListener("click", () => {
+      const text = replacedResult.textContent;
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = copyReplaceBtn.textContent;
+        copyReplaceBtn.textContent = "Copied!";
+        setTimeout(() => (copyReplaceBtn.textContent = orig), 1500);
+      });
+    });
+
+    clearBtn.addEventListener("click", () => {
+      regexInput.value = "";
+      testInput.value = "";
+      replaceInput.value = "";
+      evaluateRegex();
+      regexInput.focus();
+    });
+
+    document.querySelectorAll(".preset-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        regexInput.value = btn.dataset.pattern;
+        evaluateRegex();
+      });
+    });
+
+    evaluateRegex();
+  </script>
+</body>
+</html>

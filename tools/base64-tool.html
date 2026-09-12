@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Base64 Encode & Decode | Fast In-Browser Converter - ToolLab</title>
+  <meta name="description" content="Instant client-side Base64 encoder and decoder. Full UTF-8 Unicode support, URL-safe Base64 conversion, and file-to-Base64 Data URI generator with 100% data privacy." />
+  <meta name="keywords" content="base64 encode, base64 decode, base64 converter, url safe base64, data uri generator, client-side base64, ToolLab" />
+  <link rel="canonical" href="https://toollab.org/tools/base64-tool.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Base64 Encoder & Decoder | ToolLab" />
+  <meta property="og:description" content="Encode and decode text or files to Base64 instantly inside your browser. Zero server transfer." />
+  <meta property="og:url" content="https://toollab.org/tools/base64-tool.html" />
+
+  <!-- Schema.org WebApplication + FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Base64 Encoder & Decoder",
+        "url": "https://toollab.org/tools/base64-tool.html",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Are my sensitive keys or files transmitted across a remote API?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The entire encoding and decoding routine executes locally within your browser sandbox via JavaScript TextEncoder and FileReader APIs. No data packets ever leave your device."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why does Base64 data expand file size by approximately 33%?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Base64 represents 6 bits of raw binary data per 8-bit ASCII character. Converting 3 binary bytes (24 bits) into 4 text characters generates an inherent ~33.3% structural storage overhead."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between standard Base64 and URL-Safe Base64?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Standard Base64 contains '+' and '/' characters, which hold special query meanings in URLs. URL-Safe Base64 replaces '+' with '-' and '/' with '_', and strips trailing padding '=' to avoid URL transmission conflicts."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Main Card -->
+    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 md:p-7">
+      
+      <!-- Header -->
+      <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="../index.html" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </a>
+          <div>
+            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Base64 Converter & Data URI</h1>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="clearBtn" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition-colors">Clear</button>
+        </div>
+      </div>
+
+      <!-- Mode & Option Controls -->
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+        <div class="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
+          <button id="modeEncode" class="px-3 py-1.5 rounded-md text-xs font-bold transition-all bg-blue-600 text-white shadow-sm">Encode</button>
+          <button id="modeDecode" class="px-3 py-1.5 rounded-md text-xs font-bold transition-all text-slate-400 hover:text-slate-200">Decode</button>
+        </div>
+        
+        <div class="flex items-center gap-3 text-xs">
+          <label class="cursor-pointer font-semibold flex items-center gap-1.5 text-slate-400 hover:text-slate-200">
+            <input type="checkbox" id="urlSafeCheck" class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0"> URL-Safe
+          </label>
+          <label class="cursor-pointer font-semibold flex items-center gap-1.5 text-slate-400 hover:text-slate-200" id="dataUriWrap">
+            <input type="checkbox" id="dataUriCheck" class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0"> Data URI prefix
+          </label>
+          <label class="cursor-pointer px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">
+            <span>Upload File</span>
+            <input type="file" id="fileUpload" class="hidden" />
+          </label>
+        </div>
+      </div>
+
+      <!-- Conversion Workspace -->
+      <div class="space-y-4">
+        <!-- Input Area -->
+        <div>
+          <div class="flex justify-between items-center text-xs font-semibold text-slate-400 mb-1.5">
+            <span id="inputLabel">Plain Text</span>
+            <span id="inputSize">0 B</span>
+          </div>
+          <textarea id="sourceText" rows="6" spellcheck="false"
+            placeholder="Enter text to encode or decode..." 
+            class="w-full p-3.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 font-mono text-xs md:text-sm leading-relaxed resize-y"></textarea>
+        </div>
+
+        <!-- Action / Swap Button -->
+        <div class="flex justify-center -my-1">
+          <button id="swapBtn" class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 shadow hover:border-blue-500 hover:text-blue-400 flex items-center justify-center text-slate-400 transition-all active:scale-95" title="Swap input and output">
+            ⇅
+          </button>
+        </div>
+
+        <!-- Output Area -->
+        <div>
+          <div class="flex justify-between items-center text-xs font-semibold text-blue-400 mb-1.5">
+            <span id="outputLabel">Base64 Result</span>
+            <div class="flex items-center gap-3">
+              <span id="outputSize" class="text-slate-500">0 B</span>
+              <button id="copyBtn" class="px-2.5 py-1 rounded bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-800/60 font-bold transition-all">Copy</button>
+            </div>
+          </div>
+          <textarea id="resultText" rows="6" readonly spellcheck="false"
+            placeholder="Conversion output appears here..." 
+            class="w-full p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl text-blue-300 placeholder-slate-700 focus:outline-none font-mono text-xs md:text-sm leading-relaxed resize-y"></textarea>
+        </div>
+      </div>
+
+      <!-- Metrics Row -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mt-4 text-xs">
+        <div class="p-2.5 bg-slate-950/60 border border-slate-800 rounded-lg text-center">
+          <span class="text-slate-400 block mb-0.5 text-[11px] uppercase">Execution Runtime</span>
+          <span class="font-bold text-emerald-400 text-sm">Client-Side (Local)</span>
+        </div>
+        <div class="p-2.5 bg-slate-950/60 border border-slate-800 rounded-lg text-center">
+          <span class="text-slate-400 block mb-0.5 text-[11px] uppercase">Storage Delta</span>
+          <span id="statDelta" class="font-bold text-slate-200 text-sm">+0%</span>
+        </div>
+        <div class="p-2.5 bg-slate-950/60 border border-slate-800 rounded-lg text-center col-span-2 sm:col-span-1">
+          <span class="text-slate-400 block mb-0.5 text-[11px] uppercase">Status</span>
+          <span id="statStatus" class="font-bold text-blue-400 text-sm">Idle</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SEO & Technical Documentation -->
+    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
+      
+      <!-- Comparison Matrix -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          Standard vs. URL-Safe Base64 Character Set Matrix
+        </h2>
+        <p class="text-xs text-slate-400 mb-4">Structural differences between transmission standards specified in RFC 4648.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
+                <th class="p-2.5">Encoding Standard</th>
+                <th class="p-2.5">Index 62 Character</th>
+                <th class="p-2.5">Index 63 Character</th>
+                <th class="p-2.5">Padding Char</th>
+                <th class="p-2.5">Typical Usage</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300 font-mono">
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">RFC 4648 (Standard)</td>
+                <td class="p-2.5 text-blue-400">+</td>
+                <td class="p-2.5 text-blue-400">/</td>
+                <td class="p-2.5 text-slate-400">=</td>
+                <td class="p-2.5 text-slate-400 font-sans">MIME emails, XML, Image Data URIs</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">RFC 4648 §5 (URL-Safe)</td>
+                <td class="p-2.5 text-emerald-400">-</td>
+                <td class="p-2.5 text-emerald-400">_</td>
+                <td class="p-2.5 text-slate-400">Omitted / Optional</td>
+                <td class="p-2.5 text-slate-400 font-sans">JWT tokens, Web query strings, URL slugs</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Practical Guides -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
+        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          Base64 In Web Architecture
+        </h2>
+        
+        <div class="space-y-2.5 text-xs leading-relaxed">
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">1. Inline Data URIs for Zero-Latency Icons</h3>
+            <p>Embedding small UI assets (SVG icons, PNG favicons) directly into CSS stylesheets or HTML documents as Base64 Data URIs removes supplementary HTTP request round-trips.</p>
+          </div>
+
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">2. Unicode Multi-Byte Safety</h3>
+            <p>Native browser <code>btoa()</code> throws an exception when encountering characters outside the Latin1 range. This tool implements binary byte normalization through the <code>TextEncoder</code> API to ensure complete UTF-8 multi-byte safety.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+          Frequently Asked Questions
+        </h2>
+
+        <div class="space-y-3.5 text-xs">
+          <div>
+            <h3 class="font-bold text-slate-200 mb-1">Q. Is Base64 a form of encryption?</h3>
+            <p class="text-slate-400">No. Base64 is a binary-to-text encoding format designed strictly for safe data transport across text-only protocols. It provides zero cryptographic secrecy.</p>
+          </div>
+          <div class="border-t border-slate-800 pt-3">
+            <h3 class="font-bold text-slate-200 mb-1">Q. Can I encode large image files into Base64?</h3>
+            <p class="text-slate-400">Yes. The integrated file uploader reads raw binary data directly into browser memory using FileReader, outputting a complete Data URI string without network limits.</p>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- Footer -->
+    <footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+        <div class="space-y-0.5">
+          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
+        </div>
+        <div class="flex items-center gap-3 font-semibold text-slate-400">
+          <a href="../privacy.html" class="hover:text-blue-400 transition-colors">Privacy Policy</a>
+          <span>·</span>
+          <a href="../terms.html" class="hover:text-blue-400 transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../js/utils/base64Tool.js"></script>
+  <script>
+    let mode = "encode"; // "encode" | "decode"
+
+    const sourceText = document.getElementById("sourceText");
+    const resultText = document.getElementById("resultText");
+    const modeEncodeBtn = document.getElementById("modeEncode");
+    const modeDecodeBtn = document.getElementById("modeDecode");
+    const urlSafeCheck = document.getElementById("urlSafeCheck");
+    const dataUriCheck = document.getElementById("dataUriCheck");
+    const dataUriWrap = document.getElementById("dataUriWrap");
+    const fileUpload = document.getElementById("fileUpload");
+    const swapBtn = document.getElementById("swapBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    const inputLabel = document.getElementById("inputLabel");
+    const outputLabel = document.getElementById("outputLabel");
+    const inputSize = document.getElementById("inputSize");
+    const outputSize = document.getElementById("outputSize");
+    const statDelta = document.getElementById("statDelta");
+    const statStatus = document.getElementById("statStatus");
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return bytes + " B";
+      else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+      return (bytes / 1048576).toFixed(2) + " MB";
+    }
+
+    function processConversion() {
+      const inputVal = sourceText.value;
+      const isUrlSafe = urlSafeCheck.checked;
+      const isDataUri = dataUriCheck.checked;
+
+      if (!inputVal) {
+        resultText.value = "";
+        inputSize.textContent = "0 B";
+        outputSize.textContent = "0 B";
+        statDelta.textContent = "+0%";
+        statStatus.textContent = "Idle";
+        statStatus.className = "font-bold text-slate-400 text-sm";
+        return;
+      }
+
+      inputSize.textContent = formatBytes(new Blob([inputVal]).size);
+
+      try {
+        if (mode === "encode") {
+          let encoded = Base64Tool.encodeText(inputVal, isUrlSafe);
+          if (isDataUri) {
+            encoded = Base64Tool.toDataUri(encoded, "text/plain");
+          }
+          resultText.value = encoded;
+        } else {
+          // If input has Data URI prefix, strip it before decoding
+          let cleanVal = inputVal;
+          if (cleanVal.startsWith("data:")) {
+            cleanVal = cleanVal.substring(cleanVal.indexOf(",") + 1);
+          }
+          resultText.value = Base64Tool.decodeText(cleanVal);
+        }
+
+        const metrics = Base64Tool.getMetrics(
+          mode === "encode" ? inputVal : resultText.value,
+          mode === "encode" ? resultText.value : inputVal
+        );
+
+        outputSize.textContent = formatBytes(new Blob([resultText.value]).size);
+        statDelta.textContent = `${metrics.overheadRatio >= 0 ? "+" : ""}${metrics.overheadRatio}%`;
+        statStatus.textContent = "Success";
+        statStatus.className = "font-bold text-emerald-400 text-sm";
+      } catch (err) {
+        resultText.value = "";
+        outputSize.textContent = "0 B";
+        statStatus.textContent = err.message;
+        statStatus.className = "font-bold text-rose-400 text-sm";
+      }
+    }
+
+    function setMode(newMode) {
+      mode = newMode;
+      if (mode === "encode") {
+        modeEncodeBtn.className = "px-3 py-1.5 rounded-md text-xs font-bold transition-all bg-blue-600 text-white shadow-sm";
+        modeDecodeBtn.className = "px-3 py-1.5 rounded-md text-xs font-bold transition-all text-slate-400 hover:text-slate-200";
+        inputLabel.textContent = "Plain Text";
+        outputLabel.textContent = "Base64 Result";
+        dataUriWrap.classList.remove("hidden");
+      } else {
+        modeDecodeBtn.className = "px-3 py-1.5 rounded-md text-xs font-bold transition-all bg-blue-600 text-white shadow-sm";
+        modeEncodeBtn.className = "px-3 py-1.5 rounded-md text-xs font-bold transition-all text-slate-400 hover:text-slate-200";
+        inputLabel.textContent = "Base64 String";
+        outputLabel.textContent = "Decoded Plain Text";
+        dataUriWrap.classList.add("hidden");
+      }
+      processConversion();
+    }
+
+    modeEncodeBtn.addEventListener("click", () => setMode("encode"));
+    modeDecodeBtn.addEventListener("click", () => setMode("decode"));
+
+    sourceText.addEventListener("input", processConversion);
+    urlSafeCheck.addEventListener("change", processConversion);
+    dataUriCheck.addEventListener("change", processConversion);
+
+    swapBtn.addEventListener("click", () => {
+      const temp = sourceText.value;
+      sourceText.value = resultText.value;
+      setMode(mode === "encode" ? "decode" : "encode");
+    });
+
+    fileUpload.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const dataUrl = event.target.result;
+        setMode("encode");
+        if (dataUriCheck.checked) {
+          resultText.value = dataUrl;
+        } else {
+          resultText.value = dataUrl.substring(dataUrl.indexOf(",") + 1);
+        }
+        sourceText.value = `[File: ${file.name} (${formatBytes(file.size)})]`;
+        outputSize.textContent = formatBytes(new Blob([resultText.value]).size);
+        statStatus.textContent = "File Encoded";
+        statStatus.className = "font-bold text-emerald-400 text-sm";
+      };
+      reader.readAsDataURL(file);
+    });
+
+    copyBtn.addEventListener("click", () => {
+      if (!resultText.value) return;
+      navigator.clipboard.writeText(resultText.value).then(() => {
+        const orig = copyBtn.textContent;
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => (copyBtn.textContent = orig), 1500);
+      });
+    });
+
+    clearBtn.addEventListener("click", () => {
+      sourceText.value = "";
+      resultText.value = "";
+      processConversion();
+      sourceText.focus();
+    });
+
+    // Sample payload init
+    sourceText.value = "Welcome to ToolLab! Fast, client-side, zero-server-cost developer utilities.";
+    processConversion();
+  </script>
+</body>
+</html>

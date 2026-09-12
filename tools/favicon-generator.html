@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Favicon Generator & Multi-Size Package Creator | ToolLab</title>
+  <meta name="description" content="Generate complete multi-size favicon packages (16x16, 32x32, 180x180, WebManifest) in your browser. Download as a single ZIP bundle with production HTML tags." />
+  <meta name="keywords" content="favicon generator, create favicon online, apple touch icon generator, webmanifest creator, ico converter, ToolLab" />
+  <link rel="canonical" href="https://toollab.org/tools/favicon-generator.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Favicon Generator & Multi-Size Package | ToolLab" />
+  <meta property="og:description" content="Generate browser, Apple Touch, and Android icons with HTML tags instantly inside your browser." />
+  <meta property="og:url" content="https://toollab.org/tools/favicon-generator.html" />
+
+  <!-- Schema.org WebApplication + FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Favicon Generator & Package Creator",
+        "url": "https://toollab.org/tools/favicon-generator.html",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript. Requires HTML5 Canvas.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Which favicon sizes are strictly required for modern web browsers?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Production websites require at minimum: 16x16 (desktop browser tab), 32x32 (retina screen tabs), 180x180 (Apple Touch Icon for iOS home screens), and 192x192 / 512x512 PNGs referenced inside site.webmanifest for Android PWA support."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are my original logo images uploaded to an external server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. All square-cropping, image scaling, and ZIP packaging routines execute 100% locally inside your browser memory using HTML5 Canvas and JSZip. No data ever leaves your device."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I install the generated favicon package on my website?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Unzip the downloaded archive, move all image files and site.webmanifest into your website root directory, and paste the generated HTML link tags into your site <head> section."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Client-side Zero-cost ZIP Archiver -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Main Card -->
+    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 md:p-7">
+      
+      <!-- Top Navigation -->
+      <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="../index.html" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </a>
+          <div>
+            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Favicon Package Generator</h1>
+          </div>
+        </div>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-950/80 text-blue-400 border border-blue-800">
+          Complete Production Bundle
+        </span>
+      </div>
+
+      <!-- Drag & Drop Upload Zone -->
+      <div id="dropZone" class="border-2 border-dashed border-slate-800 hover:border-blue-500/60 bg-slate-950/40 rounded-2xl p-8 text-center transition-all cursor-pointer mb-6">
+        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/svg+xml,image/webp" class="hidden" />
+        <div class="flex flex-col items-center justify-center gap-2 pointer-events-none">
+          <svg class="w-10 h-10 text-slate-600 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+          </svg>
+          <span class="text-sm font-bold text-slate-200">Upload your logo or app icon (<span class="text-blue-400 underline">PNG, SVG, JPG</span>)</span>
+          <span class="text-xs text-slate-500">Square 512x512+ recommended · Automatically cropped and packaged locally</span>
+        </div>
+      </div>
+
+      <!-- Processing & Result Area -->
+      <div id="resultsSection" class="space-y-6 hidden">
+        
+        <!-- Live Icon Previews Grid -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-bold text-slate-400 uppercase tracking-wider">Generated Package Assets</span>
+            <button id="downloadZipBtn" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-colors shadow-sm">
+              Download Favicon Bundle (.ZIP)
+            </button>
+          </div>
+          
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 pt-2">
+            <!-- 16x16 -->
+            <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 text-center">
+              <div class="w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-800 rounded-lg">
+                <img id="prev16" class="w-4 h-4 object-contain" />
+              </div>
+              <span class="text-[11px] font-mono text-slate-400">16×16 px</span>
+            </div>
+            <!-- 32x32 -->
+            <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 text-center">
+              <div class="w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-800 rounded-lg">
+                <img id="prev32" class="w-8 h-8 object-contain" />
+              </div>
+              <span class="text-[11px] font-mono text-slate-400">32×32 px</span>
+            </div>
+            <!-- 180x180 -->
+            <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 text-center">
+              <div class="w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-800 rounded-lg">
+                <img id="prev180" class="w-9 h-9 object-contain rounded-md" />
+              </div>
+              <span class="text-[11px] font-mono text-slate-400">180×180 (Apple)</span>
+            </div>
+            <!-- 192x192 -->
+            <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 text-center">
+              <div class="w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-800 rounded-lg">
+                <img id="prev192" class="w-9 h-9 object-contain" />
+              </div>
+              <span class="text-[11px] font-mono text-slate-400">192×192 (PWA)</span>
+            </div>
+            <!-- 512x512 -->
+            <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 text-center col-span-2 sm:col-span-1">
+              <div class="w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-800 rounded-lg">
+                <img id="prev512" class="w-9 h-9 object-contain" />
+              </div>
+              <span class="text-[11px] font-mono text-slate-400">512×512 (Splash)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- HTML Snippet Export -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-bold text-slate-400 uppercase tracking-wider">HTML Header Code</span>
+            <button id="copyHtmlBtn" class="px-2.5 py-1 rounded bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-800/60 font-bold transition-colors">
+              Copy HTML Tags
+            </button>
+          </div>
+          <pre class="p-3.5 bg-slate-950 border border-slate-800 rounded-xl text-blue-300 font-mono text-xs overflow-x-auto select-all"><code id="codeSnippet"></code></pre>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- SEO & Technical Documentation -->
+    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
+      
+      <!-- Modern Favicon Standard Matrix -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          Modern Multi-Platform Favicon Specification Matrix
+        </h2>
+        <p class="text-xs text-slate-400 mb-4">Official platform icon resolution and target device standards.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
+                <th class="p-2.5">File Identifier</th>
+                <th class="p-2.5 font-mono">Dimensions</th>
+                <th class="p-2.5">Format</th>
+                <th class="p-2.5">Operating Platform & Role</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300 font-mono">
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">favicon-16x16.png</td>
+                <td class="p-2.5 text-blue-400">16 × 16</td>
+                <td class="p-2.5 text-slate-400">PNG</td>
+                <td class="p-2.5 text-slate-400 font-sans">Legacy desktop browser tabs, URL bookmarks</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">favicon-32x32.png</td>
+                <td class="p-2.5 text-blue-400">32 × 32</td>
+                <td class="p-2.5 text-slate-400">PNG</td>
+                <td class="p-2.5 text-slate-400 font-sans">Modern Retina/HiDPI browser tabs, taskbars</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">apple-touch-icon.png</td>
+                <td class="p-2.5 text-blue-400">180 × 180</td>
+                <td class="p-2.5 text-slate-400">PNG</td>
+                <td class="p-2.5 text-slate-400 font-sans">iOS Safari "Add to Home Screen" web bookmark</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">android-chrome-192x192.png</td>
+                <td class="p-2.5 text-blue-400">192 × 192</td>
+                <td class="p-2.5 text-slate-400">PNG</td>
+                <td class="p-2.5 text-slate-400 font-sans">Android Chrome home screen icon, PWA installation</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">android-chrome-512x512.png</td>
+                <td class="p-2.5 text-blue-400">512 × 512</td>
+                <td class="p-2.5 text-slate-400">PNG</td>
+                <td class="p-2.5 text-slate-400 font-sans">PWA application splash screens, app store assets</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Implementation Guidelines -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
+        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          Favicon Best Practices
+        </h2>
+        
+        <div class="space-y-2.5 text-xs leading-relaxed">
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">1. Transparent Backgrounds for Dark/Light Compatibility</h3>
+            <p>Design source icons with transparent PNG or SVG backgrounds to ensure optimal contrast against both dark-mode and light-mode browser tab styling.</p>
+          </div>
+
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">2. PWA WebManifest Integration</h3>
+            <p>Modern mobile browsers rely on <code>site.webmanifest</code> rather than redundant header tags to display branded splash screens when websites are installed to mobile home screens.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+          Frequently Asked Questions
+        </h2>
+
+        <div class="space-y-3.5 text-xs">
+          <div>
+            <h3 class="font-bold text-slate-200 mb-1">Q. Do I still need an old-fashioned .ico file?</h3>
+            <p class="text-slate-400">Modern web browsers natively support PNG favicons specified in standard link tags. Standard PNG favicons offer superior alpha transparency and smaller file sizes compared to legacy multi-layer ICO containers.</p>
+          </div>
+          <div class="border-t border-slate-800 pt-3">
+            <h3 class="font-bold text-slate-200 mb-1">Q. Are my branding assets uploaded to a cloud service?</h3>
+            <p class="text-slate-400">Never. All image scaling, cropping, and ZIP bundle assembly happen entirely within your local browser memory via JavaScript.</p>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- Footer -->
+    <footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+        <div class="space-y-0.5">
+          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
+        </div>
+        <div class="flex items-center gap-3 font-semibold text-slate-400">
+          <a href="../privacy.html" class="hover:text-blue-400 transition-colors">Privacy Policy</a>
+          <span>·</span>
+          <a href="../terms.html" class="hover:text-blue-400 transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../js/utils/faviconGenerator.js"></script>
+  <script>
+    const dropZone = document.getElementById("dropZone");
+    const fileInput = document.getElementById("fileInput");
+    const resultsSection = document.getElementById("resultsSection");
+    const downloadZipBtn = document.getElementById("downloadZipBtn");
+    const copyHtmlBtn = document.getElementById("copyHtmlBtn");
+    const codeSnippet = document.getElementById("codeSnippet");
+
+    const previews = {
+      16: document.getElementById("prev16"),
+      32: document.getElementById("prev32"),
+      180: document.getElementById("prev180"),
+      192: document.getElementById("prev192"),
+      512: document.getElementById("prev512")
+    };
+
+    let generatedBlobs = {};
+
+    dropZone.addEventListener("click", () => fileInput.click());
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.classList.add("border-blue-500");
+    });
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.classList.remove("border-blue-500");
+    });
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.classList.remove("border-blue-500");
+      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+
+    fileInput.addEventListener("change", (e) => {
+      if (e.target.files.length) handleFile(e.target.files[0]);
+    });
+
+    async function handleFile(file) {
+      if (!file.type.startsWith("image/")) return;
+
+      const bitmap = await createImageBitmap(file);
+      generatedBlobs = {};
+
+      for (const item of FaviconGenerator.SIZES) {
+        const blob = await FaviconGenerator.renderSquareIcon(bitmap, item.size);
+        generatedBlobs[item.name] = blob;
+
+        if (previews[item.size]) {
+          previews[item.size].src = URL.createObjectURL(blob);
+        }
+      }
+
+      codeSnippet.textContent = FaviconGenerator.generateHtmlSnippet();
+      resultsSection.classList.remove("hidden");
+    }
+
+    downloadZipBtn.addEventListener("click", async () => {
+      if (typeof JSZip === "undefined" || Object.keys(generatedBlobs).length === 0) return;
+
+      const zip = new JSZip();
+
+      // Append image files to archive
+      for (const [filename, blob] of Object.entries(generatedBlobs)) {
+        zip.file(filename, blob);
+      }
+
+      // Append site.webmanifest
+      const manifest = FaviconGenerator.generateManifest("ToolLab");
+      zip.file("site.webmanifest", manifest);
+
+      // Append HTML setup guide
+      zip.file("head_tags.html", FaviconGenerator.generateHtmlSnippet());
+
+      const content = await zip.generateAsync({ type: "blob" });
+      const downloadUrl = URL.createObjectURL(content);
+
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = "toollab-favicon-package.zip";
+      link.click();
+      URL.revokeObjectURL(downloadUrl);
+    });
+
+    copyHtmlBtn.addEventListener("click", () => {
+      const code = codeSnippet.textContent;
+      if (!code) return;
+      navigator.clipboard.writeText(code).then(() => {
+        const orig = copyHtmlBtn.textContent;
+        copyHtmlBtn.textContent = "Copied!";
+        setTimeout(() => (copyHtmlBtn.textContent = orig), 1500);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2048 Classic Web Puzzle | Play Free Online - ToolLab</title>
+  <meta name="description" content="Play the classic 2048 puzzle game online for free. Clean dark mode UI, zero ads lag, mobile swipe controls, and high-score corner strategy guide." />
+  <meta name="keywords" content="2048 game, play 2048, 2048 online, 2048 puzzle, unblocked games, 2048 strategy, ToolLab" />
+  <link rel="canonical" href="https://toollab.org/games/2048.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="2048 Classic Web Puzzle | ToolLab" />
+  <meta property="og:description" content="Play the classic 2048 numbers game in high-speed dark mode. No installs, 100% private." />
+  <meta property="og:url" content="https://toollab.org/games/2048.html" />
+
+  <!-- Schema.org VideoGame & FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "VideoGame",
+        "name": "2048 Classic Web Puzzle",
+        "url": "https://toollab.org/games/2048.html",
+        "genre": ["Puzzle", "Brain Game", "Strategy"],
+        "playMode": "SinglePlayer",
+        "applicationCategory": "Game",
+        "operatingSystem": "All"
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is the best strategy to win 2048?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The most effective approach is the Corner Anchoring Strategy: keep your highest-value tile locked in one corner (typically bottom-right or bottom-left) and build a descending chain of numbers around it while avoiding opposite directional swipes."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What are the spawn probabilities for new tiles in 2048?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Every valid slide spawns a new tile in an empty cell: 90% probability for a 2 tile and 10% probability for a 4 tile."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does scoring work in 2048?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Whenever two identical tiles merge, your score increases by the exact value of the newly created tile (e.g., merging two 64 tiles awards 128 points)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .grid-cell { background-color: rgba(30, 41, 59, 0.7); }
+    .tile-2 { background: #334155; color: #f8fafc; }
+    .tile-4 { background: #475569; color: #f8fafc; }
+    .tile-8 { background: #ea580c; color: #ffffff; }
+    .tile-16 { background: #f97316; color: #ffffff; }
+    .tile-32 { background: #e11d48; color: #ffffff; }
+    .tile-64 { background: #f43f5e; color: #ffffff; }
+    .tile-128 { background: #0284c7; color: #ffffff; font-size: 1.35rem; }
+    .tile-256 { background: #0ea5e9; color: #ffffff; font-size: 1.35rem; }
+    .tile-512 { background: #06b6d4; color: #ffffff; font-size: 1.35rem; }
+    .tile-1024 { background: #8b5cf6; color: #ffffff; font-size: 1.15rem; }
+    .tile-2048 { background: #6366f1; color: #ffffff; font-size: 1.15rem; box-shadow: 0 0 20px rgba(99, 102, 241, 0.6); }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
+  <div class="max-w-md mx-auto">
+    
+    <!-- Main Game Card -->
+    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 sm:p-6">
+      
+      <!-- Header Controls -->
+      <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="../index.html" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </a>
+          <div>
+            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">2048 Classic</h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <div class="bg-slate-950/80 border border-slate-800 px-3 py-1 rounded-xl text-center">
+            <div class="text-[9px] uppercase font-bold text-slate-500">Score</div>
+            <div id="score" class="text-sm font-black text-blue-400 font-mono">0</div>
+          </div>
+          <button id="restart-btn" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-colors shadow-sm">
+            New Game
+          </button>
+        </div>
+      </div>
+
+      <!-- 4x4 Game Board -->
+      <div id="game-board" class="relative bg-slate-950 p-2 sm:p-3 rounded-2xl border border-slate-800/90 touch-none select-none">
+        <div class="grid grid-cols-4 gap-2 sm:gap-2.5">
+          <!-- 16 Background Slots -->
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl grid-cell flex items-center justify-center"></div>
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl grid-cell flex items-center justify-center"></div>
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl grid-cell flex items-center justify-center"></div>
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl grid-cell flex items-center justify-center"></div>
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl grid-cell flex items-center justify-center"></div>
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl grid-cell flex items-center justify-center"></div>
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl grid-cell flex items-center justify-center"></div>
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl grid-cell flex items-center justify-center"></div>
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl grid-cell flex items-center justify-center"></div>
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl grid-cell flex items-center justify-center"></div>
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl grid-cell flex items-center justify-center"></div>
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl grid-cell flex items-center justify-center"></div>
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl grid-cell flex items-center justify-center"></div>
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl grid-cell flex items-center justify-center"></div>
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl grid-cell flex items-center justify-center"></div>
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl grid-cell flex items-center justify-center"></div>
+        </div>
+
+        <!-- Dynamic Overlay Tiles -->
+        <div id="tile-container" class="absolute inset-2 sm:inset-3 grid grid-cols-4 gap-2 sm:gap-2.5 pointer-events-none"></div>
+
+        <!-- Game Over Overlay -->
+        <div id="game-over" class="hidden absolute inset-0 bg-slate-950/85 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-4 text-center z-20">
+          <h2 class="text-2xl font-black text-slate-100 mb-1">Game Over</h2>
+          <p class="text-xs text-slate-400 mb-4">No more valid moves available on the grid.</p>
+          <button id="retry-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-colors shadow-sm">
+            Try Again
+          </button>
+        </div>
+      </div>
+
+      <!-- Controls Guide Pill -->
+      <div class="mt-4 p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-center text-xs text-slate-400">
+        Use <strong>Arrow Keys</strong> or <strong>W, A, S, D</strong>. On mobile, <strong>swipe</strong> across the grid.
+      </div>
+
+    </div>
+
+    <!-- Strategy & Reference Guide -->
+    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
+      
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          The Corner Anchoring Strategy
+        </h2>
+        <ul class="space-y-2 text-xs text-slate-300 list-disc list-inside">
+          <li><strong>Anchor Highest Tile:</strong> Keep your largest number locked permanently in one corner (e.g., bottom-right). Never swipe in the opposite direction (Up) unless completely forced.</li>
+          <li><strong>Descending Snake Chain:</strong> Order surrounding tiles in strict descending sequence (e.g., 1024 &rarr; 512 &rarr; 256 &rarr; 128) along the bottom row to trigger cascading merges.</li>
+          <li><strong>Keep 4+ Free Cells:</strong> When free cells fall below 3, immediately merge smaller numbers (2s and 4s) to prevent gridlock.</li>
+        </ul>
+      </section>
+
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          2048 Tile Progression Hierarchy
+        </h2>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
+                <th class="p-2.5">Tile Tier</th>
+                <th class="p-2.5 font-mono">Value</th>
+                <th class="p-2.5">Minimum 2s Required</th>
+                <th class="p-2.5">Milestone Level</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300 font-mono">
+              <tr>
+                <td class="p-2.5 text-slate-400 font-sans">Starter</td>
+                <td class="p-2.5 text-blue-400">2 / 4</td>
+                <td class="p-2.5 text-slate-400">1 – 2</td>
+                <td class="p-2.5 text-slate-400 font-sans">Initial board spawn</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 text-slate-300 font-sans">Intermediate</td>
+                <td class="p-2.5 text-orange-400">16 / 32 / 64</td>
+                <td class="p-2.5 text-slate-400">8 – 32</td>
+                <td class="p-2.5 text-slate-400 font-sans">Board balance phase</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 text-slate-200 font-sans">Advanced</td>
+                <td class="p-2.5 text-cyan-400">128 / 256 / 512</td>
+                <td class="p-2.5 text-slate-400">64 – 256</td>
+                <td class="p-2.5 text-slate-400 font-sans">Corner locking essential</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">Victory</td>
+                <td class="p-2.5 text-indigo-400 font-bold">1024 / 2048</td>
+                <td class="p-2.5 text-indigo-400 font-bold">512 – 1,024</td>
+                <td class="p-2.5 text-emerald-400 font-sans font-bold">Game Completion</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- Standard Minimal Footer -->
+    <footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+        <div class="space-y-0.5">
+          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
+        </div>
+        <div class="flex items-center gap-3 font-semibold text-slate-400">
+          <a href="../privacy.html" class="hover:text-blue-400 transition-colors">Privacy Policy</a>
+          <span>·</span>
+          <a href="../terms.html" class="hover:text-blue-400 transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- 순수 모듈 전역 로드 (No-CORS) -->
+  <script src="../js/utils/game2048.js"></script>
+
+  <script>
+    let board = [];
+    let score = 0;
+    const scoreEl = document.getElementById('score');
+    const container = document.getElementById('tile-container');
+    const gameOverEl = document.getElementById('game-over');
+
+    function initGame() {
+      const size = Game2048.GRID_SIZE;
+      board = Array.from({ length: size }, () => Array(size).fill(0));
+      score = 0;
+      scoreEl.innerText = '0';
+      gameOverEl.classList.add('hidden');
+
+      board = Game2048.addRandomTile(board);
+      board = Game2048.addRandomTile(board);
+      render();
+    }
+
+    function render() {
+      container.innerHTML = '';
+      const size = Game2048.GRID_SIZE;
+      for (let r = 0; r < size; r++) {
+        for (let c = 0; c < size; c++) {
+          const val = board[r][c];
+          const div = document.createElement('div');
+          div.className = 'w-16 h-16 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center font-black transition-all';
+          if (val > 0) {
+            div.classList.add(`tile-${val}`);
+            div.innerText = val;
+          }
+          container.appendChild(div);
+        }
+      }
+    }
+
+    function handleInput(dir) {
+      const { newBoard, totalScore, moved } = Game2048.move(board, dir);
+      if (moved) {
+        board = Game2048.addRandomTile(newBoard);
+        score += totalScore;
+        scoreEl.innerText = score.toLocaleString();
+        render();
+
+        if (Game2048.isGameOver(board)) {
+          gameOverEl.classList.remove('hidden');
+        }
+      }
+    }
+
+    // 키보드 리스너
+    window.addEventListener('keydown', (e) => {
+      let dir = null;
+      if (['ArrowUp', 'KeyW'].includes(e.code)) dir = 'UP';
+      else if (['ArrowDown', 'KeyS'].includes(e.code)) dir = 'DOWN';
+      else if (['ArrowLeft', 'KeyA'].includes(e.code)) dir = 'LEFT';
+      else if (['ArrowRight', 'KeyD'].includes(e.code)) dir = 'RIGHT';
+
+      if (dir) {
+        e.preventDefault();
+        handleInput(dir);
+      }
+    });
+
+    // 모바일 터치 스와이프 리스너
+    let touchStartX = 0, touchStartY = 0;
+    const boardEl = document.getElementById('game-board');
+
+    boardEl.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    boardEl.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        if (dx > 30) handleInput('RIGHT');
+        else if (dx < -30) handleInput('LEFT');
+      } else {
+        if (dy > 30) handleInput('DOWN');
+        else if (dy < -30) handleInput('UP');
+      }
+    }, { passive: true });
+
+    document.getElementById('restart-btn').addEventListener('click', initGame);
+    document.getElementById('retry-btn').addEventListener('click', initGame);
+
+    window.addEventListener('DOMContentLoaded', initGame);
+  </script>
+</body>
+</html>

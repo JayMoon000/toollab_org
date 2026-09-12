@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Background Remover | 100% On-Device Cutout - ToolLab</title>
+  <meta name="description" content="Free on-device AI background remover. Cut out backgrounds from PNG, JPG, and WebP images directly in your browser. 100% private, zero server uploads, unlimited free use." />
+  <meta name="keywords" content="background remover, remove bg online, transparent png, ai cutout tool, client-side background remover, free remove bg, ToolLab" />
+  <link rel="canonical" href="https://toollab.org/tools/background-remover.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="AI Background Remover | ToolLab" />
+  <meta property="og:description" content="Extract subjects and create transparent PNGs locally in your browser memory. Zero server uploads." />
+  <meta property="og:url" content="https://toollab.org/tools/background-remover.html" />
+
+  <!-- Schema.org WebApplication + FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "AI Background Remover",
+        "url": "https://toollab.org/tools/background-remover.html",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires WebAssembly and WebGPU/WebGL support.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Are my photos uploaded to an AI cloud server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The neural network model executes entirely inside your browser runtime via WebAssembly (Wasm) and WebGPU. Your images never leave your computer or phone."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why does the initial processing take a few seconds?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The first time you run the tool, the compressed AI segmentation weights are cached into your browser storage. Subsequent cutouts execute faster using cached model memory."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What image formats are supported?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "It supports standard PNG, JPEG, and WebP images. The exported cutout is always encoded as a transparent 32-bit PNG."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Main Card -->
+    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 md:p-7">
+      
+      <!-- Header Navigation -->
+      <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="../index.html" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </a>
+          <div>
+            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">AI Background Remover</h1>
+          </div>
+        </div>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950/80 text-emerald-400 border border-emerald-800">
+          On-Device Wasm AI
+        </span>
+      </div>
+
+      <!-- Drop Zone -->
+      <label for="fileInput" id="dropZone" class="border-2 border-dashed border-slate-800 hover:border-blue-500/60 bg-slate-950/40 hover:bg-slate-950/70 rounded-2xl p-8 text-center transition-all cursor-pointer flex flex-col items-center justify-center min-h-[220px] mb-5">
+        <input type="file" id="fileInput" accept="image/png, image/jpeg, image/webp" class="hidden" />
+        <div class="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center text-blue-400 mb-3 border border-slate-800 pointer-events-none">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <p class="text-sm font-bold text-slate-200 pointer-events-none">Click or drag & drop an image here</p>
+        <p class="text-xs text-slate-500 mt-1 pointer-events-none">Supports PNG, JPG, WebP · 100% In-Browser Local Processing</p>
+      </label>
+
+      <!-- Dual Preview & Result Area (Dual Viewer UX) -->
+      <div id="resultArea" class="hidden flex-col items-center">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mb-6">
+          
+          <!-- Original -->
+          <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3 flex flex-col items-center">
+            <span class="text-xs font-semibold text-slate-400 mb-2">Original Image</span>
+            <div class="w-full h-56 flex items-center justify-center overflow-hidden rounded-lg bg-slate-950">
+              <img id="origImg" class="max-h-full max-w-full object-contain" alt="Original Source" />
+            </div>
+          </div>
+
+          <!-- Cutout Result with Checkerboard pattern -->
+          <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3 flex flex-col items-center">
+            <span class="text-xs font-semibold text-blue-400 mb-2">Isolated Subject (Transparent)</span>
+            <div class="w-full h-56 flex items-center justify-center overflow-hidden rounded-lg bg-[repeating-conic-gradient(#1e293b_0%_25%,#0f172a_0%_50%)] bg-[length:16px_16px]">
+              <img id="resultImg" class="max-h-full max-w-full object-contain" alt="Background Removed" />
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Action Controls -->
+        <div class="flex gap-3">
+          <button type="button" id="downloadBtn" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl shadow-lg transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            Download Transparent PNG
+          </button>
+          <button type="button" id="resetBtn" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition-all">
+            Upload Another
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Interactive Loading Overlay -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex flex-col items-center justify-center p-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl flex flex-col items-center">
+        <div class="w-12 h-12 border-4 border-blue-500/20 border-t-blue-400 rounded-full animate-spin mb-4"></div>
+        <h3 id="loadingStatusText" class="text-sm font-bold text-slate-100 mb-1">Loading AI model into memory...</h3>
+        <p class="text-xs text-slate-400 mb-4">Executing neural segmentation locally in browser WebAssembly.</p>
+        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mb-3">
+          <div id="progressBar" class="bg-blue-500 h-full w-1/4 transition-all duration-300"></div>
+        </div>
+        <span class="text-[11px] text-slate-500">🔒 100% On-Device · Zero Cloud Data Transfer</span>
+      </div>
+    </div>
+
+    <!-- SEO & Technical Documentation -->
+    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
+      
+      <!-- Comparison Table -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          Client-Side WebAssembly vs. Cloud Background Removal
+        </h2>
+        <p class="text-xs text-slate-400 mb-4">Architectural comparison between local browser inference and traditional cloud-based cutout APIs.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
+                <th class="p-2.5">Attribute</th>
+                <th class="p-2.5">ToolLab (Client Wasm)</th>
+                <th class="p-2.5">Cloud API Providers</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300">
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">Data Privacy & Security</td>
+                <td class="p-2.5 text-emerald-400 font-bold">100% Local (Zero network upload)</td>
+                <td class="p-2.5 text-slate-400">Sent to third-party cloud servers</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">Usage Cost & Quotas</td>
+                <td class="p-2.5 text-blue-400 font-bold">Free Forever (Zero server cost)</td>
+                <td class="p-2.5 text-slate-400">Monthly subscriptions / credit limits</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">Network Latency</td>
+                <td class="p-2.5 text-slate-300">Instant (Hardware compute bound)</td>
+                <td class="p-2.5 text-slate-400">Subject to network upload bandwidth</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">Image Output Format</td>
+                <td class="p-2.5 text-slate-300">32-bit Transparent PNG</td>
+                <td class="p-2.5 text-slate-300">Standard PNG</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Practical Strategy Guides -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
+        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          Optimizing Cutout Quality
+        </h2>
+        
+        <div class="space-y-2.5 text-xs leading-relaxed">
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">1. High Edge Contrast</h3>
+            <p>Foreground subjects that contrast clearly with the backdrop (e.g. dark clothing on a bright wall) allow the neural segmentation weights to compute alpha transparency contours with higher precision.</p>
+          </div>
+
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">2. Hardware Acceleration</h3>
+            <p>Browsers with hardware acceleration and WebGPU active process image tensors faster, enabling responsive cutouts for portrait photography and product catalog cutouts.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+          Frequently Asked Questions
+        </h2>
+
+        <div class="space-y-3.5 text-xs">
+          <div>
+            <h3 class="font-bold text-slate-200 mb-1">Q. Are my uploaded files saved to any database?</h3>
+            <p class="text-slate-400">No. Execution is isolated within your browser's local sandbox memory. Zero images or telemetry records are dispatched to remote servers.</p>
+          </div>
+          <div class="border-t border-slate-800 pt-3">
+            <h3 class="font-bold text-slate-200 mb-1">Q. Can I process multiple images in a row?</h3>
+            <p class="text-slate-400">Yes. Once the initial neural weights load, clicking "Upload Another" reuses the cached model memory immediately without reloading.</p>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- Standard Minimal Footer -->
+    <footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+        <div class="space-y-0.5">
+          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
+        </div>
+        <div class="flex items-center gap-3 font-semibold text-slate-400">
+          <a href="../privacy.html" class="hover:text-blue-400 transition-colors">Privacy Policy</a>
+          <span>·</span>
+          <a href="../terms.html" class="hover:text-blue-400 transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../js/utils/backgroundRemover.js"></script>
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const dropZone = document.getElementById("dropZone");
+    const resultArea = document.getElementById("resultArea");
+    const origImg = document.getElementById("origImg");
+    const resultImg = document.getElementById("resultImg");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    const loadingStatusText = document.getElementById("loadingStatusText");
+    const progressBar = document.getElementById("progressBar");
+
+    let currentBlobUrl = null;
+    let currentFileName = "image";
+
+    function showLoading(show) {
+      if (show) {
+        loadingOverlay.classList.remove("hidden");
+        progressBar.style.width = "20%";
+        loadingStatusText.textContent = "Loading AI model into memory...";
+      } else {
+        progressBar.style.width = "100%";
+        setTimeout(() => {
+          loadingOverlay.classList.add("hidden");
+        }, 300);
+      }
+    }
+
+    async function handleFile(file) {
+      if (!file || !file.type.startsWith("image/")) {
+        alert("Please select a valid image file (PNG, JPG, WebP).");
+        return;
+      }
+
+      currentFileName = file.name.substring(0, file.name.lastIndexOf(".")) || "image";
+      origImg.src = URL.createObjectURL(file);
+      showLoading(true);
+
+      try {
+        const result = await BackgroundRemover.process(file, ({ stage, percent }) => {
+          loadingStatusText.textContent = `Processing (${stage})... ${percent}%`;
+          progressBar.style.width = `${Math.max(20, percent)}%`;
+        });
+
+        if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+        currentBlobUrl = result.blobUrl;
+        resultImg.src = currentBlobUrl;
+
+        dropZone.classList.add("hidden");
+        resultArea.classList.remove("hidden");
+        resultArea.classList.add("flex");
+      } catch (err) {
+        console.error("Cutout error:", err);
+        alert("Failed to process background: " + (err.message || "Model execution error."));
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    dropZone.addEventListener("click", () => fileInput.click());
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.classList.add("border-blue-500");
+    });
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.classList.remove("border-blue-500");
+    });
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.classList.remove("border-blue-500");
+      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+
+    fileInput.addEventListener("change", (e) => {
+      if (e.target.files.length) handleFile(e.target.files[0]);
+    });
+
+    downloadBtn.addEventListener("click", () => {
+      if (!currentBlobUrl) return;
+      const a = document.createElement("a");
+      a.href = currentBlobUrl;
+      a.download = `toollab-cutout-${currentFileName}.png`;
+      a.click();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      fileInput.value = "";
+      resultArea.classList.add("hidden");
+      resultArea.classList.remove("flex");
+      dropZone.classList.remove("hidden");
+    });
+  </script>
+</body>
+</html>

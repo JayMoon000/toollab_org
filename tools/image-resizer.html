@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bulk Image Resizer | Fast In-Browser Pixel & Scale Tool - ToolLab</title>
+  <meta name="description" content="Free client-side image resizer. Resize JPG, PNG, and WebP images by exact pixel dimensions or scale percentage with zero latency, zero server uploads, and total privacy." />
+  <meta name="keywords" content="image resizer, bulk image resizer, resize image online, change image dimensions, scale photo, client-side photo resizer, ToolLab" />
+  <link rel="canonical" href="https://toollab.org/tools/image-resizer.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Bulk Image Resizer & Scale Utility | ToolLab" />
+  <meta property="og:description" content="Resize dimensions and change aspect ratios of multiple photos directly inside your browser." />
+  <meta property="og:url" content="https://toollab.org/tools/image-resizer.html" />
+
+  <!-- Schema.org WebApplication + FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Bulk Image Resizer",
+        "url": "https://toollab.org/tools/image-resizer.html",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript. Requires HTML5 Canvas.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Are my original images uploaded to a cloud service?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The entire scaling and canvas resizing routine executes locally inside your browser memory. No files are uploaded to any external server."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does resizing degrade image clarity?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Downscaling retains full sharpness using high-quality bicubic browser interpolation. Upscaling beyond native camera resolution will naturally exhibit softer edges."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I lock aspect ratios during batch resizing?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. When the aspect ratio lock is active, entering one dimension automatically scales the other proportionally to prevent stretching."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Main Card -->
+    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 md:p-7">
+      
+      <!-- Top Navigation -->
+      <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="../index.html" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </a>
+          <div>
+            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Bulk Image Resizer</h1>
+          </div>
+        </div>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-950/80 text-blue-400 border border-blue-800">
+          Client-Side Core
+        </span>
+      </div>
+
+      <!-- Resize Control Configuration Panel -->
+      <div class="p-4 bg-slate-950/70 border border-slate-800 rounded-xl space-y-4 mb-5">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
+            <button id="modeDimBtn" class="px-3 py-1.5 rounded-md text-xs font-bold transition-all bg-blue-600 text-white shadow-sm">Exact Pixels</button>
+            <button id="modePctBtn" class="px-3 py-1.5 rounded-md text-xs font-bold transition-all text-slate-400 hover:text-slate-200">Scale %</button>
+          </div>
+
+          <label class="cursor-pointer flex items-center gap-1.5 text-xs text-slate-300 select-none">
+            <input type="checkbox" id="aspectRatioCheck" checked class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0">
+            Lock Aspect Ratio
+          </label>
+        </div>
+
+        <!-- Pixel Dimension Inputs -->
+        <div id="dimInputs" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="block text-xs font-semibold text-slate-400">Target Width (px)</label>
+            <input type="number" id="targetWidth" placeholder="e.g. 1920" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs font-bold text-slate-100 outline-none focus:border-blue-500" />
+          </div>
+          <div class="space-y-1">
+            <label class="block text-xs font-semibold text-slate-400">Target Height (px)</label>
+            <input type="number" id="targetHeight" placeholder="e.g. 1080" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs font-bold text-slate-100 outline-none focus:border-blue-500" />
+          </div>
+        </div>
+
+        <!-- Percentage Scale Slider -->
+        <div id="pctInputs" class="space-y-2 hidden">
+          <div class="flex justify-between text-xs font-semibold">
+            <span class="text-slate-400">Scale Factor</span>
+            <span id="scaleDisplay" class="text-blue-400 font-mono">50%</span>
+          </div>
+          <input type="range" id="scaleRange" min="5" max="200" value="50" step="5"
+            class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500" />
+        </div>
+      </div>
+
+      <!-- Drag & Drop Upload Zone -->
+      <div id="dropZone" class="border-2 border-dashed border-slate-800 hover:border-blue-500/60 bg-slate-950/40 rounded-2xl p-8 text-center transition-all cursor-pointer mb-5">
+        <input type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/webp" class="hidden" />
+        <div class="flex flex-col items-center justify-center gap-2 pointer-events-none">
+          <svg class="w-10 h-10 text-slate-600 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+          </svg>
+          <span class="text-sm font-bold text-slate-200">Drop your images here, or <span class="text-blue-400 underline">browse</span></span>
+          <span class="text-xs text-slate-500">Supports JPG, PNG, WebP · Instant multi-file processing</span>
+        </div>
+      </div>
+
+      <!-- Batch Download Bar -->
+      <div id="batchSummary" class="flex items-center justify-between p-3 bg-slate-950/60 border border-slate-800 rounded-xl mb-4 hidden">
+        <span id="batchCount" class="text-xs font-bold text-slate-200">0 images resized</span>
+        <button id="downloadAllBtn" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-colors">
+          Download All
+        </button>
+      </div>
+
+      <!-- Resized Files Output List -->
+      <div id="resultsList" class="space-y-3"></div>
+
+    </div>
+
+    <!-- SEO & Technical Documentation -->
+    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
+      
+      <!-- Standard Resolution Benchmarks Table -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          Standard Web & Display Dimension Presets
+        </h2>
+        <p class="text-xs text-slate-400 mb-4">Recommended pixel bounds for common web publishing and social media targets.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
+                <th class="p-2.5">Preset Format</th>
+                <th class="p-2.5 font-mono">Dimensions (WxH)</th>
+                <th class="p-2.5">Aspect Ratio</th>
+                <th class="p-2.5">Target Use Case</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300 font-mono">
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">Full HD Landscape</td>
+                <td class="p-2.5 text-blue-400">1920 × 1080</td>
+                <td class="p-2.5 text-slate-400">16:9</td>
+                <td class="p-2.5 text-slate-400 font-sans">Hero banners, desktop backgrounds</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">Standard HD / Blog</td>
+                <td class="p-2.5 text-blue-400">1200 × 630</td>
+                <td class="p-2.5 text-slate-400">1.91:1</td>
+                <td class="p-2.5 text-slate-400 font-sans">Open Graph social cards, blog headers</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">Square Thumbnail</td>
+                <td class="p-2.5 text-blue-400">800 × 800</td>
+                <td class="p-2.5 text-slate-400">1:1</td>
+                <td class="p-2.5 text-slate-400 font-sans">E-commerce catalog, profile avatars</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">Mobile Portrait</td>
+                <td class="p-2.5 text-blue-400">1080 × 1920</td>
+                <td class="p-2.5 text-slate-400">9:16</td>
+                <td class="p-2.5 text-slate-400 font-sans">Shorts, Reels, smartphone screens</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Strategy Guides -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
+        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          Resizing Considerations for Performance
+        </h2>
+        
+        <div class="space-y-2.5 text-xs leading-relaxed">
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">1. Serving Native Display Dimensions</h3>
+            <p>Serving a 4000px camera capture inside a 400px container wastes mobile data and triggers layout rendering overhead. Downscaling images to their maximum rendered container size prevents unnecessary Core Web Vitals penalties.</p>
+          </div>
+
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">2. Bicubic Canvas Smoothing</h3>
+            <p>Our client-side resizing engine enables high-quality multi-pass interpolation algorithms natively in your browser, maintaining anti-aliased edges and text clarity.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+          Frequently Asked Questions
+        </h2>
+
+        <div class="space-y-3.5 text-xs">
+          <div>
+            <h3 class="font-bold text-slate-200 mb-1">Q. Can I resize images with transparent backgrounds?</h3>
+            <p class="text-slate-400">Yes. If you upload a PNG or WebP with alpha transparency, transparency is fully preserved during the canvas redraw.</p>
+          </div>
+          <div class="border-t border-slate-800 pt-3">
+            <h3 class="font-bold text-slate-200 mb-1">Q. Are my images saved on an external server?</h3>
+            <p class="text-slate-400">Never. All image operations execute strictly in your local device memory. Zero files or metrics are uploaded.</p>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- Footer -->
+    <footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+        <div class="space-y-0.5">
+          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
+        </div>
+        <div class="flex items-center gap-3 font-semibold text-slate-400">
+          <a href="../privacy.html" class="hover:text-blue-400 transition-colors">Privacy Policy</a>
+          <span>·</span>
+          <a href="../terms.html" class="hover:text-blue-400 transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../js/utils/imageResizer.js"></script>
+  <script>
+    let mode = "dimensions"; // "dimensions" | "percentage"
+
+    const modeDimBtn = document.getElementById("modeDimBtn");
+    const modePctBtn = document.getElementById("modePctBtn");
+    const dimInputs = document.getElementById("dimInputs");
+    const pctInputs = document.getElementById("pctInputs");
+    const targetWidthInput = document.getElementById("targetWidth");
+    const targetHeightInput = document.getElementById("targetHeight");
+    const aspectRatioCheck = document.getElementById("aspectRatioCheck");
+    const scaleRange = document.getElementById("scaleRange");
+    const scaleDisplay = document.getElementById("scaleDisplay");
+
+    const dropZone = document.getElementById("dropZone");
+    const fileInput = document.getElementById("fileInput");
+    const batchSummary = document.getElementById("batchSummary");
+    const batchCount = document.getElementById("batchCount");
+    const downloadAllBtn = document.getElementById("downloadAllBtn");
+    const resultsList = document.getElementById("resultsList");
+
+    let resizedItems = [];
+
+    modeDimBtn.addEventListener("click", () => {
+      mode = "dimensions";
+      modeDimBtn.className = "px-3 py-1.5 rounded-md text-xs font-bold transition-all bg-blue-600 text-white shadow-sm";
+      modePctBtn.className = "px-3 py-1.5 rounded-md text-xs font-bold transition-all text-slate-400 hover:text-slate-200";
+      dimInputs.classList.remove("hidden");
+      pctInputs.classList.add("hidden");
+    });
+
+    modePctBtn.addEventListener("click", () => {
+      mode = "percentage";
+      modePctBtn.className = "px-3 py-1.5 rounded-md text-xs font-bold transition-all bg-blue-600 text-white shadow-sm";
+      modeDimBtn.className = "px-3 py-1.5 rounded-md text-xs font-bold transition-all text-slate-400 hover:text-slate-200";
+      pctInputs.classList.remove("hidden");
+      dimInputs.classList.add("hidden");
+    });
+
+    scaleRange.addEventListener("input", (e) => {
+      scaleDisplay.textContent = `${e.target.value}%`;
+    });
+
+    dropZone.addEventListener("click", () => fileInput.click());
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.classList.add("border-blue-500");
+    });
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.classList.remove("border-blue-500");
+    });
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.classList.remove("border-blue-500");
+      if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener("change", (e) => {
+      if (e.target.files.length) handleFiles(e.target.files);
+    });
+
+    async function handleFiles(files) {
+      const options = {
+        mode,
+        targetWidth: targetWidthInput.value,
+        targetHeight: targetHeightInput.value,
+        percentage: parseInt(scaleRange.value, 10),
+        keepAspectRatio: aspectRatioCheck.checked
+      };
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!file.type.startsWith("image/")) continue;
+
+        try {
+          const res = await ImageResizer.resizeFile(file, options);
+          resizedItems.push(res);
+          renderResultCard(res);
+        } catch (err) {
+          console.error("Resize error:", err);
+        }
+      }
+
+      if (resizedItems.length) {
+        batchSummary.classList.remove("hidden");
+        batchCount.textContent = `${resizedItems.length} file${resizedItems.length > 1 ? "s" : ""} resized`;
+      }
+    }
+
+    function renderResultCard(item) {
+      const downloadUrl = URL.createObjectURL(item.blob);
+      const ext = item.originalName.substring(item.originalName.lastIndexOf("."));
+      const downloadName = item.originalName.replace(ext, `_${item.targetWidth}x${item.targetHeight}${ext}`);
+
+      const card = document.createElement("div");
+      card.className = "p-3.5 bg-slate-950/80 border border-slate-800 rounded-xl flex items-center justify-between gap-3 text-xs";
+      card.innerHTML = `
+        <div class="flex items-center gap-3 overflow-hidden">
+          <img src="${downloadUrl}" class="w-12 h-12 object-cover rounded-lg border border-slate-800 flex-shrink-0" />
+          <div class="overflow-hidden">
+            <span class="font-bold text-slate-200 block truncate">${item.originalName}</span>
+            <div class="flex items-center gap-2 mt-0.5 text-[11px] font-mono">
+              <span class="text-slate-500">${item.originalWidth}×${item.originalHeight}</span>
+              <span class="text-slate-600">→</span>
+              <span class="text-blue-400 font-bold">${item.targetWidth}×${item.targetHeight}</span>
+              <span class="text-slate-500">(${ImageResizer.formatBytes(item.resizedSize)})</span>
+            </div>
+          </div>
+        </div>
+        <a href="${downloadUrl}" download="${downloadName}" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold flex-shrink-0 transition-colors">
+          Download
+        </a>
+      `;
+      resultsList.prepend(card);
+    }
+
+    downloadAllBtn.addEventListener("click", () => {
+      resizedItems.forEach((item, index) => {
+        setTimeout(() => {
+          const ext = item.originalName.substring(item.originalName.lastIndexOf("."));
+          const downloadName = item.originalName.replace(ext, `_${item.targetWidth}x${item.targetHeight}${ext}`);
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(item.blob);
+          a.download = downloadName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }, index * 200);
+      });
+    });
+  </script>
+</body>
+</html>
