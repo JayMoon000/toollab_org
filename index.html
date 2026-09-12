@@ -4,24 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ToolLab.org | Free Ultra-Fast Client-Side Micro Utilities</title>
-  <meta name="description" content="A curated suite of instant, privacy-first web utilities. Unit conversion, financial calculators, developer text formatters, and browser-side media tools with zero server latency." />
-  <meta name="keywords" content="micro tools, client side utilities, unit converter, percentage calculator, word counter, json formatter, regex tester, image compressor, ToolLab" />
+  <meta name="description" content="A curated suite of instant, privacy-first web utilities. Unit conversion, financial calculators, developer text formatters, browser-side media tools, and games with zero server latency." />
+  <meta name="keywords" content="micro tools, client side utilities, unit converter, percentage calculator, word counter, json formatter, regex tester, image compressor, 2048 game, ToolLab" />
   <link rel="canonical" href="https://toollab.org/" />
-
-	<!-- Google tag (gtag.js) -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-MGL1YF5WFH"></script>
-	<script>
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-
-	  gtag('config', 'G-MGL1YF5WFH');
-	</script>
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="ToolLab.org | Free Online Micro Utilities" />
-  <meta property="og:description" content="Instant, client-side web tools. Zero server uploads, zero logins, and 100% data privacy." />
+  <meta property="og:description" content="Instant, client-side web tools and games. Zero server uploads, zero logins, and 100% data privacy." />
   <meta property="og:url" content="https://toollab.org/" />
   <meta name="twitter:card" content="summary_large_image" />
 
@@ -61,7 +51,8 @@
           { "@type": "SiteNavigationElement", "position": 14, "name": "Bulk Image Resizer", "url": "https://toollab.org/tools/image-resizer.html" },
           { "@type": "SiteNavigationElement", "position": 15, "name": "Vector QR Code Generator", "url": "https://toollab.org/tools/qr-generator.html" },
           { "@type": "SiteNavigationElement", "position": 16, "name": "Favicon Package Generator", "url": "https://toollab.org/tools/favicon-generator.html" },
-          { "@type": "SiteNavigationElement", "position": 17, "name": "AI Background Remover", "url": "https://toollab.org/tools/background-remover.html" }
+          { "@type": "SiteNavigationElement", "position": 17, "name": "AI Background Remover", "url": "https://toollab.org/tools/background-remover.html" },
+          { "@type": "SiteNavigationElement", "position": 18, "name": "2048 Classic Web Puzzle", "url": "https://toollab.org/games/2048.html" }
         ]
       }
     ]
@@ -69,6 +60,7 @@
   </script>
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Centralized Analytics Injection -->
   <script src="./js/analytics.js"></script>
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-blue-600 selection:text-white">
@@ -109,23 +101,24 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
         </svg>
       </div>
-      <input type="text" id="toolSearch" placeholder="Search by name, keyword, or format (e.g. json, qr, resize)..." 
+      <input type="text" id="toolSearch" placeholder="Search by name, keyword, or format (e.g. json, qr, resize, 2048)..." 
         class="w-full pl-11 pr-4 py-3.5 bg-slate-900 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-500 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all shadow-lg shadow-slate-950/50" />
     </div>
 
     <!-- Category Pill Filters -->
     <div class="flex flex-wrap items-center justify-center gap-2 mt-5 text-xs font-bold text-slate-400">
-      <button class="cat-filter px-3 py-1.5 rounded-lg bg-blue-600 text-white transition-colors" data-category="all">All Tools</button>
+      <button class="cat-filter px-3 py-1.5 rounded-lg bg-blue-600 text-white transition-colors" data-category="all">All (18)</button>
       <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors" data-category="finance">Financial & Math</button>
       <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors" data-category="developer">Developer & Text</button>
       <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors" data-category="media">Image & Media</button>
+      <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors" data-category="games">Casual Brain</button>
     </div>
   </section>
 
   <!-- Tools Grid -->
   <main class="max-w-6xl mx-auto px-4 pb-16 flex-1 w-full">
     <div id="toolsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <!-- Cards rendered via JS -->
+      <!-- Cards rendered dynamically via JS -->
     </div>
 
     <div id="noResults" class="hidden text-center py-16 text-slate-500 text-sm">
@@ -185,11 +178,11 @@
         <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
       </div>
       <div class="flex items-center gap-4 font-medium text-slate-400">
-        <a href="/privacy.html" class="hover:text-blue-400 transition-colors">Privacy Policy</a>
+        <a href="./privacy.html" class="hover:text-blue-400 transition-colors">Privacy Policy</a>
         <span>·</span>
-        <a href="/terms.html" class="hover:text-blue-400 transition-colors">Terms of Service</a>
+        <a href="./terms.html" class="hover:text-blue-400 transition-colors">Terms of Service</a>
         <span>·</span>
-        <a href="/sitemap.xml" class="hover:text-blue-400 transition-colors">Sitemap</a>
+        <a href="./sitemap.xml" class="hover:text-blue-400 transition-colors">Sitemap</a>
       </div>
     </div>
   </footer>
@@ -355,16 +348,17 @@
         badge: "Wasm AI",
         keywords: "remove background transparent cutout ai wasm webgpu nobg"
       },
-	  // 18. Casual Brain Puzzle
+
+      // Casual Brain Games
       {
         id: "game-2048",
         title: "2048 Classic Web Puzzle",
-        desc: "Join numbers, slide identical tiles, and reach the 2048 tile with zero-lag swipe controls.",
-        category: "media",
+        desc: "Slide identical numbers, merge powers of two, and reach the 2048 milestone in high-speed dark mode.",
+        category: "games",
         path: "games/2048.html",
         badge: "Casual Brain",
         keywords: "2048 puzzle game brain strategy tiles numbers casual unblocked"
-      }	  
+      }
     ];
 
     const searchInput = document.getElementById("toolSearch");
