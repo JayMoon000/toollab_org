@@ -328,23 +328,44 @@
       if (e.target.files.length) handleFile(e.target.files[0]);
     });
 
+    // PNG, JPG뿐만 아니라 SVG까지 안전하게 디코딩하는 헬퍼 함수
+    function loadSourceImage(file) {
+      return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          resolve(img);
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error("Image decode failed"));
+        };
+        img.src = url;
+      });
+    }
+
     async function handleFile(file) {
       if (!file.type.startsWith("image/")) return;
 
-      const bitmap = await createImageBitmap(file);
-      generatedBlobs = {};
+      try {
+        const imgSource = await loadSourceImage(file);
+        generatedBlobs = {};
 
-      for (const item of FaviconGenerator.SIZES) {
-        const blob = await FaviconGenerator.renderSquareIcon(bitmap, item.size);
-        generatedBlobs[item.name] = blob;
+        for (const item of FaviconGenerator.SIZES) {
+          const blob = await FaviconGenerator.renderSquareIcon(imgSource, item.size);
+          generatedBlobs[item.name] = blob;
 
-        if (previews[item.size]) {
-          previews[item.size].src = URL.createObjectURL(blob);
+          if (previews[item.size]) {
+            previews[item.size].src = URL.createObjectURL(blob);
+          }
         }
-      }
 
-      codeSnippet.textContent = FaviconGenerator.generateHtmlSnippet();
-      resultsSection.classList.remove("hidden");
+        codeSnippet.textContent = FaviconGenerator.generateHtmlSnippet();
+        resultsSection.classList.remove("hidden");
+      } catch (err) {
+        console.error("Favicon processing error:", err);
+      }
     }
 
     downloadZipBtn.addEventListener("click", async () => {
