@@ -8,75 +8,24 @@
   <meta name="keywords" content="2048 game, play 2048, 2048 online, 2048 puzzle, unblocked games, 2048 strategy, ToolLab" />
   <link rel="canonical" href="https://toollab.org/games/2048.html" />
 
-  <!-- Open Graph -->
+    <!-- Open Graph & Rich Snippets -->
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ToolLab" />
   <meta property="og:title" content="2048 Classic Web Puzzle | ToolLab" />
-  <meta property="og:description" content="Play the classic 2048 numbers game in high-speed dark mode. No installs, 100% private." />
+  <meta property="og:description" content="Slide identical numbers, merge powers of two, and reach the 2048 milestone in dark mode." />
   <meta property="og:url" content="https://toollab.org/games/2048.html" />
-
-  <!-- Schema.org VideoGame & FAQPage -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "VideoGame",
-        "name": "2048 Classic Web Puzzle",
-        "url": "https://toollab.org/games/2048.html",
-        "genre": ["Puzzle", "Brain Game", "Strategy"],
-        "playMode": "SinglePlayer",
-        "applicationCategory": "Game",
-        "operatingSystem": "All"
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What is the best strategy to win 2048?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The most effective approach is the Corner Anchoring Strategy: keep your highest-value tile locked in one corner (typically bottom-right or bottom-left) and build a descending chain of numbers around it while avoiding opposite directional swipes."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What are the spawn probabilities for new tiles in 2048?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Every valid slide spawns a new tile in an empty cell: 90% probability for a 2 tile and 10% probability for a 4 tile."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How does scoring work in 2048?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Whenever two identical tiles merge, your score increases by the exact value of the newly created tile (e.g., merging two 64 tiles awards 128 points)."
-            }
-          }
-        ]
-      }
-    ]
-  }
-  </script>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .grid-cell { background-color: rgba(30, 41, 59, 0.7); }
-    .tile-2 { background: #334155; color: #f8fafc; }
-    .tile-4 { background: #475569; color: #f8fafc; }
-    .tile-8 { background: #ea580c; color: #ffffff; }
-    .tile-16 { background: #f97316; color: #ffffff; }
-    .tile-32 { background: #e11d48; color: #ffffff; }
-    .tile-64 { background: #f43f5e; color: #ffffff; }
-    .tile-128 { background: #0284c7; color: #ffffff; font-size: 1.35rem; }
-    .tile-256 { background: #0ea5e9; color: #ffffff; font-size: 1.35rem; }
-    .tile-512 { background: #06b6d4; color: #ffffff; font-size: 1.35rem; }
-    .tile-1024 { background: #8b5cf6; color: #ffffff; font-size: 1.15rem; }
-    .tile-2048 { background: #6366f1; color: #ffffff; font-size: 1.15rem; box-shadow: 0 0 20px rgba(99, 102, 241, 0.6); }
-  </style>
-<script src="../js/analytics.js"></script>
+  <meta property="og:image" content="https://toollab.org/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="2048 Classic Web Puzzle | ToolLab" />
+  <meta name="twitter:description" content="Slide identical numbers, merge powers of two, and reach the 2048 milestone in dark mode." />
+  <meta name="twitter:image" content="https://toollab.org/og-image.png" />
+  <link rel="canonical" href="https://toollab.org/games/2048.html" />
+  <meta name="twitter:title" content="2048 Classic Web Puzzle | ToolLab" />
+  <meta name="twitter:description" content="Slide identical numbers, merge powers of two, and reach the 2048 milestone in dark mode." />
+  <meta name="twitter:image" content="https://toollab.org/og-image.png" />
+  <link rel="canonical" href="https://toollab.org/games/2048.html" />
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
   <div class="max-w-md mx-auto">

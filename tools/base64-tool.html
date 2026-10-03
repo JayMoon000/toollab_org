@@ -8,65 +8,24 @@
   <meta name="keywords" content="base64 encode, base64 decode, base64 converter, url safe base64, data uri generator, client-side base64, ToolLab" />
   <link rel="canonical" href="https://toollab.org/tools/base64-tool.html" />
 
-  <!-- Open Graph -->
+    <!-- Open Graph & Rich Snippets -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Base64 Encoder & Decoder | ToolLab" />
-  <meta property="og:description" content="Encode and decode text or files to Base64 instantly inside your browser. Zero server transfer." />
+  <meta property="og:site_name" content="ToolLab" />
+  <meta property="og:title" content="Base64 Tool & Data URI | ToolLab" />
+  <meta property="og:description" content="UTF-8 safe Base64 encoder and decoder with URL-safe standard and file Data URI generator." />
   <meta property="og:url" content="https://toollab.org/tools/base64-tool.html" />
-
-  <!-- Schema.org WebApplication + FAQPage -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebApplication",
-        "name": "Base64 Encoder & Decoder",
-        "url": "https://toollab.org/tools/base64-tool.html",
-        "applicationCategory": "DeveloperApplication",
-        "operatingSystem": "All",
-        "browserRequirements": "Requires JavaScript. Requires HTML5.",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        }
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Are my sensitive keys or files transmitted across a remote API?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "No. The entire encoding and decoding routine executes locally within your browser sandbox via JavaScript TextEncoder and FileReader APIs. No data packets ever leave your device."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Why does Base64 data expand file size by approximately 33%?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Base64 represents 6 bits of raw binary data per 8-bit ASCII character. Converting 3 binary bytes (24 bits) into 4 text characters generates an inherent ~33.3% structural storage overhead."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is the difference between standard Base64 and URL-Safe Base64?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Standard Base64 contains '+' and '/' characters, which hold special query meanings in URLs. URL-Safe Base64 replaces '+' with '-' and '/' with '_', and strips trailing padding '=' to avoid URL transmission conflicts."
-            }
-          }
-        ]
-      }
-    ]
-  }
-  </script>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-<script src="../js/analytics.js"></script>
+  <meta property="og:image" content="https://toollab.org/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Base64 Tool & Data URI | ToolLab" />
+  <meta name="twitter:description" content="UTF-8 safe Base64 encoder and decoder with URL-safe standard and file Data URI generator." />
+  <meta name="twitter:image" content="https://toollab.org/og-image.png" />
+  <link rel="canonical" href="https://toollab.org/tools/base64-tool.html" />
+  <meta name="twitter:title" content="Base64 Tool & Data URI | ToolLab" />
+  <meta name="twitter:description" content="UTF-8 safe Base64 encoder and decoder with URL-safe standard and file Data URI generator." />
+  <meta name="twitter:image" content="https://toollab.org/og-image.png" />
+  <link rel="canonical" href="https://toollab.org/tools/base64-tool.html" />
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
   <div class="max-w-4xl mx-auto">

@@ -8,65 +8,24 @@
   <meta name="keywords" content="background remover, remove bg online, transparent png, ai cutout tool, client-side background remover, free remove bg, ToolLab" />
   <link rel="canonical" href="https://toollab.org/tools/background-remover.html" />
 
-  <!-- Open Graph -->
+    <!-- Open Graph & Rich Snippets -->
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ToolLab" />
   <meta property="og:title" content="AI Background Remover | ToolLab" />
-  <meta property="og:description" content="Extract subjects and create transparent PNGs locally in your browser memory. Zero server uploads." />
+  <meta property="og:description" content="100% on-device AI background cutout using in-browser WebAssembly neural inference." />
   <meta property="og:url" content="https://toollab.org/tools/background-remover.html" />
-
-  <!-- Schema.org WebApplication + FAQPage -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebApplication",
-        "name": "AI Background Remover",
-        "url": "https://toollab.org/tools/background-remover.html",
-        "applicationCategory": "MultimediaApplication",
-        "operatingSystem": "All",
-        "browserRequirements": "Requires WebAssembly and WebGPU/WebGL support.",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        }
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Are my photos uploaded to an AI cloud server?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "No. The neural network model executes entirely inside your browser runtime via WebAssembly (Wasm) and WebGPU. Your images never leave your computer or phone."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Why does the initial processing take a few seconds?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The first time you run the tool, the compressed AI segmentation weights are cached into your browser storage. Subsequent cutouts execute faster using cached model memory."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What image formats are supported?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "It supports standard PNG, JPEG, and WebP images. The exported cutout is always encoded as a transparent 32-bit PNG."
-            }
-          }
-        ]
-      }
-    ]
-  }
-  </script>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-<script src="../js/analytics.js"></script>
+  <meta property="og:image" content="https://toollab.org/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AI Background Remover | ToolLab" />
+  <meta name="twitter:description" content="100% on-device AI background cutout using in-browser WebAssembly neural inference." />
+  <meta name="twitter:image" content="https://toollab.org/og-image.png" />
+  <link rel="canonical" href="https://toollab.org/tools/background-remover.html" />
+  <meta name="twitter:title" content="AI Background Remover | ToolLab" />
+  <meta name="twitter:description" content="100% on-device AI background cutout using in-browser WebAssembly neural inference." />
+  <meta name="twitter:image" content="https://toollab.org/og-image.png" />
+  <link rel="canonical" href="https://toollab.org/tools/background-remover.html" />
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
   <div class="max-w-4xl mx-auto">
