@@ -27,4 +27,33 @@
       window.gtag('event', eventName, params);
     }
   };
+
+  // 3. 체류 시간(Dwell Time) 자동 추적 (30초, 60초)
+  const trackDwell = (seconds) => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'dwell_time', {
+        event_category: 'Engagement',
+        event_label: seconds + 's',
+        value: seconds
+      });
+    }
+  };
+  setTimeout(() => trackDwell(30), 30000);
+  setTimeout(() => trackDwell(60), 60000);
+
+  // 4. 연산/실행 버튼 인터랙션 자동 추적
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('button, input[type="file"], input[type="range"]').forEach(el => {
+      el.addEventListener('click', () => {
+        const actionLabel = (el.innerText || el.id || el.name || 'action').trim().substring(0, 30);
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'tool_interaction', {
+            tool_title: document.title,
+            element: actionLabel
+          });
+        }
+      }, { passive: true });
+    });
+  });
+
 })();
