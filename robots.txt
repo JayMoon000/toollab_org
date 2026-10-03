@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
 
-# Host & Sitemap specification
-Host: https://toollab.org
 Sitemap: https://toollab.org/sitemap.xml
