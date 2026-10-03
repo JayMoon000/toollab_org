@@ -56,4 +56,12 @@
     });
   });
 
+
+  // 5. Cloudflare Web Analytics Beacon Injection ($0 Serverless)
+  const cfScript = document.createElement('script');
+  cfScript.type = 'module';
+  cfScript.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+  cfScript.setAttribute('data-cf-beacon', '{"token": "0ce5c65756114975810c265cb2b9c02a"}');
+  document.head.appendChild(cfScript);
+
 })();
