@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <!-- SEO: 타깃 키워드 전진 배치 및 CTR 극대화 -->
-  <title>Metric to Imperial Converter | Precision Unit Calculator - ToolLab</title>
-  <meta name="description" content="Instant, high-precision metric and imperial system calculator. Convert length, weight, area, volume, and temperature (sq ft to m², lbs to kg) with 100% private client-side processing." />
-  <meta name="keywords" content="metric imperial calculator, precision unit converter, imperial system calculator, imperial converter, converter imperial to metric, unit converter, sqft to sqm, lbs to kg, feet to meters, fahrenheit to celsius, ToolLab" />
+  <!-- SEO: 최우선 검색어 'Unit Converter' 전진 배치 및 롱테일 결합 -->
+  <title>Free Unit Converter - Metric to Imperial & Precision Conversion | ToolLab</title>
+  <meta name="description" content="Fast, high-precision online unit converter. Easily convert units of measure between Metric and Imperial (Length, Weight, Area, Volume, Temperature) with 100% private client-side processing." />
+  <meta name="keywords" content="unit converter, metric to imperial converter, precision unit converter, converter units of measure, imperial system calculator, convert to imperial units, imperial converter, sqft to sqm, lbs to kg, feet to meters, fahrenheit to celsius, ToolLab" />
   
   <!-- Tailwind CDN & Config -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -20,18 +20,69 @@
   <!-- Open Graph & Rich Snippets -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="ToolLab" />
-  <meta property="og:title" content="Metric to Imperial Converter | Precision Unit Calculator" />
-  <meta property="og:description" content="High-precision metric and imperial system calculator. Instant local browser calculation with zero server latency." />
+  <meta property="og:title" content="Free Unit Converter - Metric to Imperial & Precision Conversion" />
+  <meta property="og:description" content="Fast, high-precision online unit converter. Instant local browser calculation with zero server latency." />
   <meta property="og:url" content="https://toollab.org/tools/unit-converter.html" />
   <meta property="og:image" content="https://toollab.org/og-image.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Metric to Imperial Converter | Precision Unit Calculator" />
-  <meta name="twitter:description" content="High-precision metric and imperial system calculator. Instant local browser calculation with zero server latency." />
+  <meta name="twitter:title" content="Free Unit Converter - Metric to Imperial & Precision Conversion" />
+  <meta name="twitter:description" content="Fast, high-precision online unit converter. Instant local browser calculation with zero server latency." />
   <meta name="twitter:image" content="https://toollab.org/og-image.png" />
   <link rel="canonical" href="https://toollab.org/tools/unit-converter.html" />
 
+  <!-- Schema.org FAQ & SoftwareApplication JSON-LD (검색 리치 스니펫) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "ToolLab Unit Converter",
+        "url": "https://toollab.org/tools/unit-converter.html",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "All",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "description": "Accurate, client-side online unit converter for metric and imperial measurement systems."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do I accurately convert metric to imperial units?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Select your measurement category, enter the value, and select your target imperial unit. The calculator uses standardized international conversion ratios (e.g., 1 inch = 25.4 mm, 1 lb = 0.45359237 kg) to deliver exact results."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this tool require data transmission to an external server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. All calculations execute 100% locally inside your browser via client-side JavaScript. No data or input values are ever sent across a network, ensuring zero latency and total privacy."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between an Acre and a Hectare?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "An acre (standard US/UK land unit) is approximately 4,046.86 m². A hectare (metric standard) is exactly 10,000 m² (about 2.471 acres), making a hectare roughly 2.5 times larger than an acre."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  
   <!-- ToolLab Analytics Tracker -->
   <script src="/js/analytics.js"></script>
   <!-- Google AdSense Official Loader -->
@@ -53,7 +104,7 @@
           </a>
           <div>
             <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
-            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Universal Unit Converter</h1>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Free Online Unit Converter</h1>
           </div>
         </div>
         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-950/80 text-blue-400 border border-blue-800">
@@ -109,6 +160,25 @@
     <!-- SEO / Reference Article Section -->
     <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
       
+      <!-- 0. Comprehensive Measurement Overview (SEO Boost) -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
+        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+          Precision Multi-Unit Conversion Engine
+        </h2>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          ToolLab provides an instant, universal converter for all standard units of measure. Whether you need to convert imperial units to metric equivalents for engineering, calculate room floor plans (sq ft to m²), or check international baking temperatures, our calculator computes high-precision conversions instantly in your browser with zero latency.
+        </p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 text-[11px] text-slate-400">
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Length:</strong> mm, cm, m, km, in, ft, yd, mi</div>
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Weight:</strong> mg, g, kg, oz, lb, ton</div>
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Area:</strong> sq ft, sq m, acre, hectare</div>
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Volume:</strong> mL, L, gal, fl oz, cup</div>
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Temperature:</strong> °C, °F, Kelvin</div>
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Privacy:</strong> 100% Client-side JS</div>
+        </div>
+      </section>
+
       <!-- 1. Real Estate & Floor Space Reference Table -->
       <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
         <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
