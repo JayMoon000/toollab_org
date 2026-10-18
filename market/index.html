@@ -285,7 +285,7 @@
 
     async function loadData() {
       try {
-        const res = await fetch('markets_5day.json');
+        const res = await fetch('/market/markets_5day.json');
         allMarkets = await res.json();
         renderFilteredMarkets(allMarkets);
       } catch (err) {
