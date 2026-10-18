@@ -7,7 +7,7 @@
   <!-- SEO 메타 태그 최적화 -->
   <title>전국 5일장 지도 & 오늘 열리는 장터 캘린더 | ToolLab</title>
   <meta name="description" content="오늘 내 주변에서 열리는 전국 5일장을 지도에서 1초 만에 확인하세요. 1·6일, 2·7일, 3·8일, 4·9일, 5·10일 전국 411개 5일장 주기, 주차장, 편의시설 및 길찾기 정보 제공.">
-  <meta name="keywords" content="5일장, 전국 5일장, 오늘 5일장, 주말 5일장, 5일장 날짜, 모란장, 전통시장 지도, 5일장 지도, 오일장">
+  <meta name="keywords" content="5일장, 전국 5일장, 오늘 5일장, 주말 5일장, 5일장 날짜, 모란장, 전통시장 지도, 5일장 지도, 오일장, 온누리상품권">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://toollab.org/market">
 
@@ -316,7 +316,6 @@
 
       document.querySelectorAll('.market-card').forEach(c => c.classList.remove('active'));
       
-      // 이미 열려있던 걸 다시 누르면 닫기만 하고 종료
       if (isAlreadyActive) {
         return;
       }
@@ -384,7 +383,7 @@
         marketMarkerMap.set(marketKey, marker);
         bounds.push([m.lat, m.lng]);
 
-        // 2) 리스트 카드 생성 (기본 헤더 + 클릭 시 펼쳐지는 상세 영역)
+        // 2) 리스트 카드 생성 (온누리 가맹구역 배너 포함)
         const card = document.createElement('div');
         card.className = "market-card bg-slate-800/80 hover:bg-slate-800/95 border border-slate-700/80 rounded-xl p-3.5 cursor-pointer transition flex flex-col gap-2";
         
@@ -410,7 +409,7 @@
           </div>
 
           <!-- 2단: 카드 클릭 시 아래로 펼쳐지는 상세 영역 (아코디언) -->
-          <div class="card-expanded-content pt-3 border-t border-slate-700/70 mt-1 space-y-3" onclick="event.stopPropagation();">
+          <div class="card-expanded-content pt-3 border-t border-slate-700/70 mt-1 space-y-2.5" onclick="event.stopPropagation();">
             
             <!-- 편의시설 & 시장 정보 뱃지 그리드 -->
             <div class="grid grid-cols-2 gap-2 text-xs">
@@ -438,6 +437,18 @@
               </div>
             </div>
 
+            <!-- 온누리상품권 공식 가맹점 확인 배너 -->
+            <div class="bg-slate-900/80 p-2.5 rounded-lg border border-amber-500/20 flex items-center justify-between text-xs">
+              <div class="flex items-center gap-1.5 text-slate-300">
+                <span class="text-amber-400 font-bold">🎫 온누리상품권</span>
+                <span class="text-slate-400 text-[11px]">가맹 구역</span>
+              </div>
+              <a href="https://www.sbiz.or.kr/sijangtong/nation/onnuri/onnuriMchtList.do" target="_blank" rel="noopener"
+                 class="bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] px-2 py-0.5 rounded transition flex items-center gap-1 font-medium">
+                가맹 점포 찾기 ↗
+              </a>
+            </div>
+
             <!-- 하단 3종 원클릭 액션 버튼 바 -->
             <div class="flex items-center gap-2 pt-1">
               <button class="copy-btn flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs py-2 px-2 rounded-lg font-medium transition flex items-center justify-center gap-1 border border-slate-600">
@@ -456,19 +467,16 @@
           </div>
         `;
 
-        // 카드 클릭 시 포커스
         card.addEventListener('click', () => {
           focusMarket(m, card);
         });
 
-        // 주소 복사 버튼 이벤트 바인딩
         const copyBtn = card.querySelector('.copy-btn');
         copyBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           copyToClipboard(m.addr, copyBtn);
         });
 
-        // 지도 마커 클릭 시에도 해당 카드 확장 및 스크롤 정렬
         marker.on('click', () => {
           document.querySelectorAll('.market-card').forEach(c => c.classList.remove('active'));
           card.classList.add('active');
