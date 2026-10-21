@@ -2,7 +2,7 @@
 <html lang="ko" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <!-- SEO 메타 태그 최적화 -->
   <title>전국 5일장 지도 & 오늘 열리는 장터 캘린더 | ToolLab</title>
@@ -57,11 +57,6 @@
   </script>
 
   <style>
-    /* 쓰레드/인스타 인앱 브라우저 최상위 바운스 닫기 제스처 차단 */
-    html, body {
-      overscroll-behavior-y: none;
-    }
-
     /* 지도 타일을 브라우저 CSS로 다크모드 반전 */
     .dark-tiles .leaflet-tile {
       filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
@@ -93,14 +88,6 @@
     }
     .market-card.active .expand-indicator {
       transform: rotate(180deg);
-    }
-
-    /* 쓰레드/인스타 인앱 웹뷰 터치 스크롤 충돌 및 바운스 격리 */
-    .scroll-safe-list {
-      overflow-y: auto !important;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain !important;
-      touch-action: pan-y !important;
     }
 
     /* 지도 영역 터치 제스처 완전 격리 (웹뷰 스크롤 간섭 없이 한 손가락 드래그 보장) */
@@ -136,66 +123,85 @@
 </head>
 <body class="bg-darkBg text-slate-100 flex flex-col min-h-screen font-sans">
 
-  <!-- 헤더 -->
-  <header class="bg-slate-900 border-b border-slate-800 px-4 py-3 flex flex-wrap justify-between items-center z-10 gap-2 shrink-0">
-    <div class="flex items-center gap-3">
-      <a href="https://toollab.org" class="text-xs text-slate-400 hover:text-sky-400 transition">← ToolLab</a>
-      <h1 class="text-lg sm:text-xl font-bold text-sky-400 tracking-tight">전국 5일장 뷰어</h1>
-      <span id="todayInfo" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full border border-slate-700 hidden sm:inline-block">
-        오늘 날짜 계산 중...
-      </span>
-    </div>
-    <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-      <input type="text" id="searchInput" placeholder="시장명 또는 지역(시·군·구) 검색" 
-             class="bg-slate-800 border border-slate-700 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:border-sky-400 flex-1 sm:w-64 text-slate-200 placeholder-slate-500">
-      <button id="geoBtn" title="내 위치 주변 찾기" class="bg-sky-600 hover:bg-sky-500 text-xs px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1 text-white shrink-0 whitespace-nowrap">
-        📍 내 주변
+  <!-- 상단 고정 영역 (모바일 스크롤 시에도 항상 상단에 붙어있음) -->
+  <div class="sticky top-0 z-30 bg-slate-900 shadow-lg">
+    <!-- 헤더 -->
+    <header class="border-b border-slate-800 px-4 py-3 flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center gap-3">
+        <a href="https://toollab.org" class="text-xs text-slate-400 hover:text-sky-400 transition">← ToolLab</a>
+        <h1 class="text-lg sm:text-xl font-bold text-sky-400 tracking-tight">전국 5일장 뷰어</h1>
+        <span id="todayInfo" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full border border-slate-700 hidden sm:inline-block">
+          오늘 날짜 계산 중...
+        </span>
+      </div>
+      <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+        <input type="text" id="searchInput" placeholder="시장명 또는 지역(시·군·구) 검색" 
+               class="bg-slate-800 border border-slate-700 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:border-sky-400 flex-1 sm:w-64 text-slate-200 placeholder-slate-500">
+        <button id="geoBtn" title="내 위치 반경 30km 찾기" class="bg-sky-600 hover:bg-sky-500 text-xs px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1 text-white shrink-0 whitespace-nowrap">
+          📍 내 주변
+        </button>
+      </div>
+    </header>
+
+    <!-- 2단 퀵 필터 칩 바 -->
+    <nav class="bg-slate-900/95 backdrop-blur border-b border-slate-800 px-4 py-2.5 flex flex-col gap-2 text-xs">
+      <!-- 1행: 상태 필터 + 장터 카운트 -->
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+        <span class="text-slate-400 shrink-0 font-medium">필터:</span>
+        <button class="filter-btn active bg-sky-500 text-slate-950 font-bold px-3 py-1.5 rounded-full transition shrink-0 whitespace-nowrap" data-filter="all">전체보기</button>
+        <button class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full border border-slate-700 transition shrink-0 whitespace-nowrap" data-filter="today">🔥 오늘 열리는 장</button>
+        <button class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full border border-slate-700 transition shrink-0 whitespace-nowrap" data-filter="tomorrow">내일 열리는 장</button>
+        <span id="marketCount" class="ml-auto text-slate-400 shrink-0 whitespace-nowrap font-medium pl-2">0개 장터</span>
+      </div>
+
+      <!-- 2행: 장날 주기 필터 -->
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+        <span class="text-slate-500 shrink-0 text-[11px] mr-0.5">장날:</span>
+        <button class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded-full border border-slate-700 transition shrink-0 whitespace-nowrap" data-days="1,6">1·6일</button>
+        <button class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded-full border border-slate-700 transition shrink-0 whitespace-nowrap" data-days="2,7">2·7일</button>
+        <button class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded-full border border-slate-700 transition shrink-0 whitespace-nowrap" data-days="3,8">3·8일</button>
+        <button class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded-full border border-slate-700 transition shrink-0 whitespace-nowrap" data-days="4,9">4·9일</button>
+        <button class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded-full border border-slate-700 transition shrink-0 whitespace-nowrap" data-days="5,10">5·10일</button>
+      </div>
+    </nav>
+
+    <!-- 모바일 전용 뷰 전환 탭 (PC에서는 숨김) -->
+    <div class="flex md:hidden bg-slate-900 border-b border-slate-800">
+      <button id="tabListBtn" onclick="switchMobileView('list')" class="flex-1 py-2.5 text-xs font-bold text-sky-400 border-b-2 border-sky-400 transition">
+        📋 목록보기
+      </button>
+      <button id="tabMapBtn" onclick="switchMobileView('map')" class="flex-1 py-2.5 text-xs font-semibold text-slate-400 border-b-2 border-transparent hover:text-slate-200 transition">
+        🗺️ 지도보기
       </button>
     </div>
-  </header>
-
-  <!-- 2단 퀵 필터 칩 바 (가로쓰기 고정 & 줄바꿈 깨짐 방지) -->
-  <nav class="bg-slate-900/95 backdrop-blur border-b border-slate-800 px-4 py-2.5 flex flex-col gap-2 text-xs shrink-0">
-    <!-- 1행: 상태 필터 + 장터 카운트 -->
-    <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
-      <span class="text-slate-400 shrink-0 font-medium">필터:</span>
-      <button class="filter-btn active bg-sky-500 text-slate-950 font-bold px-3 py-1.5 rounded-full transition shrink-0 whitespace-nowrap" data-filter="all">전체보기</button>
-      <button class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full border border-slate-700 transition shrink-0 whitespace-nowrap" data-filter="today">🔥 오늘 열리는 장</button>
-      <button class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full border border-slate-700 transition shrink-0 whitespace-nowrap" data-filter="tomorrow">내일 열리는 장</button>
-      <span id="marketCount" class="ml-auto text-slate-400 shrink-0 whitespace-nowrap font-medium pl-2">0개 장터</span>
-    </div>
-
-    <!-- 2행: 장날 주기 필터 -->
-    <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-      <span class="text-slate-500 shrink-0 text-[11px] mr-0.5">장날:</span>
-      <button class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded-full border border-slate-700 transition shrink-0 whitespace-nowrap" data-days="1,6">1·6일</button>
-      <button class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded-full border border-slate-700 transition shrink-0 whitespace-nowrap" data-days="2,7">2·7일</button>
-      <button class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded-full border border-slate-700 transition shrink-0 whitespace-nowrap" data-days="3,8">3·8일</button>
-      <button class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded-full border border-slate-700 transition shrink-0 whitespace-nowrap" data-days="4,9">4·9일</button>
-      <button class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded-full border border-slate-700 transition shrink-0 whitespace-nowrap" data-days="5,10">5·10일</button>
-    </div>
-  </nav>
-
-  <!-- 모바일 전용 뷰 전환 탭 (md 브레이크포인트 이상에서는 숨김) -->
-  <div class="flex md:hidden bg-slate-900 border-b border-slate-800 shrink-0">
-    <button id="tabListBtn" onclick="switchMobileView('list')" class="flex-1 py-2.5 text-xs font-bold text-sky-400 border-b-2 border-sky-400 transition">
-      📋 목록보기
-    </button>
-    <button id="tabMapBtn" onclick="switchMobileView('map')" class="flex-1 py-2.5 text-xs font-semibold text-slate-400 border-b-2 border-transparent hover:text-slate-200 transition">
-      🗺️ 지도보기
-    </button>
   </div>
 
-  <!-- 메인 인터랙티브 영역 (모바일: 탭 단일 뷰 / PC: 좌우 분할 뷰) -->
-  <section class="h-[68dvh] min-h-[460px] max-h-[680px] md:h-[680px] flex flex-col md:flex-row overflow-hidden relative border-b border-slate-800">
+  <!-- 메인 인터랙티브 영역
+       - 모바일: 높이 제한 없는 본체 스크롤 (쓰레드 고무줄 튕김 완전 해결 & 하단 SEO 자연 연결)
+       - PC(md 이상): 680px 좌우 2분할 내부 스크롤 유지 -->
+  <section class="md:h-[680px] flex flex-col md:flex-row md:overflow-hidden relative border-b border-slate-800">
     <!-- 좌측 리스트 뷰 -->
-    <div id="listViewPanel" class="w-full md:w-[390px] lg:w-[430px] h-full min-h-0 scroll-safe-list border-r border-slate-800 bg-slate-900/60 flex flex-col shrink-0">
+    <div id="listViewPanel" class="w-full md:w-[390px] lg:w-[430px] md:h-full md:overflow-y-auto border-r border-slate-800 bg-slate-900/60 flex flex-col shrink-0">
+      <!-- 내 주변 필터 안내 배너 (내 주변 활성화 시에만 노출) -->
+      <div id="geoNotice" class="hidden bg-sky-950/60 border-b border-sky-800/60 px-3.5 py-2 text-xs text-sky-300 flex items-center justify-between">
+        <span id="geoNoticeText">📍 내 주변 장터만 표시 중</span>
+        <button onclick="resetToAllMarkets()" class="text-[11px] underline text-slate-300 hover:text-white">전체 해제</button>
+      </div>
+
       <div id="marketList" class="p-3 space-y-2.5 flex-1">
         <!-- JS 동적 생성 -->
       </div>
+
+      <!-- 더보기 버튼 (400개 한 번에 렌더링 방지 & 모바일 하단 SEO 영역 도달 편의성) -->
+      <div id="loadMoreWrap" class="hidden p-3 pt-0">
+        <button id="loadMoreBtn" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-xs font-semibold text-slate-300 transition">
+          + 장터 더보기
+        </button>
+      </div>
     </div>
-    <!-- 우측 지도 뷰 (모바일 초기 상태에서는 hidden, PC에서는 항상 노출) -->
-    <div id="mapViewPanel" class="hidden md:block w-full md:flex-1 h-full min-h-0 relative z-0">
+
+    <!-- 우측 지도 뷰 -->
+    <div id="mapViewPanel" class="hidden md:block w-full md:flex-1 h-[65dvh] min-h-[420px] md:h-full relative z-0">
       <div id="map" class="w-full h-full dark-tiles"></div>
     </div>
   </section>
@@ -207,7 +213,7 @@
     </div>
   </div>
 
-  <!-- [SEO 핵심 콘텐츠] 가이드 및 FAQ -->
+  <!-- [SEO 핵심 콘텐츠] 가이드 및 FAQ (이제 모바일에서도 리스트 아래로 스크롤하면 바로 보임) -->
   <article class="max-w-5xl mx-auto w-full px-4 py-8 space-y-8 text-slate-300 leading-relaxed text-sm">
     <section class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
       <h2 class="text-lg font-bold text-slate-100 mb-3 flex items-center gap-2">
@@ -282,10 +288,10 @@
   <script>
     let allMarkets = [];
     let currentFiltered = [];
-    let map, markerGroup;
+    let visibleLimit = 20; // 한 번에 보여줄 카드 개수 (더보기로 20개씩 추가)
+    let map, markerGroup, userMarker;
     let userLocation = null;
     let marketMarkerMap = new Map();
-    let currentMobileView = 'list';
 
     const today = new Date();
     const todayDay = today.getDate();
@@ -300,42 +306,8 @@
     document.getElementById('todayInfo').innerHTML = 
       `오늘: <strong class="text-sky-300">${today.getMonth() + 1}월 ${todayDay}일</strong> (${currentCycleText} 장터)`;
 
-    // 쓰레드/인스타 인앱 브라우저 스크롤 고무줄 바운스 차단 가드
-    function setupInAppScrollGuard() {
-      const listPanel = document.getElementById('listViewPanel');
-      let startY = 0;
-
-      // 1. 터치 시작 시 스크롤이 0px(최상단)이거나 최하단에 붙어 있으면 1px 띄워 부모 웹뷰 닫기 제스처 차단
-      listPanel.addEventListener('touchstart', (e) => {
-        startY = e.touches[0].clientY;
-        const maxScroll = listPanel.scrollHeight - listPanel.clientHeight;
-        if (maxScroll <= 0) return;
-
-        if (listPanel.scrollTop <= 0) {
-          listPanel.scrollTop = 1;
-        } else if (listPanel.scrollTop >= maxScroll) {
-          listPanel.scrollTop = maxScroll - 1;
-        }
-      }, { passive: true });
-
-      // 2. 최상단에서 아래로 당길 때(Pull-to-dismiss) 이벤트 취소
-      listPanel.addEventListener('touchmove', (e) => {
-        const currentY = e.touches[0].clientY;
-        const isPullingDown = currentY > startY;
-        const isPushingUp = currentY < startY;
-        const maxScroll = listPanel.scrollHeight - listPanel.clientHeight;
-
-        if ((listPanel.scrollTop <= 0 && isPullingDown) || (listPanel.scrollTop >= maxScroll && isPushingUp)) {
-          if (e.cancelable) {
-            e.preventDefault();
-          }
-        }
-      }, { passive: false });
-    }
-
     // 모바일 탭 전환 함수
     function switchMobileView(mode) {
-      currentMobileView = mode;
       const listPanel = document.getElementById('listViewPanel');
       const mapPanel = document.getElementById('mapViewPanel');
       const tabListBtn = document.getElementById('tabListBtn');
@@ -360,7 +332,6 @@
         tabListBtn.classList.remove('text-sky-400', 'border-sky-400', 'font-bold');
         tabListBtn.classList.add('text-slate-400', 'border-transparent', 'font-semibold');
 
-        // 숨겨져 있던 지도가 나타날 때 타일 깨짐 방지 리사이즈
         setTimeout(() => {
           if (map) {
             map.invalidateSize();
@@ -373,9 +344,9 @@
       map = L.map('map', {
         zoomControl: true,
         fadeAnimation: true,
-        tap: false,             // 모바일 웹뷰 클릭/터치 지연 버그 차단
-        touchZoom: true,        // 두 손가락 줌 허용
-        dragging: true,         // 한 손가락 즉각 드래그 허용
+        tap: false,
+        touchZoom: true,
+        dragging: true,
         bounceAtZoomLimits: false
       }).setView([36.35, 127.75], 7);
       
@@ -407,7 +378,7 @@
       try {
         const res = await fetch('/market/markets_5day.json');
         allMarkets = await res.json();
-        renderFilteredMarkets(allMarkets);
+        renderFilteredMarkets(allMarkets, true);
       } catch (err) {
         console.error('JSON 로딩 실패:', err);
         document.getElementById('marketList').innerHTML = 
@@ -415,7 +386,6 @@
       }
     }
 
-    // 주소 클립보드 복사 함수
     function copyToClipboard(text, btnElement) {
       navigator.clipboard.writeText(text).then(() => {
         const originalText = btnElement.innerHTML;
@@ -425,18 +395,18 @@
           btnElement.innerHTML = originalText;
           btnElement.classList.remove('text-green-400', 'border-green-500/50');
         }, 1500);
-      }).catch(err => {
+      }).catch(() => {
         alert('주소 복사에 실패했습니다.');
       });
     }
 
-    // 지도에서 특정 시장 위치로 이동 (모바일이면 지도 탭으로 자동 전환)
     function moveToMarketOnMap(market) {
       const marketKey = `${market.name}_${market.addr}`;
       const marker = marketMarkerMap.get(marketKey);
 
       if (window.innerWidth < 768) {
         switchMobileView('map');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
       setTimeout(() => {
@@ -454,51 +424,65 @@
       }, 150);
     }
 
-    // 특정 시장 카드 클릭 (아코디언 확장 + PC에서는 지도 즉시 이동)
     function focusMarket(market, cardElement) {
       const isAlreadyActive = cardElement.classList.contains('active');
-
       document.querySelectorAll('.market-card').forEach(c => c.classList.remove('active'));
       
-      if (isAlreadyActive) {
-        return;
-      }
+      if (isAlreadyActive) return;
 
       cardElement.classList.add('active');
 
-      // PC 화면에서는 카드 클릭 즉시 지도 이동
       if (window.innerWidth >= 768) {
         moveToMarketOnMap(market);
       }
     }
 
-    function renderFilteredMarkets(markets) {
+    // 전체보기로 초기화
+    function resetToAllMarkets() {
+      document.getElementById('geoNotice').classList.add('hidden');
+      document.getElementById('searchInput').value = '';
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('active', 'bg-sky-500', 'text-slate-950', 'font-bold');
+        b.classList.add('bg-slate-800', 'text-slate-300');
+      });
+      const allBtn = document.querySelector('[data-filter="all"]');
+      if (allBtn) {
+        allBtn.classList.add('active', 'bg-sky-500', 'text-slate-950', 'font-bold');
+        allBtn.classList.remove('bg-slate-800', 'text-slate-300');
+      }
+      map.setView([36.35, 127.75], 7);
+      renderFilteredMarkets(allMarkets, true);
+    }
+
+    function renderFilteredMarkets(markets, resetLimit = true) {
       currentFiltered = markets;
+      if (resetLimit) {
+        visibleLimit = 20;
+      }
+
       document.getElementById('marketCount').innerText = `${markets.length}개 장터`;
       
       const listContainer = document.getElementById('marketList');
+      const loadMoreWrap = document.getElementById('loadMoreWrap');
+      const loadMoreBtn = document.getElementById('loadMoreBtn');
+
       listContainer.innerHTML = '';
       markerGroup.clearLayers();
       marketMarkerMap.clear();
 
       if (markets.length === 0) {
         listContainer.innerHTML = `<div class="p-8 text-center text-slate-500 text-sm">해당 조건의 5일장이 없습니다.</div>`;
+        loadMoreWrap.classList.add('hidden');
         return;
       }
 
       const bounds = [];
 
+      // 1) 지도 마커는 필터된 전체 장터를 모두 표시
       markets.forEach(m => {
         const isToday = m.days.includes(todayDigit);
         const marketKey = `${m.name}_${m.addr}`;
-        
-        let distText = '';
-        if (userLocation) {
-          const dist = getDistanceFromLatLonInKm(userLocation.lat, userLocation.lng, m.lat, m.lng);
-          distText = `<span class="text-xs text-sky-400 font-medium shrink-0">📍 ${dist.toFixed(1)} km</span>`;
-        }
 
-        // 1) 지도 마커 생성
         const marker = L.marker([m.lat, m.lng], { icon: createMarkerIcon(isToday) });
         marker.bindPopup(`
           <div class="text-sm min-w-[190px]">
@@ -515,13 +499,24 @@
         markerGroup.addLayer(marker);
         marketMarkerMap.set(marketKey, marker);
         bounds.push([m.lat, m.lng]);
+      });
 
-        // 2) 리스트 카드 생성
+      // 2) 리스트 카드는 visibleLimit 개수만큼만 끊어서 렌더링 (스크롤 최적화)
+      const slicedMarkets = markets.slice(0, visibleLimit);
+
+      slicedMarkets.forEach(m => {
+        const isToday = m.days.includes(todayDigit);
+        
+        let distText = '';
+        if (userLocation) {
+          const dist = getDistanceFromLatLonInKm(userLocation.lat, userLocation.lng, m.lat, m.lng);
+          distText = `<span class="text-xs text-sky-400 font-medium shrink-0">📍 ${dist.toFixed(1)} km</span>`;
+        }
+
         const card = document.createElement('div');
         card.className = "market-card bg-slate-800/80 hover:bg-slate-800/95 border border-slate-700/80 rounded-xl p-3.5 cursor-pointer transition flex flex-col gap-2";
         
         card.innerHTML = `
-          <!-- 1단: 기본 요약 정보 (항상 노출) -->
           <div class="flex items-start justify-between gap-2">
             <div class="truncate">
               <span class="font-bold text-slate-100 text-base group-hover:text-sky-400 transition">${m.name}</span>
@@ -541,10 +536,7 @@
             <span class="text-sky-400 text-[11px]">상세보기 ▾</span>
           </div>
 
-          <!-- 2단: 카드 클릭 시 아래로 펼쳐지는 상세 영역 (아코디언) -->
           <div class="card-expanded-content pt-3 border-t border-slate-700/70 mt-1 space-y-2.5" onclick="event.stopPropagation();">
-            
-            <!-- 편의시설 & 시장 정보 뱃지 그리드 -->
             <div class="grid grid-cols-2 gap-2 text-xs">
               <div class="bg-slate-900/70 p-2 rounded-lg border border-slate-700/50 flex items-center justify-between">
                 <span class="text-slate-400">🅿️ 주차장</span>
@@ -570,7 +562,6 @@
               </div>
             </div>
 
-            <!-- 온누리상품권 공식 가맹점 확인 배너 -->
             <div class="bg-slate-900/80 p-2.5 rounded-lg border border-amber-500/20 flex items-center justify-between text-xs">
               <div class="flex items-center gap-1.5 text-slate-300">
                 <span class="text-amber-400 font-bold">🎫 온누리상품권</span>
@@ -582,12 +573,10 @@
               </a>
             </div>
 
-            <!-- 모바일 전용: 지도 탭으로 즉시 점프 버튼 -->
             <button class="view-map-btn md:hidden w-full bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 text-xs py-2 rounded-lg font-semibold transition flex items-center justify-center gap-1.5">
               🗺️ 지도에서 위치 보기
             </button>
 
-            <!-- 하단 3종 원클릭 액션 버튼 바 -->
             <div class="flex items-center gap-2 pt-0.5">
               <button class="copy-btn flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs py-2 px-2 rounded-lg font-medium transition flex items-center justify-center gap-1 border border-slate-600 whitespace-nowrap">
                 📋 주소 복사
@@ -601,7 +590,6 @@
                 🧭 네이버 지도
               </a>
             </div>
-
           </div>
         `;
 
@@ -621,27 +609,28 @@
           moveToMarketOnMap(m);
         });
 
-        marker.on('click', () => {
-          document.querySelectorAll('.market-card').forEach(c => c.classList.remove('active'));
-          card.classList.add('active');
-          if (window.innerWidth >= 768) {
-            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
-        });
-
         listContainer.appendChild(card);
       });
 
-      // 렌더링 직후 스크롤을 1px로 세팅해 첫 스와이프 바운스 차단
-      const listPanel = document.getElementById('listViewPanel');
-      if (listPanel) {
-        listPanel.scrollTop = 1;
+      // 더보기 버튼 노출 여부 제어
+      if (markets.length > visibleLimit) {
+        const remain = markets.length - visibleLimit;
+        loadMoreWrap.classList.remove('hidden');
+        loadMoreBtn.innerText = `+ 장터 더보기 (${remain}개 남음)`;
+      } else {
+        loadMoreWrap.classList.add('hidden');
       }
 
-      if (bounds.length > 0 && markets.length < 50) {
+      if (resetLimit && bounds.length > 0 && markets.length < 50) {
         map.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 });
       }
     }
+
+    // 더보기 버튼 클릭 이벤트
+    document.getElementById('loadMoreBtn').addEventListener('click', () => {
+      visibleLimit += 20;
+      renderFilteredMarkets(currentFiltered, false);
+    });
 
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
       const R = 6371;
@@ -656,6 +645,7 @@
 
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
+        document.getElementById('geoNotice').classList.add('hidden');
         document.querySelectorAll('.filter-btn').forEach(b => {
           b.classList.remove('active', 'bg-sky-500', 'text-slate-950', 'font-bold');
           b.classList.add('bg-slate-800', 'text-slate-300');
@@ -667,33 +657,35 @@
         const daysAttr = e.currentTarget.dataset.days;
 
         if (filter === 'all') {
-          renderFilteredMarkets(allMarkets);
+          renderFilteredMarkets(allMarkets, true);
         } else if (filter === 'today') {
           const filtered = allMarkets.filter(m => m.days.includes(todayDigit));
-          renderFilteredMarkets(filtered);
+          renderFilteredMarkets(filtered, true);
         } else if (filter === 'tomorrow') {
           const filtered = allMarkets.filter(m => m.days.includes(tomorrowDigit));
-          renderFilteredMarkets(filtered);
+          renderFilteredMarkets(filtered, true);
         } else if (daysAttr) {
           const targetDays = daysAttr.split(',').map(Number);
           const filtered = allMarkets.filter(m => m.days.some(d => targetDays.includes(d)));
-          renderFilteredMarkets(filtered);
+          renderFilteredMarkets(filtered, true);
         }
       });
     });
 
     document.getElementById('searchInput').addEventListener('input', (e) => {
+      document.getElementById('geoNotice').classList.add('hidden');
       const query = e.target.value.trim().toLowerCase();
       if (!query) {
-        renderFilteredMarkets(allMarkets);
+        renderFilteredMarkets(allMarkets, true);
         return;
       }
       const filtered = allMarkets.filter(m => 
         m.name.toLowerCase().includes(query) || m.addr.toLowerCase().includes(query)
       );
-      renderFilteredMarkets(filtered);
+      renderFilteredMarkets(filtered, true);
     });
 
+    // 📍 내 주변 버튼: 반경 30km 이내(최대 20개)만 필터링
     document.getElementById('geoBtn').addEventListener('click', () => {
       if (!navigator.geolocation) {
         alert('이 브라우저에서는 위치 서비스를 지원하지 않습니다.');
@@ -703,7 +695,10 @@
         (pos) => {
           userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
           
-          L.circleMarker([userLocation.lat, userLocation.lng], {
+          if (userMarker) {
+            map.removeLayer(userMarker);
+          }
+          userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
             radius: 8,
             fillColor: '#38bdf8',
             color: '#ffffff',
@@ -712,14 +707,24 @@
             fillOpacity: 0.9
           }).addTo(map).bindPopup('내 현재 위치').openPopup();
 
-          map.setView([userLocation.lat, userLocation.lng], 11);
+          // 거리 계산 및 가까운 순 정렬
+          const withDist = allMarkets.map(m => ({
+            ...m,
+            _dist: getDistanceFromLatLonInKm(userLocation.lat, userLocation.lng, m.lat, m.lng)
+          })).sort((a, b) => a._dist - b._dist);
 
-          const sorted = [...allMarkets].sort((a, b) => {
-            const distA = getDistanceFromLatLonInKm(userLocation.lat, userLocation.lng, a.lat, a.lng);
-            const distB = getDistanceFromLatLonInKm(userLocation.lat, userLocation.lng, b.lat, b.lng);
-            return distA - distB;
-          });
-          renderFilteredMarkets(sorted);
+          // 반경 30km 이내 필터링 (만약 30km 내 장터가 없으면 가장 가까운 15개 표시)
+          const within30km = withDist.filter(m => m._dist <= 30).slice(0, 20);
+          const nearbyMarkets = within30km.length > 0 ? within30km : withDist.slice(0, 15);
+
+          const geoNotice = document.getElementById('geoNotice');
+          const geoNoticeText = document.getElementById('geoNoticeText');
+          geoNotice.classList.remove('hidden');
+          geoNoticeText.innerText = within30km.length > 0 
+            ? `📍 내 주변 30km 이내 장터 (${nearbyMarkets.length}곳)` 
+            : `📍 내 위치에서 가장 가까운 장터 (${nearbyMarkets.length}곳)`;
+
+          renderFilteredMarkets(nearbyMarkets, true);
         },
         () => {
           alert('위치 정보를 가져올 수 없습니다. 브라우저 위치 권한을 확인해주세요.');
@@ -730,7 +735,6 @@
     window.onload = () => {
       initMap();
       loadData();
-      setupInAppScrollGuard();
     };
   </script>
 </body>
