@@ -2,7 +2,7 @@
 <html lang="ko" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   
   <!-- SEO 메타 태그 최적화 -->
   <title>전국 5일장 지도 & 오늘 열리는 장터 캘린더 | ToolLab</title>
@@ -57,6 +57,11 @@
   </script>
 
   <style>
+    /* 쓰레드/인스타 인앱 브라우저 최상위 바운스 닫기 제스처 차단 */
+    html, body {
+      overscroll-behavior-y: none;
+    }
+
     /* 지도 타일을 브라우저 CSS로 다크모드 반전 */
     .dark-tiles .leaflet-tile {
       filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
@@ -90,12 +95,17 @@
       transform: rotate(180deg);
     }
 
-    /* 쓰레드/인스타 인앱 웹뷰 터치 스크롤 충돌 방지 */
+    /* 쓰레드/인스타 인앱 웹뷰 터치 스크롤 충돌 및 바운스 격리 */
     .scroll-safe-list {
-      overflow-y: auto;
+      overflow-y: auto !important;
       -webkit-overflow-scrolling: touch;
-      overscroll-behavior-y: contain;
-      touch-action: pan-y;
+      overscroll-behavior: contain !important;
+      touch-action: pan-y !important;
+    }
+
+    /* 지도 영역 터치 제스처 완전 격리 (웹뷰 스크롤 간섭 없이 한 손가락 드래그 보장) */
+    #map {
+      touch-action: none !important;
     }
 
     /* 가로 스크롤바 숨김 유틸 */
@@ -290,6 +300,39 @@
     document.getElementById('todayInfo').innerHTML = 
       `오늘: <strong class="text-sky-300">${today.getMonth() + 1}월 ${todayDay}일</strong> (${currentCycleText} 장터)`;
 
+    // 쓰레드/인스타 인앱 브라우저 스크롤 고무줄 바운스 차단 가드
+    function setupInAppScrollGuard() {
+      const listPanel = document.getElementById('listViewPanel');
+      let startY = 0;
+
+      // 1. 터치 시작 시 스크롤이 0px(최상단)이거나 최하단에 붙어 있으면 1px 띄워 부모 웹뷰 닫기 제스처 차단
+      listPanel.addEventListener('touchstart', (e) => {
+        startY = e.touches[0].clientY;
+        const maxScroll = listPanel.scrollHeight - listPanel.clientHeight;
+        if (maxScroll <= 0) return;
+
+        if (listPanel.scrollTop <= 0) {
+          listPanel.scrollTop = 1;
+        } else if (listPanel.scrollTop >= maxScroll) {
+          listPanel.scrollTop = maxScroll - 1;
+        }
+      }, { passive: true });
+
+      // 2. 최상단에서 아래로 당길 때(Pull-to-dismiss) 이벤트 취소
+      listPanel.addEventListener('touchmove', (e) => {
+        const currentY = e.touches[0].clientY;
+        const isPullingDown = currentY > startY;
+        const isPushingUp = currentY < startY;
+        const maxScroll = listPanel.scrollHeight - listPanel.clientHeight;
+
+        if ((listPanel.scrollTop <= 0 && isPullingDown) || (listPanel.scrollTop >= maxScroll && isPushingUp)) {
+          if (e.cancelable) {
+            e.preventDefault();
+          }
+        }
+      }, { passive: false });
+    }
+
     // 모바일 탭 전환 함수
     function switchMobileView(mode) {
       currentMobileView = mode;
@@ -329,7 +372,11 @@
     function initMap() {
       map = L.map('map', {
         zoomControl: true,
-        fadeAnimation: true
+        fadeAnimation: true,
+        tap: false,             // 모바일 웹뷰 클릭/터치 지연 버그 차단
+        touchZoom: true,        // 두 손가락 줌 허용
+        dragging: true,         // 한 손가락 즉각 드래그 허용
+        bounceAtZoomLimits: false
       }).setView([36.35, 127.75], 7);
       
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -585,6 +632,12 @@
         listContainer.appendChild(card);
       });
 
+      // 렌더링 직후 스크롤을 1px로 세팅해 첫 스와이프 바운스 차단
+      const listPanel = document.getElementById('listViewPanel');
+      if (listPanel) {
+        listPanel.scrollTop = 1;
+      }
+
       if (bounds.length > 0 && markets.length < 50) {
         map.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 });
       }
@@ -677,6 +730,7 @@
     window.onload = () => {
       initMap();
       loadData();
+      setupInAppScrollGuard();
     };
   </script>
 </body>
