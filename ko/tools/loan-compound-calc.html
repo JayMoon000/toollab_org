@@ -3,134 +3,127 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>대출 상환 & 월 복리 투자 계산기 | ToolLab</title>
-  <meta name="description" content="원리금균등 대출 상환 스케줄과 적립식 월 복리 스노우볼 자산 증식을 실시간 계산합니다." />
-  <meta name="keywords" content="loan calculator, mortgage amortization, compound interest calculator, monthly payment, investment growth, ToolLab" />
-  
-      <!-- Tailwind CDN & Config -->
+  <title>대출 이자 & 월 복리 투자 계산기 (원리금균등·적립식 복리) | ToolLab</title>
+  <meta name="description" content="서버 전송 없이 100% 브라우저 메모리에서 원리금균등 대출 상환 스케줄과 적립식 월 복리 스노우볼 자산 증식을 실시간 시뮬레이션합니다." />
+  <meta name="keywords" content="대출계산기, 복리계산기, 원리금균등상환, 적립식복리, 주택담보대출계산, 월복리, 재테크시뮬레이터" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/loan-compound-calc.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       darkMode: 'class'
     }
   </script>
-
-  <!-- Open Graph & Rich Snippets -->
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="ToolLab" />
-  <meta property="og:title" content="Loan & Compound Engine | ToolLab" />
-  <meta property="og:description" content="Simulate fixed monthly mortgage schedules and multi-year compound interest growth with zero login." />
-  <meta property="og:url" content="https://toollab.org/tools/loan-compound-calc.html" />
-  <meta property="og:image" content="https://toollab.org/og-image.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Loan & Compound Engine | ToolLab" />
-  <meta name="twitter:description" content="Simulate fixed monthly mortgage schedules and multi-year compound interest growth with zero login." />
-  <meta name="twitter:image" content="https://toollab.org/og-image.png" />
-  <link rel="canonical" href="https://toollab.org/tools/loan-compound-calc.html" />
-
-  <!-- ToolLab Analytics Tracker -->
-  <script src="/js/analytics.js"></script>
-  <!-- Google AdSense Official Loader -->
+  <script src="../../js/analytics.js"></script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1512367949140208" crossorigin="anonymous"></script>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
-  <div class="max-w-2xl mx-auto">
-    
-    <!-- Main Card -->
-    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 md:p-7">
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <!-- 메인 계산기 카드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl shadow-xl space-y-5">
       
-      <!-- Top Bar -->
-      <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-800">
+      <!-- 상단 헤더 -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
         <div class="flex items-center gap-2.5">
-          <a href="/ko" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-            </svg>
+          <a href="/ko" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-emerald-400 transition" title="도구 목록으로 돌아가기">
+            🏠
           </a>
           <div>
-            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
-            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Loan & Compound Engine</h1>
+            <span class="text-[10px] text-slate-500 font-bold tracking-wider block">TOOLLAB.ORG</span>
+            <h1 class="text-base sm:text-lg font-bold text-slate-100">대출 상환 &amp; 월 복리 계산기</h1>
           </div>
         </div>
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-950/80 text-blue-400 border border-blue-800">
-          Client-Side Core
+        <span class="text-[11px] font-mono px-2.5 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 font-semibold">
+          금융 시뮬레이션 엔진
         </span>
       </div>
 
-      <!-- Mode Selector -->
-      <div class="grid grid-cols-2 gap-1 bg-slate-950 p-1 rounded-xl text-xs font-bold text-slate-400 mb-6 border border-slate-800/80">
-        <button id="btnLoan" class="py-2.5 rounded-lg transition-colors bg-blue-600 text-white shadow">Loan Payment (Mortgage)</button>
-        <button id="btnCompound" class="py-2.5 rounded-lg transition-colors hover:text-slate-200">Compound Growth</button>
+      <!-- 모드 전환 탭 -->
+      <div class="grid grid-cols-2 gap-1.5 bg-slate-950/80 p-1.5 rounded-2xl text-xs font-bold border border-slate-800">
+        <button id="btnLoan" class="py-2.5 rounded-xl transition-all bg-emerald-600 text-white shadow-sm cursor-pointer">
+          대출 상환 (원리금균등)
+        </button>
+        <button id="btnCompound" class="py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer">
+          적립식 월 복리 투자
+        </button>
       </div>
 
-      <!-- Loan Section Inputs -->
+      <!-- 1. 대출 입력 섹션 -->
       <div id="loanInputs" class="space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div class="p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl">
-            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Loan Amount ($)</label>
-            <input type="number" id="loanPrincipal" value="300000" class="w-full text-xl font-black bg-transparent text-slate-100 outline-none focus:text-blue-400" />
+          <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+            <label class="block text-[11px] font-semibold text-slate-400">대출 원금 (원)</label>
+            <input type="number" id="loanPrincipal" value="100000000" step="1000000" class="w-full text-lg sm:text-xl font-bold bg-transparent text-slate-100 outline-none focus:text-emerald-400 font-mono" />
+            <span class="text-[10px] text-slate-500 block">기본 1억 원</span>
           </div>
-          <div class="p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl">
-            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Annual Interest (%)</label>
-            <input type="number" step="0.1" id="loanRate" value="6.5" class="w-full text-xl font-black bg-transparent text-slate-100 outline-none focus:text-blue-400" />
+          <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+            <label class="block text-[11px] font-semibold text-slate-400">연이자율 (%)</label>
+            <input type="number" step="0.1" id="loanRate" value="4.5" class="w-full text-lg sm:text-xl font-bold bg-transparent text-slate-100 outline-none focus:text-emerald-400 font-mono" />
+            <span class="text-[10px] text-slate-500 block">연 기준 금리</span>
           </div>
-          <div class="p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl">
-            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Loan Term (Years)</label>
-            <input type="number" id="loanYears" value="30" class="w-full text-xl font-black bg-transparent text-slate-100 outline-none focus:text-blue-400" />
+          <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+            <label class="block text-[11px] font-semibold text-slate-400">상환 기간 (년)</label>
+            <input type="number" id="loanYears" value="30" class="w-full text-lg sm:text-xl font-bold bg-transparent text-slate-100 outline-none focus:text-emerald-400 font-mono" />
+            <span class="text-[10px] text-slate-500 block">총 360개월</span>
           </div>
         </div>
       </div>
 
-      <!-- Compound Section Inputs -->
+      <!-- 2. 복리 투자 입력 섹션 -->
       <div id="compoundInputs" class="space-y-4 hidden">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div class="p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl">
-            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Initial Principal ($)</label>
-            <input type="number" id="cmpPrincipal" value="10000" class="w-full text-xl font-black bg-transparent text-slate-100 outline-none focus:text-blue-400" />
+          <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+            <label class="block text-[11px] font-semibold text-slate-400">초기 투자 원금 (원)</label>
+            <input type="number" id="cmpPrincipal" value="10000000" step="1000000" class="w-full text-lg sm:text-xl font-bold bg-transparent text-slate-100 outline-none focus:text-emerald-400 font-mono" />
+            <span class="text-[10px] text-slate-500 block">초기 시드머니 (기본 1천만 원)</span>
           </div>
-          <div class="p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl">
-            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Monthly Deposit ($)</label>
-            <input type="number" id="cmpMonthly" value="500" class="w-full text-xl font-black bg-transparent text-slate-100 outline-none focus:text-blue-400" />
+          <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+            <label class="block text-[11px] font-semibold text-slate-400">매월 추가 적립액 (원)</label>
+            <input type="number" id="cmpMonthly" value="500000" step="50000" class="w-full text-lg sm:text-xl font-bold bg-transparent text-slate-100 outline-none focus:text-emerald-400 font-mono" />
+            <span class="text-[10px] text-slate-500 block">매달 적립식 납입 (기본 50만 원)</span>
           </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div class="p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl">
-            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Estimated Return Rate (%)</label>
-            <input type="number" step="0.1" id="cmpRate" value="8" class="w-full text-xl font-black bg-transparent text-slate-100 outline-none focus:text-blue-400" />
+          <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+            <label class="block text-[11px] font-semibold text-slate-400">예상 연간 수익률 (%)</label>
+            <input type="number" step="0.1" id="cmpRate" value="8.0" class="w-full text-lg sm:text-xl font-bold bg-transparent text-slate-100 outline-none focus:text-emerald-400 font-mono" />
+            <span class="text-[10px] text-slate-500 block">배당 및 지수 추종 기대수익률</span>
           </div>
-          <div class="p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl">
-            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Investment Horizon (Years)</label>
-            <input type="number" id="cmpYears" value="10" class="w-full text-xl font-black bg-transparent text-slate-100 outline-none focus:text-blue-400" />
+          <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+            <label class="block text-[11px] font-semibold text-slate-400">투자 기간 (년)</label>
+            <input type="number" id="cmpYears" value="10" class="w-full text-lg sm:text-xl font-bold bg-transparent text-slate-100 outline-none focus:text-emerald-400 font-mono" />
+            <span class="text-[10px] text-slate-500 block">장기 보유 및 재투자 기간</span>
           </div>
         </div>
       </div>
 
-      <!-- Primary Metrics Output Card -->
-      <div class="mt-6 p-4 bg-blue-950/30 border border-blue-900/60 rounded-xl space-y-2">
-        <span class="text-xs font-semibold text-blue-400 block" id="primaryMetricTitle">Monthly Payment</span>
-        <div id="primaryMetricVal" class="text-3xl font-black text-blue-400 truncate">$0.00</div>
-        <div id="secondaryMetricVal" class="text-xs text-slate-400 pt-2 border-t border-blue-900/40 flex justify-between">
-          <span id="secItem1">Total Interest: $0.00</span>
-          <span id="secItem2">Total Repaid: $0.00</span>
+      <!-- 핵심 결과 지표 카드 -->
+      <div class="p-5 bg-slate-950 rounded-2xl border border-slate-800/90 space-y-3">
+        <div>
+          <span class="text-xs font-semibold text-slate-400 block mb-1" id="primaryMetricTitle">예상 월 상환액 (원리금)</span>
+          <div id="primaryMetricVal" class="text-3xl sm:text-4xl font-black text-emerald-400 font-mono truncate">0 원</div>
+        </div>
+        <div id="secondaryMetricVal" class="text-xs text-slate-400 pt-3 border-t border-slate-800/80 flex flex-wrap justify-between gap-2">
+          <span id="secItem1" class="font-mono">총 대출 이자: 0 원</span>
+          <span id="secItem2" class="font-mono">총 상환 원리금: 0 원</span>
         </div>
       </div>
 
-      <!-- Quick Schedule Preview -->
-      <div class="mt-6 pt-5 border-t border-slate-800">
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5" id="previewTableTitle">Amortization Milestone Snapshot</h3>
-        <div class="overflow-x-auto">
+      <!-- 연차별 상환 / 복리 성장 스케줄 표 -->
+      <div class="pt-4 border-t border-slate-800">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3" id="previewTableTitle">연차별 상환 스케줄 요약</h3>
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
           <table class="w-full text-xs text-left border-collapse">
             <thead>
               <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold" id="tableHeaderRow">
-                <th class="p-2">Period</th>
-                <th class="p-2">Principal</th>
-                <th class="p-2">Interest</th>
-                <th class="p-2">Ending Balance</th>
+                <th class="p-2.5">연차</th>
+                <th class="p-2.5">납입 원금</th>
+                <th class="p-2.5">납부 이자</th>
+                <th class="p-2.5">잔여 대출 원금</th>
               </tr>
             </thead>
-            <tbody id="scheduleRows" class="divide-y divide-slate-800/60 text-slate-300">
+            <tbody id="scheduleRows" class="divide-y divide-slate-800/60 text-slate-300 font-mono">
             </tbody>
           </table>
         </div>
@@ -138,194 +131,125 @@
 
     </div>
 
-    <!-- Technical SEO & Educational Guide -->
-    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
-      
-      <!-- Mortgage Benchmark Reference Table -->
-      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
-        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-          30-Year Fixed Loan Amortization Matrix ($100,000 Basis)
-        </h2>
-        <p class="text-xs text-slate-400 mb-4">Historical benchmark illustrating interest sensitivity and cumulative financial outlay over 360 monthly payments.</p>
-        
-        <div class="overflow-x-auto">
-          <table class="w-full text-xs text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
-                <th class="p-2.5">Interest Rate</th>
-                <th class="p-2.5">Monthly Payment</th>
-                <th class="p-2.5">Total Interest Paid</th>
-                <th class="p-2.5">Total Cost of Loan</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-800/60 text-slate-300">
-              <tr>
-                <td class="p-2.5 font-bold text-slate-100">4.5%</td>
-                <td class="p-2.5 text-blue-400 font-medium">$506.69</td>
-                <td class="p-2.5 text-slate-400">$82,407</td>
-                <td class="p-2.5 text-slate-200 font-bold">$182,407</td>
-              </tr>
-              <tr>
-                <td class="p-2.5 font-bold text-slate-100">5.5%</td>
-                <td class="p-2.5 text-blue-400 font-medium">$567.79</td>
-                <td class="p-2.5 text-slate-400">$104,404</td>
-                <td class="p-2.5 text-slate-200 font-bold">$204,404</td>
-              </tr>
-              <tr>
-                <td class="p-2.5 font-bold text-slate-100">6.5%</td>
-                <td class="p-2.5 text-blue-400 font-medium">$632.07</td>
-                <td class="p-2.5 text-slate-400">$127,544</td>
-                <td class="p-2.5 text-slate-200 font-bold">$227,544</td>
-              </tr>
-              <tr>
-                <td class="p-2.5 font-bold text-slate-100">7.5%</td>
-                <td class="p-2.5 text-blue-400 font-medium">$699.21</td>
-                <td class="p-2.5 text-slate-400">$151,717</td>
-                <td class="p-2.5 text-slate-200 font-bold">$251,717</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- Practical Strategy Guides -->
-      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
-        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+    <!-- 1. 30년 만기 금리별 원리금 상환 벤치마크 표 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <div class="space-y-1">
+        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          Financial Optimization Frameworks
+          <span>대출 원금 1억 원 기준 금리별 30년 만기 상환액 비교</span>
         </h2>
-        
-        <div class="space-y-2.5 text-xs leading-relaxed">
-          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
-            <h3 class="font-bold text-slate-200 mb-1">1. The Power of Early Principal Prepayment</h3>
-            <p>Because standard amortization schedules front-load interest obligations, additional principal payments during the initial 5 to 7 years directly bypass cumulative compounding, substantially reducing both the loan duration and total interest.</p>
-          </div>
-
-          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
-            <h3 class="font-bold text-slate-200 mb-1">2. Dollar-Cost Averaging & Compounding</h3>
-            <p>Regular monthly deposits leverage time-in-the-market rather than timing-the-market. Consistently reinvesting accrued dividends and interest compounds growth non-linearly across multi-decade holding periods.</p>
-          </div>
-        </div>
-      </section>
-
-      
-      <!-- ToolLab Clean Ad Unit -->
-      <div class="my-8 flex flex-col items-center justify-center">
-        <span class="text-[10px] font-mono tracking-widest text-slate-600 uppercase mb-1.5">ADVERTISEMENT</span>
-        <div class="w-full max-w-3xl min-h-[100px] sm:min-h-[250px] bg-slate-900/40 border border-slate-800/80 rounded-2xl flex items-center justify-center overflow-hidden">
-          <ins class="adsbygoogle"
-               style="display:block"
-               data-ad-client="ca-pub-1512367949140208"
-               data-ad-slot="5185318921"
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
-          <script>
-               (adsbygoogle = window.adsbygoogle || []).push({});
-          </script>
-        </div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          금리가 1% 상승함에 따라 총 납부해야 하는 이자 부담과 월 지출액의 변화를 비교한 벤치마크입니다.
+        </p>
       </div>
 
-      <!-- FAQ -->
-      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
-        <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
-          Frequently Asked Questions
-        </h2>
-
-        <div class="space-y-3.5 text-xs">
-          <div>
-            <h3 class="font-bold text-slate-200 mb-1">Q. Does this calculator incorporate property taxes or home insurance?</h3>
-            <p class="text-slate-400">This engine computes pure Principal & Interest (P&I) amortization. Escrow charges such as property taxes, PMI, and homeowner's insurance vary across municipalities and are omitted from baseline interest models.</p>
-          </div>
-          <div class="border-t border-slate-800 pt-3">
-            <h3 class="font-bold text-slate-200 mb-1">Q. How is compounding frequency handled for investments?</h3>
-            <p class="text-slate-400">Investment compounding simulates standard monthly compounding alongside concurrent recurring monthly contributions.</p>
-          </div>
-        </div>
-      </section>
-
-    </article>
-
-    <!-- Standard Minimal Footer -->
-    
-    <!-- 한국어 SEO 가이드 & FAQ 복합 섹션 -->
-    <section class="max-w-4xl mx-auto px-4 py-8 space-y-6 border-t border-slate-800/80 mt-12">
-      <div class="space-y-3">
-        <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
-          <span class="text-emerald-400">📖</span>
-          <span>원리금균등 상환과 복리의 마법 이해하기</span>
-        </h2>
-        <p class="text-xs text-slate-400 leading-relaxed">원리금균등분할상환은 매달 납부하는 원금과 이자의 합계가 동일하여 가계 지출 계획을 세우기에 가장 안정적인 방식입니다. 대출 초기에는 이자 비중이 높고 후기로 갈수록 원금 비중이 커집니다.</p>
-        <p class="text-xs text-slate-400 leading-relaxed">아인슈타인이 '세계 8대 불가사의'라 불렀던 복리 투자는 투자 기간이 길어질수록 이자가 다시 원금이 되어 눈덩이처럼 불어나는 스노우볼 효과를 창출합니다.</p>
+      <div class="overflow-x-auto rounded-xl border border-slate-800">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-950 text-slate-400 font-semibold border-b border-slate-800">
+            <tr>
+              <th class="p-3">연 대출금리</th>
+              <th class="p-3">월 상환 원리금</th>
+              <th class="p-3">총 납부 이자</th>
+              <th class="p-3">총 상환 금액 (원금+이자)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-300 font-mono">
+            <tr>
+              <td class="p-3 font-bold text-slate-200">연 3.5%</td>
+              <td class="p-3 text-emerald-400 font-bold">449,045 원</td>
+              <td class="p-3 text-slate-400">61,656,108 원</td>
+              <td class="p-3 text-slate-100">161,656,108 원</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200">연 4.5%</td>
+              <td class="p-3 text-emerald-400 font-bold">506,685 원</td>
+              <td class="p-3 text-slate-400">82,406,674 원</td>
+              <td class="p-3 text-slate-100">182,406,674 원</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200">연 5.5%</td>
+              <td class="p-3 text-sky-400 font-bold">567,789 원</td>
+              <td class="p-3 text-slate-400">104,403,969 원</td>
+              <td class="p-3 text-slate-100">204,403,969 원</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200">연 6.5%</td>
+              <td class="p-3 text-amber-400 font-bold">632,068 원</td>
+              <td class="p-3 text-slate-400">127,544,484 원</td>
+              <td class="p-3 text-slate-100">227,544,484 원</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+    </div>
 
-      <!-- 애드센스 인피드 슬롯 -->
-      <div class="my-6 p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
-        <div class="text-[11px] text-slate-600 font-mono tracking-wider mb-2">SPONSORED</div>
-        <div class="min-h-[100px] flex items-center justify-center text-xs text-slate-600">
-          <!-- 애드센스 반응형 광고 태그 자리 -->
-          <span>반응형 광고 영역 (Google AdSense)</span>
+    <!-- 2. 금융 최적화 전략 가이드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-3 text-xs leading-relaxed">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>가계 금융 최적화를 위한 2대 핵심 법칙</span>
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-400 pt-1">
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">1. 대출 초기의 원금 중도상환 효과</strong>
+          <p>원리금균등 상환은 초기에 이자 비중이 극단적으로 높습니다. 대출 초기 3~5년 이내에 원금을 일부라도 조기 상환하면 후반부에 붙을 복리 이자가 원천 소멸하여 전체 이자 총액이 대폭 절감됩니다.</p>
         </div>
-      </div>
-
-      <div class="space-y-3 pt-4"><h3 class="text-sm font-bold text-slate-200">자주 묻는 질문 (FAQ)</h3>
-        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
-          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
-            <span>Q. 원리금균등과 원금균등 상환의 차이는 무엇인가요?</span>
-            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
-          </summary>
-          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">원리금균등은 매월 내는 총금액이 일정하고, 원금균등은 매월 갚는 원금이 일정하여 초기에 납입액이 많고 점차 줄어듭니다.</p>
-        </details>
-        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
-          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
-            <span>Q. 복리 효과를 극대화하려면 어떻게 해야 하나요?</span>
-            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
-          </summary>
-          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">수익률을 무리하게 높이기보다 매월 꾸준한 적립식 투자와 배당 재투자(DRIP), 그리고 장기 보유 기간을 확보하는 것이 핵심입니다.</p>
-        </details></div>
-
-      <!-- 한국어 관련 툴 내부 링크 추천 바 -->
-      <div class="pt-8 border-t border-slate-800/60">
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">함께 쓰면 유용한 추천 도구</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-          <a href="/ko/tools/unit-converter.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
-            <span>📐</span> <span>단위 변환기</span>
-          </a>
-          <a href="/ko/tools/percentage-calc.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
-            <span>🏷️</span> <span>퍼센트 계산기</span>
-          </a>
-          <a href="/ko/tools/image-compressor.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
-            <span>📷</span> <span>이미지 압축기</span>
-          </a>
-          <a href="/ko" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
-            <span>⚡</span> <span>전체 도구 보기</span>
-          </a>
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">2. 적립식 분할 매수(DCA)와 복리 스노우볼</strong>
+          <p>시장의 등락을 맞추려 하기보다 매달 일정한 금액을 꾸준히 적립하고 배당금을 재투자하는 것이 핵심입니다. 기간이 10년, 20년을 넘어가면 복리 이자가 원금을 추월하는 지수적 자산 증식이 시작됩니다.</p>
         </div>
       </div>
-    </section>
-    
-<footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
-        <div class="space-y-0.5">
-          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
-          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
+    </div>
+
+    <!-- 3. 오픈형 FAQ (접힘 없는 일관 구조) -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>자주 묻는 질문 (FAQ)</span>
+      </h2>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <h3 class="font-bold text-slate-200 mb-1">Q. 원리금균등 상환과 원금균등 상환은 어떻게 다른가요?</h3>
+          <p class="text-slate-400 leading-relaxed">원리금균등은 매달 납부하는 총금액(원금+이자)이 동일하여 가계 지출 관리에 유리하며, 원금균등은 매월 갚는 원금 액수가 일정하여 대출 초기 납입액이 많고 갈수록 부담이 줄어듭니다. 전체 총 이자액은 원금균등이 조금 더 적습니다.</p>
         </div>
-        <div class="flex items-center gap-3 font-semibold text-slate-400">
-          <a href="../about.html" class="hover:text-emerald-400 transition-colors">About</a>
-        <span>·</span>
-        <a href="../contact.html" class="hover:text-emerald-400 transition-colors">Contact</a>
-        <span>·</span>
-        <a href="../privacy.html" class="hover:text-emerald-400 transition-colors">Privacy</a>
-        <span>·</span>
-        <a href="../terms.html" class="hover:text-emerald-400 transition-colors">Terms</a>
+        <div class="border-t border-slate-800 pt-3">
+          <h3 class="font-bold text-slate-200 mb-1">Q. 주택담보대출 계산 시 취득세나 보증보험료 등 부대비용도 포함되나요?</h3>
+          <p class="text-slate-400 leading-relaxed">본 계산기는 순수한 금융 대출 원금과 약정 이자(P&I)만을 시뮬레이션합니다. 취득세, 인지세, 감정평가비, 근저당 설정비 등 부대비용은 취급 금융기관 및 부동산 지역에 따라 차이가 있으므로 별도 고려하셔야 합니다.</p>
         </div>
       </div>
-    </footer>
+    </div>
 
-  </div>
+    <!-- 광고 슬롯 -->
+    <div class="p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
+      <div class="text-[10px] text-slate-600 font-mono tracking-wider mb-2">ADVERTISEMENT</div>
+      <div class="min-h-[80px] flex items-center justify-center text-xs text-slate-600">
+        <span>반응형 광고 영역 (Google AdSense)</span>
+      </div>
+    </div>
+  </main>
 
-  <script src="../js/utils/loanCompoundCalc.js"></script>
+  <!-- 가로형 한국어 표준 푸터 -->
+  <footer class="w-full max-w-4xl mx-auto px-4 py-8 mt-12 border-t border-slate-800/80 text-xs text-slate-500">
+    <div class="space-y-4 text-center">
+      <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-medium text-slate-400">
+        <a href="/ko/about.html" class="hover:text-emerald-400 transition">소개</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/contact.html" class="hover:text-emerald-400 transition">문의</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/privacy.html" class="hover:text-emerald-400 transition">개인정보처리방침</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/terms.html" class="hover:text-emerald-400 transition">이용약관</a>
+      </nav>
+      <div class="space-y-1">
+        <p class="font-semibold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+        <p class="text-[11px] text-slate-600">100% 브라우저 메모리 연산 · 서버 전송 0바이트 Zero Server Latency</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 로직 스크립트: 대출 & 복리 엔진 + 한글 추천 도구 모듈 -->
+  <script src="../../js/utils/loanCompoundCalc.js"></script>
   <script>
     let mode = "loan";
 
@@ -336,8 +260,8 @@
 
     btnLoan.addEventListener("click", () => {
       mode = "loan";
-      btnLoan.className = "py-2.5 rounded-lg transition-colors bg-blue-600 text-white shadow";
-      btnCompound.className = "py-2.5 rounded-lg transition-colors hover:text-slate-200";
+      btnLoan.className = "py-2.5 rounded-xl transition-all bg-emerald-600 text-white shadow-sm cursor-pointer";
+      btnCompound.className = "py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer";
       loanInputs.classList.remove("hidden");
       compoundInputs.classList.add("hidden");
       recalc();
@@ -345,21 +269,25 @@
 
     btnCompound.addEventListener("click", () => {
       mode = "compound";
-      btnCompound.className = "py-2.5 rounded-lg transition-colors bg-blue-600 text-white shadow";
-      btnLoan.className = "py-2.5 rounded-lg transition-colors hover:text-slate-200";
+      btnCompound.className = "py-2.5 rounded-xl transition-all bg-emerald-600 text-white shadow-sm cursor-pointer";
+      btnLoan.className = "py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer";
       compoundInputs.classList.remove("hidden");
       loanInputs.classList.add("hidden");
       recalc();
     });
 
-    const inputs = [
+    const inputIds = [
       "loanPrincipal", "loanRate", "loanYears",
       "cmpPrincipal", "cmpMonthly", "cmpRate", "cmpYears"
     ];
 
-    inputs.forEach(id => {
+    inputIds.forEach(id => {
       document.getElementById(id).addEventListener("input", recalc);
     });
+
+    function formatWon(val) {
+      return Math.round(val).toLocaleString() + " 원";
+    }
 
     function recalc() {
       const pTitle = document.getElementById("primaryMetricTitle");
@@ -379,20 +307,19 @@
 
         const res = LoanCompoundCalc.calculateLoan(principal, rate, years);
 
-        pTitle.textContent = "Estimated Monthly Payment";
-        pVal.textContent = `$${res.monthlyPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        sec1.textContent = `Total Interest: $${res.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        sec2.textContent = `Total Paid: $${res.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        pTitle.textContent = "예상 월 상환액 (원리금균등)";
+        pVal.textContent = formatWon(res.monthlyPayment);
+        sec1.textContent = `총 대출 이자: ${formatWon(res.totalInterest)}`;
+        sec2.textContent = `총 상환 원리금: ${formatWon(res.totalPayment)}`;
 
-        tableTitle.textContent = "Annual Amortization Snapshot";
+        tableTitle.textContent = "연차별 상환 스케줄 요약";
         tableHead.innerHTML = `
-          <th class="p-2">Year</th>
-          <th class="p-2">Principal Paid</th>
-          <th class="p-2">Interest Paid</th>
-          <th class="p-2">Balance</th>
+          <th class="p-2.5">연차</th>
+          <th class="p-2.5">당월 상환 원금</th>
+          <th class="p-2.5">당월 상환 이자</th>
+          <th class="p-2.5">잔여 대출 원금</th>
         `;
 
-        // Filter yearly milestones
         const totalMonths = res.schedule.length;
         for (let y = 1; y <= Math.ceil(totalMonths / 12); y++) {
           const mIdx = Math.min(y * 12 - 1, totalMonths - 1);
@@ -400,14 +327,13 @@
           if (!item) break;
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td class="p-2 font-bold text-slate-100">Year ${y}</td>
-            <td class="p-2 text-slate-300">$${item.principalPart.toLocaleString()}</td>
-            <td class="p-2 text-slate-300">$${item.interestPart.toLocaleString()}</td>
-            <td class="p-2 font-bold text-blue-400">$${item.remainingBalance.toLocaleString()}</td>
+            <td class="p-2.5 font-bold text-slate-100">${y}년차</td>
+            <td class="p-2.5 text-slate-300">${formatWon(item.principalPart)}</td>
+            <td class="p-2.5 text-slate-300">${formatWon(item.interestPart)}</td>
+            <td class="p-2.5 font-bold text-emerald-400">${formatWon(item.remainingBalance)}</td>
           `;
           tbody.appendChild(tr);
           if (y >= 10 && totalMonths > 120) {
-            // Cap preview rows to keep DOM ultra-light
             break;
           }
         }
@@ -420,26 +346,26 @@
 
         const res = LoanCompoundCalc.calculateCompound(principal, monthly, rate, years);
 
-        pTitle.textContent = "Total Future Value";
-        pVal.textContent = `$${res.futureValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        sec1.textContent = `Total Principal Invested: $${res.totalDeposits.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        sec2.textContent = `Total Interest Earned: $${res.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        pTitle.textContent = "예상 만기 자산 평가액";
+        pVal.textContent = formatWon(res.futureValue);
+        sec1.textContent = `총 납입 원금: ${formatWon(res.totalDeposits)}`;
+        sec2.textContent = `총 복리 수익: +${formatWon(res.totalInterest)}`;
 
-        tableTitle.textContent = "Year-by-Year Growth Schedule";
+        tableTitle.textContent = "연도별 누적 자산 성장 스케줄";
         tableHead.innerHTML = `
-          <th class="p-2">Year</th>
-          <th class="p-2">Total Invested</th>
-          <th class="p-2">Interest Earned</th>
-          <th class="p-2">Portfolio Value</th>
+          <th class="p-2.5">연차</th>
+          <th class="p-2.5">누적 납입 원금</th>
+          <th class="p-2.5">누적 복리 수익</th>
+          <th class="p-2.5">총 자산 평가액</th>
         `;
 
         res.yearlyBreakdown.forEach(row => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td class="p-2 font-bold text-slate-100">Year ${row.year}</td>
-            <td class="p-2 text-slate-300">$${row.totalInvested.toLocaleString()}</td>
-            <td class="p-2 text-emerald-400">+$${row.interestEarned.toLocaleString()}</td>
-            <td class="p-2 font-bold text-blue-400">$${row.balance.toLocaleString()}</td>
+            <td class="p-2.5 font-bold text-slate-100">${row.year}년차</td>
+            <td class="p-2.5 text-slate-300">${formatWon(row.totalInvested)}</td>
+            <td class="p-2.5 text-emerald-400 font-bold">+${formatWon(row.interestEarned)}</td>
+            <td class="p-2.5 font-bold text-sky-400">${formatWon(row.balance)}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -448,6 +374,6 @@
 
     recalc();
   </script>
-  <script src="../js/related-tools.js"></script>
+  <script src="../../js/related-tools-ko.js"></script>
 </body>
 </html>

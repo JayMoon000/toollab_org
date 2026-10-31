@@ -18,12 +18,14 @@ const BackgroundRemover = {
   // 1. Core Background Removal Execution
   async process(imageSource, progressCallback = null) {
     if (!imageSource) {
-      throw new Error("Invalid image source.");
+      throw new Error("올바른 이미지 파일이 아닙니다.");
     }
 
     const removeFn = await this.init();
 
+    // 로컬 file:/// 환경 및 웹 서버 환경 모두에서 Wasm/ONNX 모델을 정상 로드하도록 CDN publicPath 명시
     const options = {
+      publicPath: "https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/",
       progress: (key, current, total) => {
         if (progressCallback && total > 0) {
           const ratio = Math.min(1, current / total);

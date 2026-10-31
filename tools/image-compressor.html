@@ -71,6 +71,7 @@
             </div>
             <input type="range" id="qualityRange" min="10" max="100" value="80" step="5"
               class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500" />
+            <span id="qualityGuideTextEn" class="text-[10px] text-slate-500 block mt-1">Recommended 80%: Strips 50–70% size with no visible loss</span>
           </div>
 
           <!-- Output Format -->
@@ -218,6 +219,10 @@
 
         <div class="space-y-3.5 text-xs">
           <div>
+            <h3 class="font-bold text-slate-200 mb-1">Q. Why is the quality slider disabled for PNG, and why does file size sometimes increase?</h3>
+            <p class="text-slate-400">PNG is standardized as a strictly <strong>lossless</strong> raster format in web browsers, which ignores the compression quality parameter. Converting an already compressed lossy JPEG into raw uncompressed RGBA pixel buffers can temporarily increase file size. To reduce PNG file weights, scale down the <strong>Max Dimension</strong> selector (e.g., HD or Compact 800px).</p>
+          </div>
+          <div class="border-t border-slate-800 pt-3">
             <h3 class="font-bold text-slate-200 mb-1">Q. Does this tool store or log image metadata (EXIF)?</h3>
             <p class="text-slate-400">No. During canvas drawing, EXIF metadata (GPS coordinates, camera serial numbers) is automatically stripped, protecting your privacy before web publishing.</p>
           </div>
@@ -266,11 +271,54 @@
     const downloadAllBtn = document.getElementById("downloadAllBtn");
     const resultsList = document.getElementById("resultsList");
 
+    let rawFiles = [];
     let processedItems = [];
+    let debounceTimer = null;
+
+    function triggerRecompression() {
+      if (!rawFiles.length) return;
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        recompressAll();
+      }, 80);
+    }
+
+    function updateQualityControlState() {
+      const isPng = formatSelect.value === "image/png";
+      const guideText = document.getElementById("qualityGuideTextEn");
+
+      if (isPng) {
+        qualityRange.disabled = true;
+        qualityRange.classList.add("opacity-30", "cursor-not-allowed");
+        qualityVal.textContent = "Lossless (N/A)";
+        qualityVal.className = "text-amber-400 font-mono text-[11px] font-bold";
+        if (guideText) {
+          guideText.textContent = "💡 PNG is lossless. Lower Max Dimension to reduce file weight.";
+          guideText.className = "text-[10px] text-amber-400/90 block mt-1 font-medium";
+        }
+      } else {
+        qualityRange.disabled = false;
+        qualityRange.classList.remove("opacity-30", "cursor-not-allowed");
+        qualityVal.textContent = `${qualityRange.value}%`;
+        qualityVal.className = "text-blue-400 font-mono font-bold";
+        if (guideText) {
+          guideText.textContent = "Recommended 80%: Strips 50–70% size with no visible loss";
+          guideText.className = "text-[10px] text-slate-500 block mt-1";
+        }
+      }
+    }
 
     qualityRange.addEventListener("input", (e) => {
       qualityVal.textContent = `${e.target.value}%`;
+      triggerRecompression();
     });
+
+    formatSelect.addEventListener("change", () => {
+      updateQualityControlState();
+      triggerRecompression();
+    });
+
+    resSelect.addEventListener("change", triggerRecompression);
 
     dropZone.addEventListener("click", () => fileInput.click());
     dropZone.addEventListener("dragover", (e) => {
@@ -283,26 +331,36 @@
     dropZone.addEventListener("drop", (e) => {
       e.preventDefault();
       dropZone.classList.remove("border-blue-500");
-      if (e.dataTransfer.files.length) {
-        handleFiles(e.dataTransfer.files);
-      }
+      if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
     });
 
     fileInput.addEventListener("change", (e) => {
-      if (e.target.files.length) {
-        handleFiles(e.target.files);
-      }
+      if (e.target.files.length) addFiles(e.target.files);
     });
 
-    async function handleFiles(files) {
+    function addFiles(files) {
+      const validImages = Array.from(files).filter(f => f.type.startsWith("image/"));
+      if (!validImages.length) return;
+      rawFiles = validImages;
+      recompressAll();
+    }
+
+    async function recompressAll() {
+      if (!rawFiles.length) return;
+
       const quality = parseFloat(qualityRange.value) / 100;
       const format = formatSelect.value;
       const resVal = resSelect.value;
       const maxDim = resVal === "original" ? 10000 : parseInt(resVal, 10);
 
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (!file.type.startsWith("image/")) continue;
+      processedItems.forEach(item => {
+        if (item.blobUrl) URL.revokeObjectURL(item.blobUrl);
+      });
+      processedItems = [];
+      resultsList.innerHTML = "";
+
+      for (let i = 0; i < rawFiles.length; i++) {
+        const file = rawFiles[i];
 
         try {
           const result = await ImageCompressor.compressFile(file, {
@@ -312,13 +370,19 @@
             maxHeight: maxDim
           });
 
+          const extension = result.outputFormat === "image/webp" ? ".webp" : result.outputFormat === "image/png" ? ".png" : ".jpg";
+          const downloadName = file.name.substring(0, file.name.lastIndexOf(".")) + "_compressed" + extension;
+          const blobUrl = URL.createObjectURL(result.blob);
+
           const itemData = {
             id: "img_" + Date.now() + "_" + i,
             name: file.name,
+            downloadName,
             originalSize: result.originalSize,
             compressedSize: result.compressedSize,
             savedRatio: result.savedRatio,
             blob: result.blob,
+            blobUrl,
             format: result.outputFormat
           };
 
@@ -333,15 +397,11 @@
     }
 
     function renderItemCard(item) {
-      const extension = item.format === "image/webp" ? ".webp" : item.format === "image/png" ? ".png" : ".jpg";
-      const downloadName = item.name.substring(0, item.name.lastIndexOf(".")) + "_compressed" + extension;
-      const downloadUrl = URL.createObjectURL(item.blob);
-
       const card = document.createElement("div");
       card.className = "p-3.5 bg-slate-950/80 border border-slate-800 rounded-xl flex items-center justify-between gap-3 text-xs";
       card.innerHTML = `
         <div class="flex items-center gap-3 overflow-hidden">
-          <img src="${downloadUrl}" class="w-12 h-12 object-cover rounded-lg border border-slate-800 flex-shrink-0" />
+          <img src="${item.blobUrl}" class="w-12 h-12 object-cover rounded-lg border border-slate-800 flex-shrink-0" />
           <div class="overflow-hidden">
             <span class="font-bold text-slate-200 block truncate">${item.name}</span>
             <div class="flex items-center gap-2 mt-0.5 text-[11px] font-mono">
@@ -351,16 +411,21 @@
             </div>
           </div>
         </div>
-        <a href="${downloadUrl}" download="${downloadName}" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold flex-shrink-0 transition-colors">
+        <a href="${item.blobUrl}" download="${item.downloadName}" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold flex-shrink-0 transition-colors">
           Download
         </a>
       `;
-      resultsList.prepend(card);
+      resultsList.appendChild(card);
     }
 
     function updateBatchSummary() {
-      if (!processedItems.length) return;
+      if (!processedItems.length) {
+        batchSummary.classList.add("hidden");
+        batchSummary.classList.remove("flex");
+        return;
+      }
       batchSummary.classList.remove("hidden");
+      batchSummary.classList.add("flex");
 
       const totalOrig = processedItems.reduce((acc, cur) => acc + cur.originalSize, 0);
       const totalComp = processedItems.reduce((acc, cur) => acc + cur.compressedSize, 0);
@@ -374,17 +439,17 @@
     downloadAllBtn.addEventListener("click", () => {
       processedItems.forEach((item, index) => {
         setTimeout(() => {
-          const extension = item.format === "image/webp" ? ".webp" : item.format === "image/png" ? ".png" : ".jpg";
-          const downloadName = item.name.substring(0, item.name.lastIndexOf(".")) + "_compressed" + extension;
           const a = document.createElement("a");
-          a.href = URL.createObjectURL(item.blob);
-          a.download = downloadName;
+          a.href = item.blobUrl;
+          a.download = item.downloadName;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
-        }, index * 200);
+        }, index * 150);
       });
     });
+
+    updateQualityControlState();
   </script>
   <script src="../js/related-tools.js"></script>
 </body>

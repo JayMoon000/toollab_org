@@ -3,181 +3,163 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>고화질 벡터 QR코드 생성기 (PNG 다운로드) | ToolLab</title>
-  <meta name="description" content="웹 링크, 명함, 와이파이 접속 정보 QR코드를 영구 무료로 생성하고 고해상도 PNG로 다운로드합니다." />
-  <meta name="keywords" content="qr code generator, wifi qr code, vcard qr code, vector qr svg, free qr code online, client side qr, ToolLab" />
-  
-      <!-- Tailwind CDN & Config -->
+  <title>고화질 벡터 QR코드 생성기 (PNG·SVG 다운로드) | ToolLab</title>
+  <meta name="description" content="웹사이트 링크, Wi-Fi 접속, 모바일 명함(vCard), 텍스트 QR코드를 영구 무료로 생성하고 고해상도 PNG 및 무손실 SVG 벡터 파일로 다운로드합니다." />
+  <meta name="keywords" content="QR코드생성기, QR코드만들기, 와이파이QR코드, 명함QR코드, vCardQR, 고해상도QR, 벡터QRSVG, 무료QR코드" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/qr-generator.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       darkMode: 'class'
     }
   </script>
-
-  <!-- Open Graph & Rich Snippets -->
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="ToolLab" />
-  <meta property="og:title" content="Vector QR Code Generator | ToolLab" />
-  <meta property="og:description" content="Generate permanent static QR codes for links, Wi-Fi, and contacts with SVG and HD PNG downloads." />
-  <meta property="og:url" content="https://toollab.org/tools/qr-generator.html" />
-  <meta property="og:image" content="https://toollab.org/og-image.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Vector QR Code Generator | ToolLab" />
-  <meta name="twitter:description" content="Generate permanent static QR codes for links, Wi-Fi, and contacts with SVG and HD PNG downloads." />
-  <meta name="twitter:image" content="https://toollab.org/og-image.png" />
-  <link rel="canonical" href="https://toollab.org/tools/qr-generator.html" />
-
-  <!-- ToolLab Analytics Tracker -->
-  <script src="/js/analytics.js"></script>
-  <!-- Google AdSense Official Loader -->
+  <!-- QRCode.js 순수 클라이언트 렌더러 CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="../../js/analytics.js"></script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1512367949140208" crossorigin="anonymous"></script>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
-  <div class="max-w-4xl mx-auto">
-    
-    <!-- Main Card -->
-    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 md:p-7">
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <!-- 메인 조작 카드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl shadow-xl space-y-5">
       
-      <!-- Top Navigation -->
-      <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-800">
+      <!-- 상단 헤더 -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
         <div class="flex items-center gap-2.5">
-          <a href="/ko" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-            </svg>
+          <a href="/ko" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-emerald-400 transition" title="도구 목록으로 돌아가기">
+            🏠
           </a>
           <div>
-            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
-            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Vector QR Code Generator</h1>
+            <span class="text-[10px] text-slate-500 font-bold tracking-wider block">TOOLLAB.ORG</span>
+            <h1 class="text-base sm:text-lg font-bold text-slate-100">고화질 벡터 QR코드 생성기</h1>
           </div>
         </div>
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-950/80 text-blue-400 border border-blue-800">
-          Static & Permanent
+        <span class="text-[11px] font-mono px-2.5 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 font-semibold">
+          영구 무료 · 만료 없음
         </span>
       </div>
 
-      <!-- Mode Selector Tabs -->
-      <div class="grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-xl text-xs font-bold text-slate-400 mb-6 border border-slate-800/80">
-        <button class="tab-btn py-2 rounded-lg transition-colors bg-blue-600 text-white shadow" data-tab="url">URL Link</button>
-        <button class="tab-btn py-2 rounded-lg transition-colors hover:text-slate-200" data-tab="wifi">Wi-Fi Access</button>
-        <button class="tab-btn py-2 rounded-lg transition-colors hover:text-slate-200" data-tab="vcard">vCard Contact</button>
-        <button class="tab-btn py-2 rounded-lg transition-colors hover:text-slate-200" data-tab="text">Plain Text</button>
+      <!-- 모드 선택 탭 (4종) -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 bg-slate-950/80 p-1.5 rounded-2xl text-xs font-bold border border-slate-800">
+        <button class="tab-btn py-2.5 rounded-xl transition-all bg-emerald-600 text-white shadow-sm cursor-pointer" data-tab="url">웹 링크 (URL)</button>
+        <button class="tab-btn py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer" data-tab="wifi">와이파이 접속</button>
+        <button class="tab-btn py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer" data-tab="vcard">모바일 명함 (vCard)</button>
+        <button class="tab-btn py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer" data-tab="text">일반 텍스트</button>
       </div>
 
-      <!-- Main Dual Grid -->
+      <!-- 입력 폼 및 미리보기 그리드 -->
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
         
-        <!-- Left: Dynamic Inputs Form -->
+        <!-- 좌측: 모드별 동적 입력 폼 -->
         <div class="md:col-span-7 space-y-4">
           
-          <!-- URL Form -->
+          <!-- 1. URL 폼 -->
           <div id="formUrl" class="space-y-3">
-            <div class="space-y-1">
-              <label class="block text-xs font-semibold text-slate-400">Destination Website URL</label>
-              <input type="text" id="inputUrl" value="https://toollab.org" placeholder="https://yourwebsite.com" 
-                class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 font-mono text-xs md:text-sm" />
+            <div class="space-y-1.5">
+              <label class="block text-xs font-semibold text-slate-400">연결할 웹사이트 주소 (URL)</label>
+              <input type="text" id="inputUrl" value="https://toollab.org/ko" placeholder="https://example.com" 
+                class="w-full p-3.5 bg-slate-950 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono text-xs sm:text-sm transition" />
             </div>
           </div>
 
-          <!-- Wi-Fi Form -->
+          <!-- 2. Wi-Fi 폼 -->
           <div id="formWifi" class="space-y-3 hidden">
-            <div class="space-y-1">
-              <label class="block text-xs font-semibold text-slate-400">Network Name (SSID)</label>
-              <input type="text" id="wifiSsid" placeholder="Office-Guest-WiFi" 
-                class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 font-mono text-xs" />
+            <div class="space-y-1.5">
+              <label class="block text-xs font-semibold text-slate-400">와이파이 네트워크 이름 (SSID)</label>
+              <input type="text" id="wifiSsid" placeholder="예: MyHome_WiFi_5G" 
+                class="w-full p-3 bg-slate-950 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono text-xs transition" />
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div class="space-y-1">
-                <label class="block text-xs font-semibold text-slate-400">Password</label>
-                <input type="text" id="wifiPass" placeholder="Network password" 
-                  class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 font-mono text-xs" />
+              <div class="space-y-1.5">
+                <label class="block text-xs font-semibold text-slate-400">비밀번호</label>
+                <input type="text" id="wifiPass" placeholder="네트워크 접속 암호" 
+                  class="w-full p-3 bg-slate-950 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono text-xs transition" />
               </div>
-              <div class="space-y-1">
-                <label class="block text-xs font-semibold text-slate-400">Security Type</label>
-                <select id="wifiAuth" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 font-bold text-xs outline-none focus:border-blue-500">
-                  <option value="WPA">WPA / WPA2 / WPA3</option>
-                  <option value="WEP">WEP</option>
-                  <option value="nopass">None (Open)</option>
+              <div class="space-y-1.5">
+                <label class="block text-xs font-semibold text-slate-400">보안 암호화 방식</label>
+                <select id="wifiAuth" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-2xl text-slate-200 font-bold text-xs outline-none focus:border-emerald-500 cursor-pointer">
+                  <option value="WPA">WPA / WPA2 / WPA3 (권장)</option>
+                  <option value="WEP">WEP (구형)</option>
+                  <option value="nopass">비밀번호 없음 (개방형)</option>
                 </select>
               </div>
             </div>
             <label class="cursor-pointer flex items-center gap-2 text-xs text-slate-400 select-none">
-              <input type="checkbox" id="wifiHidden" class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0">
-              Hidden Network SSID
+              <input type="checkbox" id="wifiHidden" class="rounded bg-slate-900 border-slate-700 text-emerald-500 focus:ring-0">
+              숨겨진 네트워크 (SSID 비공개)
             </label>
           </div>
 
-          <!-- vCard Form -->
+          <!-- 3. vCard 폼 -->
           <div id="formVcard" class="space-y-3 hidden">
             <div class="grid grid-cols-2 gap-3">
-              <div class="space-y-1">
-                <label class="block text-xs font-semibold text-slate-400">First Name</label>
-                <input type="text" id="vcardFirst" placeholder="Jane" 
-                  class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 text-xs" />
+              <div class="space-y-1.5">
+                <label class="block text-xs font-semibold text-slate-400">이름 (First Name)</label>
+                <input type="text" id="vcardFirst" placeholder="길동" 
+                  class="w-full p-3 bg-slate-950 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 text-xs transition" />
               </div>
-              <div class="space-y-1">
-                <label class="block text-xs font-semibold text-slate-400">Last Name</label>
-                <input type="text" id="vcardLast" placeholder="Doe" 
-                  class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 text-xs" />
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div class="space-y-1">
-                <label class="block text-xs font-semibold text-slate-400">Phone</label>
-                <input type="tel" id="vcardPhone" placeholder="+1 555-0199" 
-                  class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 text-xs font-mono" />
-              </div>
-              <div class="space-y-1">
-                <label class="block text-xs font-semibold text-slate-400">Email</label>
-                <input type="email" id="vcardEmail" placeholder="jane@company.com" 
-                  class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 text-xs font-mono" />
+              <div class="space-y-1.5">
+                <label class="block text-xs font-semibold text-slate-400">성 (Last Name)</label>
+                <input type="text" id="vcardLast" placeholder="홍" 
+                  class="w-full p-3 bg-slate-950 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 text-xs transition" />
               </div>
             </div>
             <div class="grid grid-cols-2 gap-3">
-              <div class="space-y-1">
-                <label class="block text-xs font-semibold text-slate-400">Company</label>
-                <input type="text" id="vcardOrg" placeholder="Acme Labs" 
-                  class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 text-xs" />
+              <div class="space-y-1.5">
+                <label class="block text-xs font-semibold text-slate-400">휴대폰 번호</label>
+                <input type="tel" id="vcardPhone" placeholder="010-1234-5678" 
+                  class="w-full p-3 bg-slate-950 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 text-xs font-mono transition" />
               </div>
-              <div class="space-y-1">
-                <label class="block text-xs font-semibold text-slate-400">Job Title</label>
-                <input type="text" id="vcardTitle" placeholder="Lead Architect" 
-                  class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 text-xs" />
+              <div class="space-y-1.5">
+                <label class="block text-xs font-semibold text-slate-400">이메일</label>
+                <input type="email" id="vcardEmail" placeholder="user@domain.com" 
+                  class="w-full p-3 bg-slate-950 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 text-xs font-mono transition" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="space-y-1.5">
+                <label class="block text-xs font-semibold text-slate-400">회사 / 소속</label>
+                <input type="text" id="vcardOrg" placeholder="회사명" 
+                  class="w-full p-3 bg-slate-950 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 text-xs transition" />
+              </div>
+              <div class="space-y-1.5">
+                <label class="block text-xs font-semibold text-slate-400">직책 / 직무</label>
+                <input type="text" id="vcardTitle" placeholder="대표 / 팀장" 
+                  class="w-full p-3 bg-slate-950 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 text-xs transition" />
               </div>
             </div>
           </div>
 
-          <!-- Plain Text Form -->
+          <!-- 4. 일반 텍스트 폼 -->
           <div id="formText" class="space-y-3 hidden">
-            <div class="space-y-1">
-              <label class="block text-xs font-semibold text-slate-400">Raw Text Content</label>
-              <textarea id="inputText" rows="5" placeholder="Enter notes, alphanumeric tokens, or cryptographic keys..." 
-                class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 font-mono text-xs resize-y"></textarea>
+            <div class="space-y-1.5">
+              <label class="block text-xs font-semibold text-slate-400">일반 텍스트 내용</label>
+              <textarea id="inputText" rows="5" placeholder="스캔 시 표시될 메모, 시리얼 번호, 인증 토큰 등을 입력하세요..." 
+                class="w-full p-3.5 bg-slate-950 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono text-xs resize-y transition"></textarea>
             </div>
           </div>
 
-          <!-- Design & Correction Options -->
-          <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-xl space-y-3 pt-3">
-            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Render Settings</span>
+          <!-- 렌더링 설정 (복원율 & 해상도) -->
+          <div class="p-4 bg-slate-950/70 border border-slate-800 rounded-2xl space-y-3">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">QR코드 정밀 설정</span>
             <div class="grid grid-cols-2 gap-3 text-xs">
               <div>
-                <label class="block text-slate-400 text-[11px] mb-1">Error Correction</label>
-                <select id="correctionLevel" class="w-full p-1.5 bg-slate-900 border border-slate-700 rounded-lg text-slate-200 font-bold outline-none">
-                  <option value="H">High (30% recovery)</option>
-                  <option value="Q">Quartile (25%)</option>
-                  <option value="M" selected>Medium (15%)</option>
-                  <option value="L">Low (7%)</option>
+                <label class="block text-slate-400 text-[11px] mb-1">오류 복원율 (Reed-Solomon)</label>
+                <select id="correctionLevel" class="w-full p-2 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 font-bold outline-none cursor-pointer focus:border-emerald-500">
+                  <option value="H">High (최대 30% 복원 - 권장)</option>
+                  <option value="Q">Quartile (최대 25% 복원)</option>
+                  <option value="M" selected>Medium (최대 15% 복원)</option>
+                  <option value="L">Low (최대 7% 복원 - 초소형)</option>
                 </select>
               </div>
               <div>
-                <label class="block text-slate-400 text-[11px] mb-1">Pixel Size</label>
-                <select id="pixelSize" class="w-full p-1.5 bg-slate-900 border border-slate-700 rounded-lg text-slate-200 font-bold outline-none">
-                  <option value="256">256 × 256 px</option>
-                  <option value="512" selected>512 × 512 px (HD)</option>
-                  <option value="1024">1024 × 1024 px (Print)</option>
+                <label class="block text-slate-400 text-[11px] mb-1">다운로드 픽셀 해상도</label>
+                <select id="pixelSize" class="w-full p-2 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 font-bold outline-none cursor-pointer focus:border-emerald-500">
+                  <option value="256">256 × 256 px (웹용)</option>
+                  <option value="512" selected>512 × 512 px (고화질 HD)</option>
+                  <option value="1024">1024 × 1024 px (고해상도 인쇄용)</option>
                 </select>
               </div>
             </div>
@@ -185,216 +167,147 @@
 
         </div>
 
-        <!-- Right: Live QR Visual Canvas & Export -->
-        <div class="md:col-span-5 flex flex-col items-center justify-center p-6 bg-slate-950/80 border border-slate-800 rounded-2xl text-center">
-          <div class="p-4 bg-white rounded-2xl shadow-lg border-4 border-slate-800 mb-4 transition-all" id="qrWrapper">
+        <!-- 우측: 실시간 시각적 QR 캔버스 & 다운로드 바 -->
+        <div class="md:col-span-5 flex flex-col items-center justify-center p-6 bg-slate-950/80 border border-slate-800 rounded-3xl text-center">
+          <div class="p-4 bg-white rounded-2xl shadow-xl border-4 border-slate-800 mb-4 transition-all" id="qrWrapper">
             <div id="qrCanvas"></div>
           </div>
 
-          <!-- Download Action Bar -->
+          <!-- 다운로드 액션 버튼 -->
           <div class="flex items-center gap-2 w-full max-w-xs">
-            <button id="downloadPngBtn" class="flex-1 py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-colors shadow-sm">
-              Download PNG
+            <button id="downloadPngBtn" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition shadow-sm cursor-pointer">
+              PNG 다운로드
             </button>
-            <button id="downloadSvgBtn" class="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 transition-colors">
-              Download SVG
+            <button id="downloadSvgBtn" class="flex-1 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-emerald-400 font-bold text-xs border border-slate-700 transition cursor-pointer">
+              SVG 벡터 다운로드
             </button>
           </div>
-          <span class="text-[11px] text-slate-500 mt-2">Zero tracking · Instant direct download</span>
+          <span class="text-[11px] text-slate-500 mt-2">🔒 외부 서버 전송 없음 · 100% 브라우저 메모리 생성</span>
         </div>
 
       </div>
 
     </div>
 
-    <!-- SEO & Technical Documentation -->
-    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
-      
-      <!-- Error Correction Reference Matrix -->
-      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
-        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-          Reed-Solomon Error Correction Capability Matrix
-        </h2>
-        <p class="text-xs text-slate-400 mb-4">Trade-offs between optical damage resistance and QR code density as defined by ISO/IEC 18004.</p>
-        
-        <div class="overflow-x-auto">
-          <table class="w-full text-xs text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
-                <th class="p-2.5">Level</th>
-                <th class="p-2.5">Recovery Capacity</th>
-                <th class="p-2.5">Data Density</th>
-                <th class="p-2.5">Recommended Deployment Context</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-800/60 text-slate-300">
-              <tr>
-                <td class="p-2.5 font-bold text-blue-400 font-mono">Level L</td>
-                <td class="p-2.5 text-slate-200">~7% restoration</td>
-                <td class="p-2.5 text-emerald-400 font-medium">Lowest (Cleanest)</td>
-                <td class="p-2.5 text-slate-400">Clean digital screen displays, mobile presentations</td>
-              </tr>
-              <tr>
-                <td class="p-2.5 font-bold text-blue-400 font-mono">Level M</td>
-                <td class="p-2.5 text-slate-200">~15% restoration</td>
-                <td class="p-2.5 text-slate-300">Moderate</td>
-                <td class="p-2.5 text-slate-400">Standard business cards, packaging, digital flyers</td>
-              </tr>
-              <tr>
-                <td class="p-2.5 font-bold text-blue-400 font-mono">Level Q</td>
-                <td class="p-2.5 text-slate-200">~25% restoration</td>
-                <td class="p-2.5 text-slate-300">Dense</td>
-                <td class="p-2.5 text-slate-400">Outdoor stickers, delivery labels prone to smudges</td>
-              </tr>
-              <tr>
-                <td class="p-2.5 font-bold text-blue-400 font-mono">Level H</td>
-                <td class="p-2.5 text-slate-200">~30% restoration</td>
-                <td class="p-2.5 text-rose-400 font-medium">Highest (Complex)</td>
-                <td class="p-2.5 text-slate-400">Industrial machinery, central logo overlays</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- Practical Strategy Guides -->
-      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
-        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+    <!-- 1. 리드-솔로몬 오류 복원율 매트릭스 표 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <div class="space-y-1">
+        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          QR Code Deployment Best Practices
+          <span>리드-솔로몬(Reed-Solomon) 오류 복원율 규격(ISO/IEC 18004) 비교</span>
         </h2>
-        
-        <div class="space-y-2.5 text-xs leading-relaxed">
-          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
-            <h3 class="font-bold text-slate-200 mb-1">1. Static Codes vs. Dynamic Shortlinks</h3>
-            <p>Static QR codes encode actual strings into the matrix. They never expire, require no subscription renewals, and cannot be intercepted by redirect services.</p>
-          </div>
-
-          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
-            <h3 class="font-bold text-slate-200 mb-1">2. Contrast & Quiet Zone Rules</h3>
-            <p>Maintain a minimum 4-module quiet zone (white border) around the outer edges of the code matrix. Optical scanner cameras require this margin to detect positioning landmarks.</p>
-          </div>
-        </div>
-      </section>
-
-      
-      <!-- ToolLab Clean Ad Unit -->
-      <div class="my-8 flex flex-col items-center justify-center">
-        <span class="text-[10px] font-mono tracking-widest text-slate-600 uppercase mb-1.5">ADVERTISEMENT</span>
-        <div class="w-full max-w-3xl min-h-[100px] sm:min-h-[250px] bg-slate-900/40 border border-slate-800/80 rounded-2xl flex items-center justify-center overflow-hidden">
-          <ins class="adsbygoogle"
-               style="display:block"
-               data-ad-client="ca-pub-1512367949140208"
-               data-ad-slot="5185318921"
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
-          <script>
-               (adsbygoogle = window.adsbygoogle || []).push({});
-          </script>
-        </div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          QR코드가 물리적으로 훼손되거나 일부가 가려져도 정상 인식할 수 있는 복원 능력과 매트릭스 밀도 기준입니다.
+        </p>
       </div>
 
-      <!-- FAQ -->
-      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
-        <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
-          Frequently Asked Questions
-        </h2>
-
-        <div class="space-y-3.5 text-xs">
-          <div>
-            <h3 class="font-bold text-slate-200 mb-1">Q. Can Wi-Fi QR codes connect iOS and Android devices without typing?</h3>
-            <p class="text-slate-400">Yes. Native camera applications on modern iOS and Android parse <code>WIFI:S:...</code> strings directly, prompting an instant "Join Network" dialog with zero manual password entry.</p>
-          </div>
-          <div class="border-t border-slate-800 pt-3">
-            <h3 class="font-bold text-slate-200 mb-1">Q. Are my contact details or URLs saved to a database?</h3>
-            <p class="text-slate-400">Never. All calculations run strictly in your browser runtime memory. No data is transmitted across an external network.</p>
-          </div>
-        </div>
-      </section>
-
-    </article>
-
-    <!-- Standard Minimal Footer -->
-    
-    <!-- 한국어 SEO 가이드 & FAQ 복합 섹션 -->
-    <section class="max-w-4xl mx-auto px-4 py-8 space-y-6 border-t border-slate-800/80 mt-12">
-      <div class="space-y-3">
-        <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
-          <span class="text-emerald-400">📖</span>
-          <span>QR코드(Quick Response) 활용법과 복원율 설정</span>
-        </h2>
-        <p class="text-xs text-slate-400 leading-relaxed">스마트폰 카메라로 스캔하여 웹사이트 방문, 메뉴판 확인, 명함 저장 등을 수행할 수 있는 2차원 매트릭스 바코드입니다.</p>
-        <p class="text-xs text-slate-400 leading-relaxed">ToolLab QR코드 생성기는 만료일이나 스캔 횟수 제한이 전혀 없으며, 오류 복원율(Error Correction Level)을 설정하여 QR 일부가 손상되거나 오염되어도 정상 인식되도록 설계되었습니다.</p>
+      <div class="overflow-x-auto rounded-xl border border-slate-800">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-950 text-slate-400 font-semibold border-b border-slate-800">
+            <tr>
+              <th class="p-3">복원 등급</th>
+              <th class="p-3">손상 복원 한계</th>
+              <th class="p-3">데이터 밀도</th>
+              <th class="p-3">권장 활용 환경</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-300">
+            <tr>
+              <td class="p-3 font-bold text-emerald-400 font-mono">Level L (Low)</td>
+              <td class="p-3 text-slate-200">약 7% 복원</td>
+              <td class="p-3 text-emerald-400 font-bold">가장 낮음 (단순한 패턴)</td>
+              <td class="p-3 text-slate-400">선명한 모바일 화면 표시, 디지털 프레젠테이션 슬라이드</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200 font-mono">Level M (Medium)</td>
+              <td class="p-3 text-slate-200">약 15% 복원</td>
+              <td class="p-3 text-slate-300">표준 밀도</td>
+              <td class="p-3 text-slate-400">일반 명함, 종이 전단지, 웹페이지 배너, 표준 규격</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-sky-400 font-mono">Level Q (Quartile)</td>
+              <td class="p-3 text-slate-200">약 25% 복원</td>
+              <td class="p-3 text-slate-300">높음 (촘촘한 패턴)</td>
+              <td class="p-3 text-slate-400">오염 및 구겨짐 위험이 있는 택배 송장, 야외 포스터</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-amber-400 font-mono">Level H (High)</td>
+              <td class="p-3 text-slate-200">약 30% 복원</td>
+              <td class="p-3 text-amber-400 font-bold">가장 촘촘함</td>
+              <td class="p-3 text-slate-400">중앙에 기업 로고 이미지를 합성하거나 거친 산업 현장 라벨</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+    </div>
 
-      <!-- 애드센스 인피드 슬롯 -->
-      <div class="my-6 p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
-        <div class="text-[11px] text-slate-600 font-mono tracking-wider mb-2">SPONSORED</div>
-        <div class="min-h-[100px] flex items-center justify-center text-xs text-slate-600">
-          <!-- 애드센스 반응형 광고 태그 자리 -->
-          <span>반응형 광고 영역 (Google AdSense)</span>
+    <!-- 2. QR코드 제작 가이드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-3 text-xs leading-relaxed">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>인식률을 극대화하는 QR코드 배치 원칙</span>
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-400 pt-1">
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">1. 영구 불변의 정적(Static) QR코드</strong>
+          <p>ToolLab의 QR코드는 외부 리다이렉트 서버를 거치지 않고 실제 데이터가 매트릭스 안에 영구 각인됩니다. 유효기간 만료나 결제 유도 없이 평생 동작합니다.</p>
         </div>
-      </div>
-
-      <div class="space-y-3 pt-4"><h3 class="text-sm font-bold text-slate-200">자주 묻는 질문 (FAQ)</h3>
-        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
-          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
-            <span>Q. 생성된 QR코드에 유효기간이나 비용이 발생하나요?</span>
-            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
-          </summary>
-          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">전혀 없습니다. 브라우저에서 직접 생성된 순수 2D 매트릭스 코드이므로 영구적으로 무료 사용이 가능합니다.</p>
-        </details>
-        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
-          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
-            <span>Q. 인쇄물이나 명함에 넣으려면 어떤 크기가 좋은가요?</span>
-            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
-          </summary>
-          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">300x300px 이상의 해상도를 권장하며, 인쇄용 브로슈어의 경우 500x500px 고화질 옵션을 추천합니다.</p>
-        </details></div>
-
-      <!-- 한국어 관련 툴 내부 링크 추천 바 -->
-      <div class="pt-8 border-t border-slate-800/60">
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">함께 쓰면 유용한 추천 도구</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-          <a href="/ko/tools/unit-converter.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
-            <span>📐</span> <span>단위 변환기</span>
-          </a>
-          <a href="/ko/tools/percentage-calc.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
-            <span>🏷️</span> <span>퍼센트 계산기</span>
-          </a>
-          <a href="/ko/tools/image-compressor.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
-            <span>📷</span> <span>이미지 압축기</span>
-          </a>
-          <a href="/ko" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
-            <span>⚡</span> <span>전체 도구 보기</span>
-          </a>
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">2. 콰이어트 존(Quiet Zone) 여백 확보</strong>
+          <p>스마트폰 카메라가 QR코드의 3개 모서리 앵커를 정확히 판독하려면 테두리에 최소 4칸 이상의 흰색 여백이 반드시 확보되어야 합니다.</p>
         </div>
       </div>
-    </section>
-    
-<footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
-        <div class="space-y-0.5">
-          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
-          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
+    </div>
+
+    <!-- 3. 오픈형 FAQ (단일 일관 구조) -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>자주 묻는 질문 (FAQ)</span>
+      </h2>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <h3 class="font-bold text-slate-200 mb-1">Q. 와이파이 QR코드는 비밀번호 입력 없이 바로 접속되나요?</h3>
+          <p class="text-slate-400 leading-relaxed">네. 최신 아이폰(iOS) 및 안드로이드 스마트폰 카메라로 와이파이 QR코드를 스캔하면 비밀번호를 직접 입력할 필요 없이 '네트워크 연결' 안내창이 바로 뜨며 원클릭으로 접속됩니다.</p>
         </div>
-        <div class="flex items-center gap-3 font-semibold text-slate-400">
-          <a href="../about.html" class="hover:text-emerald-400 transition-colors">About</a>
-        <span>·</span>
-        <a href="../contact.html" class="hover:text-emerald-400 transition-colors">Contact</a>
-        <span>·</span>
-        <a href="../privacy.html" class="hover:text-emerald-400 transition-colors">Privacy</a>
-        <span>·</span>
-        <a href="../terms.html" class="hover:text-emerald-400 transition-colors">Terms</a>
+        <div class="border-t border-slate-800 pt-3">
+          <h3 class="font-bold text-slate-200 mb-1">Q. 생성된 QR코드의 스캔 횟수나 유효기간에 제한이 있나요?</h3>
+          <p class="text-slate-400 leading-relaxed">전혀 없습니다. 본 도구는 서버에 정보를 저장하고 중계하는 동적 QR이 아니라, 텍스트 원본 자체를 2D 바코드로 변환한 순수 정적 코드이므로 횟수나 기간 제한 없이 영구적으로 유효합니다.</p>
         </div>
       </div>
-    </footer>
+    </div>
 
-  </div>
+    <!-- 광고 슬롯 -->
+    <div class="p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
+      <div class="text-[10px] text-slate-600 font-mono tracking-wider mb-2">ADVERTISEMENT</div>
+      <div class="min-h-[80px] flex items-center justify-center text-xs text-slate-600">
+        <span>반응형 광고 영역 (Google AdSense)</span>
+      </div>
+    </div>
+  </main>
 
-  <script src="../js/utils/qrGenerator.js"></script>
+  <!-- 가로형 한국어 표준 푸터 -->
+  <footer class="w-full max-w-4xl mx-auto px-4 py-8 mt-12 border-t border-slate-800/80 text-xs text-slate-500">
+    <div class="space-y-4 text-center">
+      <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-medium text-slate-400">
+        <a href="/ko/about.html" class="hover:text-emerald-400 transition">소개</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/contact.html" class="hover:text-emerald-400 transition">문의</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/privacy.html" class="hover:text-emerald-400 transition">개인정보처리방침</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/terms.html" class="hover:text-emerald-400 transition">이용약관</a>
+      </nav>
+      <div class="space-y-1">
+        <p class="font-semibold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+        <p class="text-[11px] text-slate-600">100% 브라우저 메모리 연산 · 서버 전송 0바이트 Zero Server Latency</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 로직 스크립트: QR 엔진 + 한글 추천 도구 모듈 -->
+  <script src="../../js/utils/qrGenerator.js"></script>
   <script>
     let activeTab = "url";
     let qrcodeInstance = null;
@@ -462,7 +375,6 @@
       const text = getCurrentPayload();
       if (!text || typeof QRCode === "undefined") return;
 
-      const size = parseInt(pixelSize.value, 10);
       const level = getCorrectionConstant(correctionLevel.value);
 
       qrCanvas.innerHTML = "";
@@ -476,13 +388,13 @@
       });
     }
 
-    // Tab Switching
+    // 탭 전환
     document.querySelectorAll(".tab-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".tab-btn").forEach((b) => {
-          b.className = "tab-btn py-2 rounded-lg transition-colors hover:text-slate-200";
+          b.className = "tab-btn py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer";
         });
-        btn.className = "tab-btn py-2 rounded-lg transition-colors bg-blue-600 text-white shadow";
+        btn.className = "tab-btn py-2.5 rounded-xl transition-all bg-emerald-600 text-white shadow-sm cursor-pointer";
         activeTab = btn.dataset.tab;
 
         Object.keys(forms).forEach((k) => {
@@ -497,17 +409,17 @@
       });
     });
 
-    // Inputs dynamic rendering
+    // 입력값 변경 시 실시간 재렌더링
     const allInputs = document.querySelectorAll("input, select, textarea");
     allInputs.forEach((el) => {
       el.addEventListener("input", renderQr);
       el.addEventListener("change", renderQr);
     });
 
-    // PNG Download (High-Res Offscreen Canvas)
+    // 고해상도 PNG 다운로드
     downloadPngBtn.addEventListener("click", () => {
       const text = getCurrentPayload();
-      if (!text) return;
+      if (!text || typeof QRCode === "undefined") return;
 
       const targetDim = parseInt(pixelSize.value, 10);
       const tempDiv = document.createElement("div");
@@ -528,7 +440,7 @@
       }, 50);
     });
 
-    // SVG Vector Download
+    // SVG 벡터 다운로드
     downloadSvgBtn.addEventListener("click", () => {
       const canvas = qrCanvas.querySelector("canvas");
       if (!canvas) return;
@@ -538,7 +450,6 @@
       const width = canvas.width;
       const height = canvas.height;
 
-      // Construct SVG vector elements from pixel data
       let svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges">`;
       svgContent += `<rect width="${width}" height="${height}" fill="#ffffff"/>`;
 
@@ -566,6 +477,6 @@
 
     window.addEventListener("load", renderQr);
   </script>
-  <script src="../js/related-tools.js"></script>
+  <script src="../../js/related-tools-ko.js"></script>
 </body>
 </html>

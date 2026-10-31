@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>파비콘 올인원 패키지 생성기 (ICO·PNG 번들) | ToolLab</title>
-  <meta name="description" content="하나의 로고 이미지로 16x16 파비콘부터 512x512 PWA 앱 아이콘까지 웹 표준 규격 세트를 자동 생성합니다." />
+  <title>파비콘 올인원 패키지 생성기 (ICO·PNG 번들·HTML 태그) | ToolLab</title>
+  <meta name="description" content="Generate complete multi-size favicon packages (16x16, 32x32, 180x180, WebManifest) in your browser. Download as a single ZIP bundle with production HTML tags." />
   <meta name="keywords" content="favicon generator, create favicon online, apple touch icon generator, webmanifest creator, ico converter, ToolLab" />
   
       <!-- Tailwind CDN & Config -->
@@ -18,14 +18,14 @@
   <!-- Open Graph & Rich Snippets -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="ToolLab" />
-  <meta property="og:title" content="Favicon Package Generator | ToolLab" />
+  <meta property="og:title" content="파비콘 올인원 패키지 생성기 | ToolLab" />
   <meta property="og:description" content="Generate complete multi-size icon bundles (16x16, 32x32, 180x180, PWA) inside a single client-side ZIP." />
   <meta property="og:url" content="https://toollab.org/tools/favicon-generator.html" />
   <meta property="og:image" content="https://toollab.org/og-image.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Favicon Package Generator | ToolLab" />
+  <meta name="twitter:title" content="파비콘 올인원 패키지 생성기 | ToolLab" />
   <meta name="twitter:description" content="Generate complete multi-size icon bundles (16x16, 32x32, 180x180, PWA) inside a single client-side ZIP." />
   <meta name="twitter:image" content="https://toollab.org/og-image.png" />
   <link rel="canonical" href="https://toollab.org/tools/favicon-generator.html" />
@@ -51,11 +51,11 @@
           </a>
           <div>
             <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
-            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Favicon Package Generator</h1>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">파비콘 올인원 패키지 생성기</h1>
           </div>
         </div>
         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-950/80 text-blue-400 border border-blue-800">
-          Complete Production Bundle
+          웹 표준 상용 규격
         </span>
       </div>
 
@@ -66,8 +66,8 @@
           <svg class="w-10 h-10 text-slate-600 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
           </svg>
-          <span class="text-sm font-bold text-slate-200">Upload your logo or app icon (<span class="text-blue-400 underline">PNG, SVG, JPG</span>)</span>
-          <span class="text-xs text-slate-500">Square 512x512+ recommended · Automatically cropped and packaged locally</span>
+          <span class="text-sm font-bold text-slate-200">로고 또는 앱 아이콘 업로드 (<span class="text-blue-400 underline">PNG, SVG, JPG</span>)</span>
+          <span class="text-xs text-slate-500">512×512px 이상 정사각형 이미지 권장 · 브라우저 로컬 자동 크롭 및 ZIP 패키징</span>
         </div>
       </div>
 
@@ -79,7 +79,7 @@
           <div class="flex justify-between items-center text-xs">
             <span class="font-bold text-slate-400 uppercase tracking-wider">Generated Package Assets</span>
             <button id="downloadZipBtn" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-colors shadow-sm">
-              Download Favicon Bundle (.ZIP)
+              파비콘 번들 다운로드 (.ZIP)
             </button>
           </div>
           
@@ -127,7 +127,7 @@
           <div class="flex justify-between items-center text-xs">
             <span class="font-bold text-slate-400 uppercase tracking-wider">HTML Header Code</span>
             <button id="copyHtmlBtn" class="px-2.5 py-1 rounded bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-800/60 font-bold transition-colors">
-              Copy HTML Tags
+              HTML 태그 복사
             </button>
           </div>
           <pre class="p-3.5 bg-slate-950 border border-slate-800 rounded-xl text-blue-300 font-mono text-xs overflow-x-auto select-all"><code id="codeSnippet"></code></pre>
@@ -144,18 +144,18 @@
       <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
         <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-          Modern Multi-Platform Favicon Specification Matrix
+          멀티 플랫폼 파비콘 규격 매트릭스
         </h2>
-        <p class="text-xs text-slate-400 mb-4">Official platform icon resolution and target device standards.</p>
+        <p class="text-xs text-slate-400 mb-4">공식 플랫폼별 아이콘 해상도 및 타깃 디바이스 표준 규격입니다.</p>
         
         <div class="overflow-x-auto">
           <table class="w-full text-xs text-left border-collapse">
             <thead>
               <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
-                <th class="p-2.5">File Identifier</th>
-                <th class="p-2.5 font-mono">Dimensions</th>
-                <th class="p-2.5">Format</th>
-                <th class="p-2.5">Operating Platform & Role</th>
+                <th class="p-2.5">파일명</th>
+                <th class="p-2.5 font-mono">해상도</th>
+                <th class="p-2.5">포맷</th>
+                <th class="p-2.5">지원 플랫폼 및 주요 역할</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-800/60 text-slate-300 font-mono">
@@ -163,31 +163,31 @@
                 <td class="p-2.5 font-bold text-slate-100 font-sans">favicon-16x16.png</td>
                 <td class="p-2.5 text-blue-400">16 × 16</td>
                 <td class="p-2.5 text-slate-400">PNG</td>
-                <td class="p-2.5 text-slate-400 font-sans">Legacy desktop browser tabs, URL bookmarks</td>
+                <td class="p-2.5 text-slate-400 font-sans">데스크톱 브라우저 탭, 즐겨찾기 북마크</td>
               </tr>
               <tr>
                 <td class="p-2.5 font-bold text-slate-100 font-sans">favicon-32x32.png</td>
                 <td class="p-2.5 text-blue-400">32 × 32</td>
                 <td class="p-2.5 text-slate-400">PNG</td>
-                <td class="p-2.5 text-slate-400 font-sans">Modern Retina/HiDPI browser tabs, taskbars</td>
+                <td class="p-2.5 text-slate-400 font-sans">고해상도 레티나/HiDPI 브라우저 탭, 윈도우 작업표시줄</td>
               </tr>
               <tr>
                 <td class="p-2.5 font-bold text-slate-100 font-sans">apple-touch-icon.png</td>
                 <td class="p-2.5 text-blue-400">180 × 180</td>
                 <td class="p-2.5 text-slate-400">PNG</td>
-                <td class="p-2.5 text-slate-400 font-sans">iOS Safari "Add to Home Screen" web bookmark</td>
+                <td class="p-2.5 text-slate-400 font-sans">iOS 사파리 "홈 화면에 추가" 바로가기 아이콘</td>
               </tr>
               <tr>
                 <td class="p-2.5 font-bold text-slate-100 font-sans">android-chrome-192x192.png</td>
                 <td class="p-2.5 text-blue-400">192 × 192</td>
                 <td class="p-2.5 text-slate-400">PNG</td>
-                <td class="p-2.5 text-slate-400 font-sans">Android Chrome home screen icon, PWA installation</td>
+                <td class="p-2.5 text-slate-400 font-sans">안드로이드 크롬 홈 화면 아이콘, PWA 앱 설치</td>
               </tr>
               <tr>
                 <td class="p-2.5 font-bold text-slate-100 font-sans">android-chrome-512x512.png</td>
                 <td class="p-2.5 text-blue-400">512 × 512</td>
                 <td class="p-2.5 text-slate-400">PNG</td>
-                <td class="p-2.5 text-slate-400 font-sans">PWA application splash screens, app store assets</td>
+                <td class="p-2.5 text-slate-400 font-sans">PWA 앱 구동 스플래시 화면, 앱스토어 등록 에셋</td>
               </tr>
             </tbody>
           </table>
@@ -198,18 +198,18 @@
       <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
         <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          Favicon Best Practices
+          파비콘 제작 및 적용 가이드
         </h2>
         
         <div class="space-y-2.5 text-xs leading-relaxed">
           <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
-            <h3 class="font-bold text-slate-200 mb-1">1. Transparent Backgrounds for Dark/Light Compatibility</h3>
-            <p>Design source icons with transparent PNG or SVG backgrounds to ensure optimal contrast against both dark-mode and light-mode browser tab styling.</p>
+            <h3 class="font-bold text-slate-200 mb-1">1. 다크모드 호환을 위한 투명 배경(PNG/SVG)</h3>
+            <p>투명 배경의 PNG 또는 SVG 원본을 사용하면 브라우저의 다크 모드와 라이트 모드 탭 인터페이스 모두에서 아이콘이 깔끔하고 선명하게 대비됩니다.</p>
           </div>
 
           <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
-            <h3 class="font-bold text-slate-200 mb-1">2. PWA WebManifest Integration</h3>
-            <p>Modern mobile browsers rely on <code>site.webmanifest</code> rather than redundant header tags to display branded splash screens when websites are installed to mobile home screens.</p>
+            <h3 class="font-bold text-slate-200 mb-1">2. PWA 웹 매니페스트(site.webmanifest) 연동</h3>
+            <p>최신 모바일 브라우저는 복잡한 헤더 태그 대신 <code>site.webmanifest</code> 파일을 참조하여 스마트폰 홈 화면에 바로가기를 추가할 때 브랜드 아이콘과 스플래시 로딩 화면을 깔끔하게 표시합니다.</p>
           </div>
         </div>
       </section>
@@ -235,17 +235,17 @@
       <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
         <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
-          Frequently Asked Questions
+          자주 묻는 질문 (FAQ)
         </h2>
 
         <div class="space-y-3.5 text-xs">
           <div>
-            <h3 class="font-bold text-slate-200 mb-1">Q. Do I still need an old-fashioned .ico file?</h3>
-            <p class="text-slate-400">Modern web browsers natively support PNG favicons specified in standard link tags. Standard PNG favicons offer superior alpha transparency and smaller file sizes compared to legacy multi-layer ICO containers.</p>
+            <h3 class="font-bold text-slate-200 mb-1">Q. 아직도 구형 .ico 파일이 꼭 필요한가요?</h3>
+            <p class="text-slate-400">대부분의 최신 웹 브라우저는 표준 PNG 파비콘을 완벽하게 지원합니다. PNG 포맷은 구형 다중 레이어 ICO 파일보다 투명도 처리가 뛰어나며 파일 용량도 훨씬 가볍습니다.</p>
           </div>
           <div class="border-t border-slate-800 pt-3">
-            <h3 class="font-bold text-slate-200 mb-1">Q. Are my branding assets uploaded to a cloud service?</h3>
-            <p class="text-slate-400">Never. All image scaling, cropping, and ZIP bundle assembly happen entirely within your local browser memory via JavaScript.</p>
+            <h3 class="font-bold text-slate-200 mb-1">Q. 업로드한 로고나 브랜드 이미지가 서버로 전송되나요?</h3>
+            <p class="text-slate-400">절대 전송되지 않습니다. 모든 이미지 리사이징, 크롭, ZIP 압축 패키징은 사용자의 브라우저 메모리 안에서 자바스크립트로 100% 로컬 처리됩니다.</p>
           </div>
         </div>
       </section>
@@ -253,84 +253,27 @@
     </article>
 
     <!-- Footer -->
-    
-    <!-- 한국어 SEO 가이드 & FAQ 복합 섹션 -->
-    <section class="max-w-4xl mx-auto px-4 py-8 space-y-6 border-t border-slate-800/80 mt-12">
-      <div class="space-y-3">
-        <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
-          <span class="text-emerald-400">📖</span>
-          <span>웹 표준 파비콘과 모바일 바로가기 아이콘 규격</span>
-        </h2>
-        <p class="text-xs text-slate-400 leading-relaxed">파비콘(Favicon)은 브라우저 탭, 즐겨찾기, 북마크에 노출되는 웹사이트의 얼굴입니다. 최신 웹 브라우저 환경에서는 데스크톱용 16x16, 32x32 크기뿐만 아니라 모바일 홈 화면 추가를 위한 180x180 애플 터치 아이콘, 512x512 PWA 아이콘이 함께 요구됩니다.</p>
-        <p class="text-xs text-slate-400 leading-relaxed">고해상도 PNG 또는 SVG 로고를 등록하면 브라우저 안에서 규격별 리사이징을 거쳐 필수 HTML 메타 태그와 함께 즉시 다운로드할 수 있습니다.</p>
+    <footer class="w-full max-w-4xl mx-auto px-4 py-8 mt-12 border-t border-slate-800/80 text-xs text-slate-500">
+    <div class="space-y-4 text-center">
+      <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-medium text-slate-400">
+        <a href="/ko/about.html" class="hover:text-emerald-400 transition">소개</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/contact.html" class="hover:text-emerald-400 transition">문의</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/privacy.html" class="hover:text-emerald-400 transition">개인정보처리방침</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/terms.html" class="hover:text-emerald-400 transition">이용약관</a>
+      </nav>
+      <div class="space-y-1">
+        <p class="font-semibold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+        <p class="text-[11px] text-slate-600">100% 브라우저 메모리 연산 · 서버 전송 0바이트 Zero Server Latency</p>
       </div>
-
-      <!-- 애드센스 인피드 슬롯 -->
-      <div class="my-6 p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
-        <div class="text-[11px] text-slate-600 font-mono tracking-wider mb-2">SPONSORED</div>
-        <div class="min-h-[100px] flex items-center justify-center text-xs text-slate-600">
-          <!-- 애드센스 반응형 광고 태그 자리 -->
-          <span>반응형 광고 영역 (Google AdSense)</span>
-        </div>
-      </div>
-
-      <div class="space-y-3 pt-4"><h3 class="text-sm font-bold text-slate-200">자주 묻는 질문 (FAQ)</h3>
-        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
-          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
-            <span>Q. 어떤 확장자의 이미지를 넣는 것이 가장 좋은가요?</span>
-            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
-          </summary>
-          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">정사각형(1:1 비율) 비율의 512x512px 이상 고해상도 PNG 또는 투명 배경 PNG를 등록하시는 것이 가장 선명합니다.</p>
-        </details>
-        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
-          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
-            <span>Q. 파비콘 HTML 코드는 어디에 넣어야 하나요?</span>
-            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
-          </summary>
-          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">웹사이트 HTML 문서의 `<head>`와 `</head>` 태그 사이에 복사한 메타 링크 태그를 삽입하시면 됩니다.</p>
-        </details></div>
-
-      <!-- 한국어 관련 툴 내부 링크 추천 바 -->
-      <div class="pt-8 border-t border-slate-800/60">
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">함께 쓰면 유용한 추천 도구</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-          <a href="/ko/tools/unit-converter.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
-            <span>📐</span> <span>단위 변환기</span>
-          </a>
-          <a href="/ko/tools/percentage-calc.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
-            <span>🏷️</span> <span>퍼센트 계산기</span>
-          </a>
-          <a href="/ko/tools/image-compressor.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
-            <span>📷</span> <span>이미지 압축기</span>
-          </a>
-          <a href="/ko" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
-            <span>⚡</span> <span>전체 도구 보기</span>
-          </a>
-        </div>
-      </div>
-    </section>
-    
-<footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
-        <div class="space-y-0.5">
-          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
-          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
-        </div>
-        <div class="flex items-center gap-3 font-semibold text-slate-400">
-          <a href="../about.html" class="hover:text-emerald-400 transition-colors">About</a>
-        <span>·</span>
-        <a href="../contact.html" class="hover:text-emerald-400 transition-colors">Contact</a>
-        <span>·</span>
-        <a href="../privacy.html" class="hover:text-emerald-400 transition-colors">Privacy</a>
-        <span>·</span>
-        <a href="../terms.html" class="hover:text-emerald-400 transition-colors">Terms</a>
-        </div>
-      </div>
-    </footer>
+    </div>
+  </footer>
 
   </div>
 
-  <script src="../js/utils/faviconGenerator.js"></script>
+  <script src="../../js/utils/faviconGenerator.js"></script>
   <script>
     const dropZone = document.getElementById("dropZone");
     const fileInput = document.getElementById("fileInput");
@@ -439,11 +382,11 @@
       if (!code) return;
       navigator.clipboard.writeText(code).then(() => {
         const orig = copyHtmlBtn.textContent;
-        copyHtmlBtn.textContent = "Copied!";
+        copyHtmlBtn.textContent = "복사완료!";
         setTimeout(() => (copyHtmlBtn.textContent = orig), 1500);
       });
     });
   </script>
-  <script src="../js/related-tools.js"></script>
+  <script src="../../js/related-tools-ko.js"></script>
 </body>
 </html>

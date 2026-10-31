@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2048 클래식 두뇌 퍼즐 | Play Free Online - ToolLab</title>
+  <title>2048 클래식 두뇌 퍼즐 | ToolLab</title>
   <meta name="description" content="Play the classic 2048 puzzle game online for free. Clean dark mode UI, zero ads lag, mobile swipe controls, and high-score corner strategy guide." />
   <meta name="keywords" content="2048 game, play 2048, 2048 online, 2048 puzzle, unblocked games, 2048 strategy, ToolLab" />
   
@@ -18,20 +18,20 @@
   <!-- Open Graph & Rich Snippets -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="ToolLab" />
-  <meta property="og:title" content="2048 클래식 두뇌 퍼즐 | ToolLab" />
+  <meta property="og:title" content="2048 클래식 Web Puzzle | ToolLab" />
   <meta property="og:description" content="Slide identical numbers, merge powers of two, and reach the 2048 milestone in dark mode." />
   <meta property="og:url" content="https://toollab.org/games/2048.html" />
   <meta property="og:image" content="https://toollab.org/og-image.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="2048 클래식 두뇌 퍼즐 | ToolLab" />
+  <meta name="twitter:title" content="2048 클래식 Web Puzzle | ToolLab" />
   <meta name="twitter:description" content="Slide identical numbers, merge powers of two, and reach the 2048 milestone in dark mode." />
   <meta name="twitter:image" content="https://toollab.org/og-image.png" />
   <link rel="canonical" href="https://toollab.org/games/2048.html" />
 
   <!-- ToolLab Analytics Tracker -->
-  <script src="/js/analytics.js"></script>
+  <script src="../../js/analytics.js"></script>
   <!-- Google AdSense Official Loader -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1512367949140208" crossorigin="anonymous"></script>
   <style>
@@ -71,7 +71,7 @@
           </a>
           <div>
             <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
-            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">2048 Classic</h1>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">2048 클래식</h1>
           </div>
         </div>
 
@@ -123,7 +123,7 @@
 
       <!-- Controls Guide Pill -->
       <div class="mt-4 p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-center text-xs text-slate-400">
-        Use <strong>Arrow Keys</strong> or <strong>W, A, S, D</strong>. On mobile, <strong>swipe</strong> across the grid.
+        PC에서는 <strong>방향키</strong>나 <strong>W, A, S, D</strong>, 모바일에서는 <strong>화면 스와이프</strong>로 타일을 이동하세요.
       </div>
 
     </div>
@@ -134,55 +134,55 @@
       <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
         <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-          The Corner Anchoring Strategy
+          모서리 고정(Corner Anchoring) 필승 공략
         </h2>
         <ul class="space-y-2 text-xs text-slate-300 list-disc list-inside">
-          <li><strong>Anchor Highest Tile:</strong> Keep your largest number locked permanently in one corner (e.g., bottom-right). Never swipe in the opposite direction (Up) unless completely forced.</li>
-          <li><strong>Descending Snake Chain:</strong> Order surrounding tiles in strict descending sequence (e.g., 1024 &rarr; 512 &rarr; 256 &rarr; 128) along the bottom row to trigger cascading merges.</li>
-          <li><strong>Keep 4+ Free Cells:</strong> When free cells fall below 3, immediately merge smaller numbers (2s and 4s) to prevent gridlock.</li>
+          <li><strong>가장 큰 타일 모서리 고정:</strong> 가장 큰 숫자의 타일을 한쪽 모서리(예: 우측 하단)에 끝까지 고정하세요. 판이 완전히 막힌 경우가 아니라면 반대 방향(위쪽)으로는 절대 스와이프하지 않는 것이 핵심입니다.</li>
+          <li><strong>내림차순 지렁이 연쇄 배치:</strong> Order surrounding tiles in strict descending sequence (e.g., 1024 &rarr; 512 &rarr; 256 &rarr; 128) along the bottom row to trigger cascading merges.</li>
+          <li><strong>최소 4칸 이상의 빈 공간 확보:</strong> 빈칸이 3개 이하로 줄어들면 판이 굳어버릴 위험이 큽니다. 작은 숫자(2와 4)들을 빠르게 정리하여 이동 공간을 만드세요.</li>
         </ul>
       </section>
 
       <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
         <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          2048 Tile Progression Hierarchy
+          타일 진화 단계 및 목표 가이드
         </h2>
         
         <div class="overflow-x-auto">
           <table class="w-full text-xs text-left border-collapse">
             <thead>
               <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
-                <th class="p-2.5">Tile Tier</th>
-                <th class="p-2.5 font-mono">Value</th>
-                <th class="p-2.5">Minimum 2s Required</th>
-                <th class="p-2.5">Milestone Level</th>
+                <th class="p-2.5">단계</th>
+                <th class="p-2.5 font-mono">타일 숫자</th>
+                <th class="p-2.5">최소 생성 타일(2) 수</th>
+                <th class="p-2.5">진행 상태</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-800/60 text-slate-300 font-mono">
               <tr>
-                <td class="p-2.5 text-slate-400 font-sans">Starter</td>
+                <td class="p-2.5 text-slate-400 font-sans">초반</td>
                 <td class="p-2.5 text-blue-400">2 / 4</td>
                 <td class="p-2.5 text-slate-400">1 – 2</td>
-                <td class="p-2.5 text-slate-400 font-sans">Initial board spawn</td>
+                <td class="p-2.5 text-slate-400 font-sans">초기 배치 단계</td>
               </tr>
               <tr>
-                <td class="p-2.5 text-slate-300 font-sans">Intermediate</td>
+                <td class="p-2.5 text-slate-300 font-sans">중반</td>
                 <td class="p-2.5 text-orange-400">16 / 32 / 64</td>
                 <td class="p-2.5 text-slate-400">8 – 32</td>
-                <td class="p-2.5 text-slate-400 font-sans">Board balance phase</td>
+                <td class="p-2.5 text-slate-400 font-sans">판 균형 유지 단계</td>
               </tr>
               <tr>
-                <td class="p-2.5 text-slate-200 font-sans">Advanced</td>
+                <td class="p-2.5 text-slate-200 font-sans">고급</td>
                 <td class="p-2.5 text-cyan-400">128 / 256 / 512</td>
                 <td class="p-2.5 text-slate-400">64 – 256</td>
-                <td class="p-2.5 text-slate-400 font-sans">Corner locking essential</td>
+                <td class="p-2.5 text-slate-400 font-sans">모서리 고정 필수 단계</td>
               </tr>
               <tr>
-                <td class="p-2.5 font-bold text-slate-100 font-sans">Victory</td>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">승리 (완성)</td>
                 <td class="p-2.5 text-indigo-400 font-bold">1024 / 2048</td>
                 <td class="p-2.5 text-indigo-400 font-bold">512 – 1,024</td>
-                <td class="p-2.5 text-emerald-400 font-sans font-bold">Game Completion</td>
+                <td class="p-2.5 text-emerald-400 font-sans font-bold">2048 최종 달성</td>
               </tr>
             </tbody>
           </table>
@@ -209,28 +209,30 @@
         </div>
       </div>
 
-      <footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
-        <div class="space-y-0.5">
-          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
-          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
-        </div>
-        <div class="flex items-center gap-3 font-semibold text-slate-400">
-          <a href="../about.html" class="hover:text-emerald-400 transition-colors">About</a>
-        <span>·</span>
-        <a href="../contact.html" class="hover:text-emerald-400 transition-colors">Contact</a>
-        <span>·</span>
-        <a href="../privacy.html" class="hover:text-emerald-400 transition-colors">Privacy</a>
-        <span>·</span>
-        <a href="../terms.html" class="hover:text-emerald-400 transition-colors">Terms</a>
-        </div>
+      <footer class="w-full max-w-2xl mx-auto px-4 py-8 mt-12 border-t border-slate-800/80 text-xs text-slate-500">
+    <div class="space-y-4 text-center">
+      <!-- 1행: 가로로 넉넉하게 펼쳐진 정책 링크 -->
+      <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-medium text-slate-400">
+        <a href="/ko/about.html" class="hover:text-emerald-400 transition">소개</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/contact.html" class="hover:text-emerald-400 transition">문의</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/privacy.html" class="hover:text-emerald-400 transition">개인정보처리방침</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/terms.html" class="hover:text-emerald-400 transition">이용약관</a>
+      </nav>
+      <!-- 2행: 서비스 정체성 안내 -->
+      <div class="space-y-1">
+        <p class="font-semibold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+        <p class="text-[11px] text-slate-600">100% 브라우저 메모리 연산 · 서버 전송 0바이트 Zero Server Latency</p>
       </div>
-    </footer>
+    </div>
+  </footer>
 
   </div>
 
   <!-- 순수 모듈 전역 로드 (No-CORS) -->
-  <script src="../js/utils/game2048.js"></script>
+  <script src="../../js/utils/game2048.js"></script>
 
   <script>
     let board = [];
@@ -269,10 +271,10 @@
     }
 
     function handleInput(dir) {
-      const { newBoard, total점수, moved } = Game2048.move(board, dir);
+      const { newBoard, totalScore, moved } = Game2048.move(board, dir);
       if (moved) {
         board = Game2048.addRandomTile(newBoard);
-        score += total점수;
+        score += totalScore;
         scoreEl.innerText = score.toLocaleString();
         render();
 
@@ -322,15 +324,6 @@
 
     window.addEventListener('DOMContentLoaded', initGame);
   </script>
-  <script src="../js/related-tools.js"></script>
-
-    <div class="max-w-md mx-auto px-4 py-6 text-center space-y-3 text-xs text-slate-400">
-      <h3 class="font-bold text-slate-200">🎮 2048 게임 방법</h3>
-      <p class="leading-relaxed">방향키(←, ↑, →, ↓) 또는 화면을 스와이프하여 타일을 움직이세요. 같은 숫자가 적힌 두 타일이 충돌하면 하나로 합쳐져 두 배의 숫자가 됩니다. 2048 타일을 완성해 보세요!</p>
-      <div class="pt-2">
-        <a href="/ko" class="text-emerald-400 hover:underline">← ToolLab 도구 목록으로 돌아가기</a>
-      </div>
-    </div>
-    
+  <script src="../../js/related-tools-ko.js"></script>
 </body>
 </html>

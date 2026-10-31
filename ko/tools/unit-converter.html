@@ -3,397 +3,292 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <!-- SEO: 최우선 검색어 'Unit Converter' 전진 배치 및 롱테일 결합 -->
-  <title>만능 단위 변환기 (아파트 평수↔㎡·인치·무게) | ToolLab</title>
-  <meta name="description" content="아파트 평수↔제곱미터(㎡), 인치↔cm, 파운드↔kg, 금 1돈/고기 1근 등 실생활과 부동산 단위를 즉시 상호 변환합니다." />
-  <meta name="keywords" content="unit converter, metric to imperial converter, precision unit converter, converter units of measure, imperial system calculator, convert to imperial units, imperial converter, sqft to sqm, lbs to kg, feet to meters, fahrenheit to celsius, ToolLab" />
-  
-  <!-- Tailwind CDN & Config -->
+  <title>만능 단위 변환기 (아파트 평수↔㎡·인치·금 1돈·무게) | ToolLab</title>
+  <meta name="description" content="서버 전송 없이 100% 브라우저 메모리 안에서 아파트 평수↔제곱미터(㎡), 인치↔cm, 파운드↔kg, 금 1돈/고기 1근 등 실생활과 부동산 단위를 실시간 상호 변환합니다." />
+  <meta name="keywords" content="단위변환기, 평수계산기, 아파트평수계산, 평제곱미터변환, 인치cm변환, 파운드kg변환, 금1돈무게, 고기1근무게, 화씨섭씨변환" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/unit-converter.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       darkMode: 'class'
     }
   </script>
-
-  <!-- Open Graph & Rich Snippets -->
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="ToolLab" />
-  <meta property="og:title" content="Free Unit Converter - Metric to Imperial & Precision Conversion" />
-  <meta property="og:description" content="Fast, high-precision online unit converter. Instant local browser calculation with zero server latency." />
-  <meta property="og:url" content="https://toollab.org/tools/unit-converter.html" />
-  <meta property="og:image" content="https://toollab.org/og-image.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Free Unit Converter - Metric to Imperial & Precision Conversion" />
-  <meta name="twitter:description" content="Fast, high-precision online unit converter. Instant local browser calculation with zero server latency." />
-  <meta name="twitter:image" content="https://toollab.org/og-image.png" />
-  <link rel="canonical" href="https://toollab.org/tools/unit-converter.html" />
-
-  <!-- Schema.org FAQ & SoftwareApplication JSON-LD (검색 리치 스니펫) -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebApplication",
-        "name": "ToolLab Unit Converter",
-        "url": "https://toollab.org/tools/unit-converter.html",
-        "applicationCategory": "UtilitiesApplication",
-        "operatingSystem": "All",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        },
-        "description": "Accurate, client-side online unit converter for metric and imperial measurement systems."
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "How do I accurately convert metric to imperial units?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Select your measurement category, enter the value, and select your target imperial unit. The calculator uses standardized international conversion ratios (e.g., 1 inch = 25.4 mm, 1 lb = 0.45359237 kg) to deliver exact results."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Does this tool require data transmission to an external server?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "No. All calculations execute 100% locally inside your browser via client-side JavaScript. No data or input values are ever sent across a network, ensuring zero latency and total privacy."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is the difference between an Acre and a Hectare?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "An acre (standard US/UK land unit) is approximately 4,046.86 m². A hectare (metric standard) is exactly 10,000 m² (about 2.471 acres), making a hectare roughly 2.5 times larger than an acre."
-            }
-          }
-        ]
-      }
-    ]
-  }
-  </script>
-  
-  <!-- ToolLab Analytics Tracker -->
-  <script src="/js/analytics.js"></script>
-  <!-- Google AdSense Official Loader -->
+  <script src="../../js/analytics.js"></script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1512367949140208" crossorigin="anonymous"></script>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
-  <div class="max-w-2xl mx-auto">
-    
-    <!-- Main Converter Card -->
-    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 md:p-7">
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+
+  <main class="max-w-2xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <!-- 메인 변환기 카드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl shadow-xl space-y-5">
       
-      <!-- Header Navigation -->
-      <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-800">
+      <!-- 상단 헤더 -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
         <div class="flex items-center gap-2.5">
-          <a href="/ko" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-            </svg>
+          <a href="/ko" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-emerald-400 transition" title="도구 목록으로 돌아가기">
+            🏠
           </a>
           <div>
-            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
-            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Free Online Unit Converter</h1>
+            <span class="text-[10px] text-slate-500 font-bold tracking-wider block">TOOLLAB.ORG</span>
+            <h1 class="text-base sm:text-lg font-bold text-slate-100">만능 단위 변환기</h1>
           </div>
         </div>
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-950/80 text-blue-400 border border-blue-800">
-          SI Standard
+        <span class="text-[11px] font-mono px-2.5 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 font-semibold">
+          SI &amp; 생활 단위 규격
         </span>
       </div>
 
-      <!-- Category Tab Bar -->
-      <div class="grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-xl text-xs font-bold text-slate-400 mb-6 border border-slate-800/80">
-        <button class="cat-btn py-2 rounded-lg transition-colors bg-blue-600 text-white shadow" data-cat="area">Area</button>
-        <button class="cat-btn py-2 rounded-lg transition-colors hover:text-slate-200" data-cat="length">Length</button>
-        <button class="cat-btn py-2 rounded-lg transition-colors hover:text-slate-200" data-cat="weight">Weight</button>
-        <button class="cat-btn py-2 rounded-lg transition-colors hover:text-slate-200" data-cat="volume">Volume</button>
-        <button class="cat-btn py-2 rounded-lg transition-colors hover:text-slate-200" data-cat="temperature">Temp</button>
+      <!-- 카테고리 탭 바 (5종) -->
+      <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5 bg-slate-950/80 p-1.5 rounded-2xl text-xs font-bold border border-slate-800">
+        <button class="cat-btn py-2.5 rounded-xl transition-all bg-emerald-600 text-white shadow-sm cursor-pointer" data-cat="area">면적 (평·㎡)</button>
+        <button class="cat-btn py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer" data-cat="length">길이 (cm·인치)</button>
+        <button class="cat-btn py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer" data-cat="weight">무게 (kg·근·돈)</button>
+        <button class="cat-btn py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer" data-cat="volume">부피 (L·gal)</button>
+        <button class="cat-btn py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer col-span-2 sm:col-span-1" data-cat="temperature">온도 (℃·℉)</button>
       </div>
 
-      <!-- Conversion Interactive Inputs -->
+      <!-- 양방향 변환 인터랙티브 입력 공간 -->
       <div class="space-y-4">
-        <!-- Input Value -->
-        <div class="p-4 bg-slate-950/70 border border-slate-800 rounded-xl space-y-2">
+        <!-- 1. 변환 기준값 입력 -->
+        <div class="p-4 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-2">
           <div class="flex justify-between items-center text-xs font-semibold text-slate-400">
-            <span>From</span>
-            <select id="fromUnit" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-slate-200 font-bold outline-none focus:border-blue-500"></select>
+            <span>기준 단위 (From)</span>
+            <select id="fromUnit" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-slate-200 font-bold outline-none focus:border-emerald-500 cursor-pointer text-xs"></select>
           </div>
-          <input type="number" id="fromValue" value="1000" class="w-full text-2xl font-black bg-transparent text-slate-100 outline-none focus:text-blue-400" placeholder="0" />
+          <input type="number" id="fromValue" value="84" class="w-full text-2xl sm:text-3xl font-black bg-transparent text-slate-100 outline-none focus:text-emerald-400 font-mono" placeholder="0" />
         </div>
 
-        <!-- Swap Button -->
+        <!-- 스왑(단위 맞바꾸기) 버튼 -->
         <div class="flex justify-center -my-2 relative z-10">
-          <button id="swapBtn" class="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 shadow-md hover:border-blue-500 hover:text-blue-400 flex items-center justify-center text-slate-300 transition-all active:scale-95" title="Swap Units">
+          <button id="swapBtn" class="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 shadow-md hover:border-emerald-500 hover:text-emerald-400 flex items-center justify-center text-slate-300 transition active:scale-95 cursor-pointer" title="단위 서로 바꾸기">
             ⇅
           </button>
         </div>
 
-        <!-- Output Result -->
-        <div class="p-4 bg-blue-950/30 border border-blue-900/60 rounded-xl space-y-2">
-          <div class="flex justify-between items-center text-xs font-semibold text-blue-400">
-            <span>Result</span>
-            <select id="toUnit" class="bg-slate-900 border border-blue-800 rounded-lg px-2.5 py-1 text-blue-300 font-bold outline-none focus:border-blue-400"></select>
+        <!-- 2. 변환 결과 출력 -->
+        <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800/90 space-y-2">
+          <div class="flex justify-between items-center text-xs font-semibold text-emerald-400">
+            <span>변환 결과 (To)</span>
+            <select id="toUnit" class="bg-slate-900 border border-emerald-800/60 rounded-xl px-3 py-1.5 text-emerald-300 font-bold outline-none focus:border-emerald-400 cursor-pointer text-xs"></select>
           </div>
-          <div id="toValue" class="text-2xl font-black text-blue-400 truncate">0</div>
+          <div id="toValue" class="text-2xl sm:text-3xl font-black text-emerald-400 font-mono truncate">0</div>
         </div>
       </div>
 
-      <!-- Multiple Unit Overview Grid -->
-      <div class="mt-6 pt-5 border-t border-slate-800">
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">Instant Multi-Unit Comparison</h3>
+      <!-- 실시간 다중 단위 비교 그리드 -->
+      <div class="pt-4 border-t border-slate-800">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">다른 주요 단위로 즉시 환산</h3>
         <div id="multiResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs"></div>
       </div>
 
     </div>
 
-    <!-- SEO / Reference Article Section -->
-    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
-      
-      <!-- 0. Comprehensive Measurement Overview (SEO Boost) -->
-      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
-        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-blue-400"></span>
-          Precision Multi-Unit Conversion Engine
-        </h2>
-        <p class="text-xs text-slate-300 leading-relaxed">
-          ToolLab provides an instant, universal converter for all standard units of measure. Whether you need to convert imperial units to metric equivalents for engineering, calculate room floor plans (sq ft to m²), or check international baking temperatures, our calculator computes high-precision conversions instantly in your browser with zero latency.
-        </p>
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 text-[11px] text-slate-400">
-          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Length:</strong> mm, cm, m, km, in, ft, yd, mi</div>
-          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Weight:</strong> mg, g, kg, oz, lb, ton</div>
-          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Area:</strong> sq ft, sq m, acre, hectare</div>
-          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Volume:</strong> mL, L, gal, fl oz, cup</div>
-          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Temperature:</strong> °C, °F, Kelvin</div>
-          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Privacy:</strong> 100% Client-side JS</div>
-        </div>
-      </section>
-
-      <!-- 1. Real Estate & Floor Space Reference Table -->
-      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
-        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-          Standard Area & Real Estate Conversion Reference
-        </h2>
-        <p class="text-xs text-slate-400 mb-4">Quick lookup guide for architectural, residential, and commercial floor plans across international standards.</p>
-        
-        <div class="overflow-x-auto">
-          <table class="w-full text-xs text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
-                <th class="p-2.5">Square Feet (sq ft)</th>
-                <th class="p-2.5">Square Meters (m²)</th>
-                <th class="p-2.5">Square Yards (yd²)</th>
-                <th class="p-2.5">Typical Context</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-800/60 text-slate-300">
-              <tr>
-                <td class="p-2.5 font-bold text-slate-100">500 sq ft</td>
-                <td class="p-2.5 text-blue-400 font-medium">46.45 m²</td>
-                <td class="p-2.5 text-slate-200">55.56 yd²</td>
-                <td class="p-2.5 text-slate-400">Studio / 1-Bedroom Apartment</td>
-              </tr>
-              <tr>
-                <td class="p-2.5 font-bold text-slate-100">800 sq ft</td>
-                <td class="p-2.5 text-blue-400 font-medium">74.32 m²</td>
-                <td class="p-2.5 text-slate-200">88.89 yd²</td>
-                <td class="p-2.5 text-slate-400">Standard 2-Bedroom Condo</td>
-              </tr>
-              <tr>
-                <td class="p-2.5 font-bold text-slate-100">1,200 sq ft</td>
-                <td class="p-2.5 text-blue-400 font-medium">111.48 m²</td>
-                <td class="p-2.5 text-slate-200">133.33 yd²</td>
-                <td class="p-2.5 text-slate-400">Spacious 3-Bedroom Family Home</td>
-              </tr>
-              <tr>
-                <td class="p-2.5 font-bold text-slate-100">2,500 sq ft</td>
-                <td class="p-2.5 text-blue-400 font-medium">232.26 m²</td>
-                <td class="p-2.5 text-slate-200">277.78 yd²</td>
-                <td class="p-2.5 text-slate-400">Large Single-Family Detached Residence</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- 2. Essential Cross-Border Conversion Guide -->
-      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
-        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+    <!-- 1. 아파트 평수 ↔ ㎡ 및 실생활 단위 환산 벤치마크 표 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <div class="space-y-1">
+        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          Essential Practical Conversion Guides
+          <span>주요 아파트 전용면적(㎡) vs 공급 평형 환산 기준표</span>
         </h2>
-        
-        <div class="space-y-2.5 text-xs leading-relaxed">
-          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
-            <h3 class="font-bold text-slate-200 mb-1">1. Weight & Mass: Pounds (lb) vs. Kilograms (kg)</h3>
-            <p>One pound corresponds to exactly 0.45359237 kg. When shipping internationally or traveling, multiply kilograms by 2.2 for an approximate weight in pounds (e.g., a 23 kg airline check-in allowance is roughly 50.7 lbs).</p>
-          </div>
-
-          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
-            <h3 class="font-bold text-slate-200 mb-1">2. Culinary Temperature: Fahrenheit (°F) vs. Celsius (°C)</h3>
-            <p>Baking instructions in US recipes use Fahrenheit, while European standards use Celsius. Common benchmarks include 350°F (177°C moderate oven), 400°F (204°C hot oven), and 450°F (232°C high-heat roasting).</p>
-          </div>
-
-          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
-            <h3 class="font-bold text-slate-200 mb-1">3. Liquid Measures: US Fluid Ounces vs. Metric Milliliters</h3>
-            <p>One US fluid ounce equals 29.57 mL. Beverage sizes, skincare packaging, and cooking oils regularly rely on this measurement (e.g., 16 US fl oz is roughly 473 mL, standard US pint).</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- 3. Frequently Asked Questions -->
-      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
-        <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
-          Frequently Asked Questions (FAQ)
-        </h2>
-
-        <div class="space-y-3.5 text-xs">
-          <div>
-            <h3 class="font-bold text-slate-200 mb-1">Q. Does this tool require data transmission to an external server?</h3>
-            <p class="text-slate-400">No. All calculations execute 100% locally inside your browser via client-side JavaScript. No data or input values are ever sent across a network, ensuring zero latency and total privacy.</p>
-          </div>
-          <div class="border-t border-slate-800 pt-3">
-            <h3 class="font-bold text-slate-200 mb-1">Q. How accurate are the conversion coefficients used here?</h3>
-            <p class="text-slate-400">The conversion rates strictly adhere to international definitions set by the General Conference on Weights and Measures (CGPM) and the National Institute of Standards and Technology (NIST).</p>
-          </div>
-          <div class="border-t border-slate-800 pt-3">
-            <h3 class="font-bold text-slate-200 mb-1">Q. What is the difference between an Acre and a Hectare?</h3>
-            <p class="text-slate-400">An acre (standard US/UK land unit) is approximately 4,046.86 m². A hectare (metric standard) is exactly 10,000 m² (about 2.471 acres), making a hectare roughly 2.5 times larger than an acre.</p>
-          </div>
-        </div>
-      </section>
-
-    </article>
-
-    <!-- Standard Minimal Footer -->
-    
-      <!-- ToolLab Clean Ad Unit -->
-      <div class="my-8 flex flex-col items-center justify-center">
-        <span class="text-[10px] font-mono tracking-widest text-slate-600 uppercase mb-1.5">ADVERTISEMENT</span>
-        <div class="w-full max-w-3xl min-h-[100px] sm:min-h-[250px] bg-slate-900/40 border border-slate-800/80 rounded-2xl flex items-center justify-center overflow-hidden">
-          <ins class="adsbygoogle"
-               style="display:block"
-               data-ad-client="ca-pub-1512367949140208"
-               data-ad-slot="5185318921"
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
-          <script>
-               (adsbygoogle = window.adsbygoogle || []).push({});
-          </script>
-        </div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          대한민국 주택 분양 및 부동산 실거래에서 가장 많이 통용되는 전용면적과 실생활 공급 평형입니다.
+        </p>
       </div>
 
-      
-    <!-- 한국어 SEO 가이드 & FAQ 복합 섹션 -->
-    <section class="max-w-4xl mx-auto px-4 py-8 space-y-6 border-t border-slate-800/80 mt-12">
-      <div class="space-y-3">
-        <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
-          <span class="text-emerald-400">📖</span>
-          <span>부동산 법정계량단위와 일상 단위 환산 팁</span>
-        </h2>
-        <p class="text-xs text-slate-400 leading-relaxed">국내 부동산 거래에서는 법정계량단위인 제곱미터(㎡) 사용이 의무화되어 있지만, 실생활에서는 여전히 '34평형', '24평형' 같은 평 단위가 훨씬 익숙합니다. 1평은 정확히 약 3.305785㎡입니다.</p>
-        <p class="text-xs text-slate-400 leading-relaxed">해외 직구나 해외 규격 제품을 구매할 때 자주 마주치는 인치(inch), 피트(ft), 파운드(lb)뿐만 아니라 전통 시장에서 통용되는 금 1돈(3.75g), 고기 1근(600g)도 간편하게 상호 변환할 수 있습니다.</p>
+      <div class="overflow-x-auto rounded-xl border border-slate-800">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-950 text-slate-400 font-semibold border-b border-slate-800">
+            <tr>
+              <th class="p-3">전용면적 (㎡)</th>
+              <th class="p-3">순수 전용 평수</th>
+              <th class="p-3">통상 분양 공급평형</th>
+              <th class="p-3">주요 주거 형태</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-300 font-mono">
+            <tr>
+              <td class="p-3 font-bold text-slate-200">59㎡</td>
+              <td class="p-3 text-emerald-400 font-bold">17.85 평</td>
+              <td class="p-3 text-slate-100 font-bold">24 ~ 25평형</td>
+              <td class="p-3 font-sans text-slate-400">신혼부부 및 2~3인 가구 표준</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200">84㎡ (국민평형)</td>
+              <td class="p-3 text-emerald-400 font-bold">25.41 평</td>
+              <td class="p-3 text-slate-100 font-bold">33 ~ 34평형</td>
+              <td class="p-3 font-sans text-slate-400">가장 선호도 높은 3~4인 표준 주거</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200">101㎡</td>
+              <td class="p-3 text-sky-400 font-bold">30.55 평</td>
+              <td class="p-3 text-slate-100 font-bold">39 ~ 40평형</td>
+              <td class="p-3 font-sans text-slate-400">중대형 여유 공간 주거</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200">114㎡</td>
+              <td class="p-3 text-amber-400 font-bold">34.48 평</td>
+              <td class="p-3 text-slate-100 font-bold">45 ~ 46평형</td>
+              <td class="p-3 font-sans text-slate-400">대형 패밀리 하우스</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+    </div>
 
-      <!-- 애드센스 인피드 슬롯 -->
-      <div class="my-6 p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
-        <div class="text-[11px] text-slate-600 font-mono tracking-wider mb-2">SPONSORED</div>
-        <div class="min-h-[100px] flex items-center justify-center text-xs text-slate-600">
-          <!-- 애드센스 반응형 광고 태그 자리 -->
-          <span>반응형 광고 영역 (Google AdSense)</span>
+    <!-- 2. 실생활 단위 상식 가이드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-3 text-xs leading-relaxed">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>알아두면 유용한 일상 &amp; 해외직구 단위 상식</span>
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-400 pt-1">
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">1. 고기 1근(600g) vs 채소 1근(375g/400g)</strong>
+          <p>전통시장에서 고기 1근은 600g이지만 채소나 과일, 건어물 1근은 관습에 따라 375g이나 400g을 의미하므로 품목에 따른 구분이 필요합니다.</p>
+        </div>
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">2. 해외직구 신발·의류: 인치(in)와 파운드(lb)</strong>
+          <p>1인치는 정확히 2.54cm이며 1파운드는 약 0.453kg입니다. 해외 의류 허리둘레나 가전 모니터 크기(32인치=약 81cm) 계산 시 유용합니다.</p>
         </div>
       </div>
+    </div>
 
-      <div class="space-y-3 pt-4"><h3 class="text-sm font-bold text-slate-200">자주 묻는 질문 (FAQ)</h3>
-        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
-          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
-            <span>Q. 아파트 84㎡는 몇 평인가요?</span>
-            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
-          </summary>
-          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">전용면적 84㎡는 약 25.4평이며, 공용면적을 포함한 공급면적 기준으로는 흔히 '국민평형 34평형'으로 부릅니다.</p>
-        </details>
-        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
-          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
-            <span>Q. 금 1돈과 고기 1근의 무게는 얼마인가요?</span>
-            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
-          </summary>
-          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">순금 1돈은 3.75g이며, 정육점에서 고기 1근은 600g, 채소류 1근은 보통 375g 또는 400g을 뜻합니다.</p>
-        </details></div>
+    <!-- 3. 오픈형 FAQ (단일 일관 구조) -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>자주 묻는 질문 (FAQ)</span>
+      </h2>
 
-      <!-- 한국어 관련 툴 내부 링크 추천 바 -->
-      <div class="pt-8 border-t border-slate-800/60">
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">함께 쓰면 유용한 추천 도구</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-          <a href="/ko/tools/unit-converter.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
-            <span>📐</span> <span>단위 변환기</span>
-          </a>
-          <a href="/ko/tools/percentage-calc.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
-            <span>🏷️</span> <span>퍼센트 계산기</span>
-          </a>
-          <a href="/ko/tools/image-compressor.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
-            <span>📷</span> <span>이미지 압축기</span>
-          </a>
-          <a href="/ko" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
-            <span>⚡</span> <span>전체 도구 보기</span>
-          </a>
+      <div class="space-y-4 text-xs">
+        <div>
+          <h3 class="font-bold text-slate-200 mb-1">Q. 아파트 전용면적 84㎡를 왜 34평이라고 부르나요?</h3>
+          <p class="text-slate-400 leading-relaxed">84㎡를 순수 환산하면 25.4평(전용면적)이지만, 아파트 분양 시에는 복도, 계단, 엘리베이터 등 주거공용면적 약 8~9평이 더해져 총 공급면적이 약 33~34평이 되기 때문입니다.</p>
+        </div>
+        <div class="border-t border-slate-800 pt-3">
+          <h3 class="font-bold text-slate-200 mb-1">Q. 순금 1돈의 정확한 무게는 얼마인가요?</h3>
+          <p class="text-slate-400 leading-relaxed">순금 1돈은 미터법 기준으로 정확히 3.75g입니다. 금 10돈(1냥)은 37.5g입니다.</p>
         </div>
       </div>
-    </section>
-    
-<footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
-        <div class="space-y-0.5">
-          <p class="font-bold text-slate-400">ToolLab.org · Ultra-lightweight Utility Toolkit</p>
-          <p class="text-[11px]">Compliant with CGPM International System of Units (SI) & NIST conversion standards.</p>
-        </div>
-        <div class="flex items-center gap-3 font-semibold text-slate-400">
-          <a href="../about.html" class="hover:text-emerald-400 transition-colors">About</a>
-        <span>·</span>
-        <a href="../contact.html" class="hover:text-emerald-400 transition-colors">Contact</a>
-        <span>·</span>
-        <a href="../privacy.html" class="hover:text-emerald-400 transition-colors">Privacy</a>
-        <span>·</span>
-        <a href="../terms.html" class="hover:text-emerald-400 transition-colors">Terms</a>
-        </div>
+    </div>
+
+    <!-- 광고 슬롯 -->
+    <div class="p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
+      <div class="text-[10px] text-slate-600 font-mono tracking-wider mb-2">ADVERTISEMENT</div>
+      <div class="min-h-[80px] flex items-center justify-center text-xs text-slate-600">
+        <span>반응형 광고 영역 (Google AdSense)</span>
       </div>
-    </footer>
+    </div>
+  </main>
 
-  </div>
+  <!-- 가로형 한국어 표준 푸터 -->
+  <footer class="w-full max-w-4xl mx-auto px-4 py-8 mt-12 border-t border-slate-800/80 text-xs text-slate-500">
+    <div class="space-y-4 text-center">
+      <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-medium text-slate-400">
+        <a href="/ko/about.html" class="hover:text-emerald-400 transition">소개</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/contact.html" class="hover:text-emerald-400 transition">문의</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/privacy.html" class="hover:text-emerald-400 transition">개인정보처리방침</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/terms.html" class="hover:text-emerald-400 transition">이용약관</a>
+      </nav>
+      <div class="space-y-1">
+        <p class="font-semibold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+        <p class="text-[11px] text-slate-600">국제도량형총회(CGPM) SI 및 미국 국립표준기술원(NIST) 표준 준수 · 100% 브라우저 메모리 연산</p>
+      </div>
+    </div>
+  </footer>
 
-  <!-- Decoupled Pure Engine -->
-  <script src="../js/utils/unitConverter.js"></script>
-
-  <!-- UI Event Binding -->
+  <!-- 로직 스크립트: 단위 변환 엔진 + 한글 추천 도구 모듈 -->
+  <script src="../../js/utils/unitConverter.js"></script>
   <script>
     let currentCat = "area";
 
+    // 한국 사용자 친화적 단위 라벨 매핑 맵
+    const KO_UNIT_LABELS = {
+      area: {
+        sqm: "제곱미터 (㎡)",
+        pyeong: "평 (약 3.3㎡)",
+        sqft: "제곱피트 (sq ft)",
+        sqin: "제곱인치 (sq in)",
+        sqyd: "제곱야드 (sq yd)",
+        acre: "에이커 (ac)",
+        hectare: "헥타르 (ha)",
+        sqkm: "제곱킬로미터 (km²)",
+        sqmi: "제곱마일 (sq mi)"
+      },
+      length: {
+        m: "미터 (m)",
+        cm: "센티미터 (cm)",
+        mm: "밀리미터 (mm)",
+        inch: "인치 (in)",
+        ft: "피트 (ft)",
+        yd: "야드 (yd)",
+        km: "킬로미터 (km)",
+        mi: "마일 (mi)"
+      },
+      weight: {
+        kg: "킬로그램 (kg)",
+        g: "그램 (g)",
+        mg: "밀리그램 (mg)",
+        geun: "근 (고기 1근, 600g)",
+        don: "돈 (순금 1돈, 3.75g)",
+        lb: "파운드 (lb)",
+        oz: "온스 (oz)",
+        ton: "톤 (t)"
+      },
+      volume: {
+        l: "리터 (L)",
+        ml: "밀리리터 (mL)",
+        gal_us: "갤런 (미국 액량, gal)",
+        floz_us: "액량 온스 (fl oz)",
+        cuft: "세제곱피트 (ft³)",
+        cum: "세제곱미터 (m³)"
+      },
+      temperature: {
+        C: "섭씨도 (℃)",
+        F: "화씨도 (℉)",
+        K: "켈빈 (K)"
+      }
+    };
+
     function populateSelects() {
       const data = UNIT_DATA[currentCat];
+      const koLabels = KO_UNIT_LABELS[currentCat] || data.labels;
       const fromSel = document.getElementById("fromUnit");
       const toSel = document.getElementById("toUnit");
       fromSel.innerHTML = "";
       toSel.innerHTML = "";
 
-      Object.entries(data.labels).forEach(([k, label]) => {
+      Object.entries(koLabels).forEach(([k, label]) => {
         fromSel.add(new Option(label, k));
         toSel.add(new Option(label, k));
       });
 
-      fromSel.value = data.defaultFrom;
-      toSel.value = data.defaultTo;
-      document.getElementById("fromValue").value = data.defaultVal;
+      // 한국 사용자 기본 프리셋
+      if (currentCat === "area") {
+        fromSel.value = "sqm";
+        toSel.value = "pyeong";
+        document.getElementById("fromValue").value = 84;
+      } else if (currentCat === "length") {
+        fromSel.value = "cm";
+        toSel.value = "inch";
+        document.getElementById("fromValue").value = 100;
+      } else if (currentCat === "weight") {
+        fromSel.value = "kg";
+        toSel.value = "geun";
+        document.getElementById("fromValue").value = 1;
+      } else if (currentCat === "volume") {
+        fromSel.value = "l";
+        toSel.value = "gal_us";
+        document.getElementById("fromValue").value = 10;
+      } else if (currentCat === "temperature") {
+        fromSel.value = "C";
+        toSel.value = "F";
+        document.getElementById("fromValue").value = 25;
+      }
     }
 
     function calculate() {
@@ -413,15 +308,15 @@
       toEl.textContent = Number(res.toFixed(6)).toLocaleString(undefined, { maximumFractionDigits: 4 });
 
       multiEl.innerHTML = "";
-      const labels = UNIT_DATA[currentCat].labels;
-      Object.keys(labels).forEach(k => {
+      const koLabels = KO_UNIT_LABELS[currentCat] || UNIT_DATA[currentCat].labels;
+      Object.keys(koLabels).forEach(k => {
         if (k !== from) {
           const v = UnitConverter.convert(currentCat, val, from, k);
           const item = document.createElement("div");
-          item.className = "bg-slate-950/80 p-2.5 rounded-lg border border-slate-800/80 flex justify-between items-center";
+          item.className = "bg-slate-950/80 p-3 rounded-xl border border-slate-800/80 flex justify-between items-center";
           item.innerHTML = `
-            <span class="text-slate-400 text-[11px]">${labels[k]}</span>
-            <span class="font-bold text-slate-200 text-xs">${Number(v.toFixed(6)).toLocaleString(undefined, { maximumFractionDigits: 4 })}</span>
+            <span class="text-slate-400 text-xs">${koLabels[k]}</span>
+            <span class="font-bold text-slate-100 text-xs font-mono">${Number(v.toFixed(6)).toLocaleString(undefined, { maximumFractionDigits: 4 })}</span>
           `;
           multiEl.appendChild(item);
         }
@@ -431,9 +326,9 @@
     document.querySelectorAll(".cat-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".cat-btn").forEach(b => {
-          b.className = "cat-btn py-2 rounded-lg transition-colors hover:text-slate-200";
+          b.className = "cat-btn py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer";
         });
-        btn.className = "cat-btn py-2 rounded-lg transition-colors bg-blue-600 text-white shadow";
+        btn.className = "cat-btn py-2.5 rounded-xl transition-all bg-emerald-600 text-white shadow-sm cursor-pointer";
         currentCat = btn.dataset.cat;
         populateSelects();
         calculate();
@@ -456,6 +351,6 @@
     populateSelects();
     calculate();
   </script>
-  <script src="../js/related-tools.js"></script>
+  <script src="../../js/related-tools-ko.js"></script>
 </body>
 </html>

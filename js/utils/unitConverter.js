@@ -12,7 +12,8 @@ const UNIT_DATA = {
       acre: "Acres (ac)",
       hectare: "Hectares (ha)",
       sqkm: "Square Kilometers (km²)",
-      sqmi: "Square Miles (sq mi)"
+      sqmi: "Square Miles (sq mi)",
+      pyeong: "Pyeong (평, 3.3㎡)"
     },
     rates: {
       sqm: 1,
@@ -22,7 +23,8 @@ const UNIT_DATA = {
       acre: 4046.8564224,
       hectare: 10000,
       sqkm: 1000000,
-      sqmi: 2589988.110336
+      sqmi: 2589988.110336,
+      pyeong: 3.305785
     },
     defaultFrom: "sqft",
     defaultTo: "sqm",
@@ -61,7 +63,9 @@ const UNIT_DATA = {
       lb: "Pounds (lb)",
       oz: "Ounces (oz)",
       st: "Stones (st)",
-      ton: "Metric Tons (t)"
+      ton: "Metric Tons (t)",
+      don: "Don (금 1돈, 3.75g)",
+      geun: "Geun (고기 1근, 600g)"
     },
     rates: {
       kg: 1,
@@ -70,7 +74,9 @@ const UNIT_DATA = {
       lb: 0.45359237,
       oz: 0.028349523125,
       st: 6.35029318,
-      ton: 1000
+      ton: 1000,
+      don: 0.00375,
+      geun: 0.6
     },
     defaultFrom: "lb",
     defaultTo: "kg",
