@@ -7,11 +7,17 @@
   <meta name="description" content="A curated suite of instant, privacy-first web utilities. Unit conversion, financial calculators, developer text formatters, browser-side media tools, and games with zero server latency." />
   <meta name="keywords" content="micro tools, client side utilities, unit converter, percentage calculator, word counter, json formatter, regex tester, image compressor, 2048 game, ToolLab" />
   <link rel="canonical" href="https://toollab.org/" />
+  
+  <!-- 다국어 SEO Hreflang 태그 (/ko 분기 대응) -->
+  <link rel="alternate" hreflang="en" href="https://toollab.org/" />
+  <link rel="alternate" hreflang="ko" href="https://toollab.org/ko" />
+  <link rel="alternate" hreflang="x-default" href="https://toollab.org/" />
+
   <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
   <meta name="google-adsense-account" content="ca-pub-1512367949140208">
   
   <!-- Open Graph -->
-<meta property="og:type" content="website" />
+  <meta property="og:type" content="website" />
   <meta property="og:site_name" content="ToolLab" />
   <meta property="og:title" content="ToolLab.org | Free Online Micro Utilities" />
   <meta property="og:description" content="Instant, client-side web tools and games. Zero server uploads, zero logins, and 100% data privacy." />
@@ -43,7 +49,7 @@
           "query-input": "required name=search_term_string"
         }
       },
-    {
+      {
         "@type": "WebApplication",
         "name": "ToolLab.org",
         "url": "https://toollab.org/",
@@ -55,7 +61,6 @@
           "priceCurrency": "USD"
         }
       },	  
-	  
       {
         "@type": "ItemList",
         "name": "ToolLab Online Utilities",
@@ -90,7 +95,7 @@
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-blue-600 selection:text-white">
 
- <!-- Top Global Header -->
+  <!-- Top Global Header -->
   <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
     <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
       <a href="/" class="flex items-center gap-3 select-none group">
@@ -142,10 +147,17 @@
         </div>
       </a>
 
-<div class="flex items-center gap-2.5">
-        <!-- 2048 게임 바로가기 버튼 복구 -->
+      <div class="flex items-center gap-2 sm:gap-2.5">
+        <!-- 한국어 허브 이동 GNB 버튼 -->
+        <a href="/ko" 
+           class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-slate-300 bg-slate-800/80 border border-slate-700 rounded-full hover:bg-slate-700 hover:text-white transition-all shadow-xs">
+          <span>🌐</span>
+          <span>한국어</span>
+        </a>
+
+        <!-- 2048 게임 바로가기 버튼 -->
         <a href="./games/2048.html" 
-           class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold text-amber-300 bg-amber-950/40 border border-amber-800/80 rounded-full hover:bg-amber-900/40 hover:border-amber-600 transition-all shadow-sm">
+           class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold text-amber-300 bg-amber-950/40 border border-amber-800/80 rounded-full hover:bg-amber-900/40 hover:border-amber-600 transition-all shadow-xs">
           <span>🎮</span>
           <span>Play 2048</span>
         </a>
@@ -179,11 +191,11 @@
 
     <!-- Category Pill Filters -->
     <div class="flex flex-wrap items-center justify-center gap-2 mt-5 text-xs font-bold text-slate-400">
-      <button class="cat-filter px-3 py-1.5 rounded-lg bg-blue-600 text-white transition-colors" data-category="all">All (18)</button>
-      <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors" data-category="finance">Financial & Math</button>
-      <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors" data-category="developer">Developer & Text</button>
-      <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors" data-category="media">Image & Media</button>
-      <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors" data-category="games">Casual Brain</button>
+      <button class="cat-filter px-3 py-1.5 rounded-lg bg-blue-600 text-white transition-colors cursor-pointer" data-category="all">All (18)</button>
+      <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors cursor-pointer" data-category="finance">Financial &amp; Math</button>
+      <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors cursor-pointer" data-category="developer">Developer &amp; Text</button>
+      <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors cursor-pointer" data-category="media">Image &amp; Media</button>
+      <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors cursor-pointer" data-category="games">Casual Brain</button>
     </div>
   </section>
 
@@ -250,19 +262,19 @@
         <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
       </div>
 	  
-	<div class="flex flex-wrap items-center justify-center md:justify-end gap-3 font-medium text-slate-400">
-	  <a href="./about.html" class="hover:text-emerald-400 transition-colors">About</a>
-	  <span>·</span>
-	  <a href="./contact.html" class="hover:text-emerald-400 transition-colors">Contact</a>
-	  <span>·</span>
-	  <a href="./privacy.html" class="hover:text-emerald-400 transition-colors">Privacy</a>
-	  <span>·</span>
-	  <a href="./terms.html" class="hover:text-emerald-400 transition-colors">Terms</a>
-	</div>
+      <div class="flex flex-wrap items-center justify-center md:justify-end gap-3 font-medium text-slate-400">
+        <a href="./about.html" class="hover:text-emerald-400 transition-colors">About</a>
+        <span>·</span>
+        <a href="./contact.html" class="hover:text-emerald-400 transition-colors">Contact</a>
+        <span>·</span>
+        <a href="./privacy.html" class="hover:text-emerald-400 transition-colors">Privacy</a>
+        <span>·</span>
+        <a href="./terms.html" class="hover:text-emerald-400 transition-colors">Terms</a>
+      </div>
     </div>
   </footer>
 
-  <!-- Search & Filter Logic -->
+  <!-- Search & Filter Logic with Defensive Debounce -->
   <script>
     const TOOLS = [
       // Finance & Math
@@ -443,66 +455,85 @@
 
     let currentCat = "all";
     let searchQuery = "";
+    let debounceTimer = null;
 
     function renderTools() {
-      const filtered = TOOLS.filter(tool => {
-        const matchesCat = currentCat === "all" || tool.category === currentCat;
-        const q = searchQuery.toLowerCase().trim();
-        const matchesQuery = !q || 
-          tool.title.toLowerCase().includes(q) || 
-          tool.desc.toLowerCase().includes(q) || 
-          tool.keywords.toLowerCase().includes(q);
-        return matchesCat && matchesQuery;
-      });
+      try {
+        const filtered = TOOLS.filter(tool => {
+          const matchesCat = currentCat === "all" || tool.category === currentCat;
+          const q = searchQuery.toLowerCase().trim();
+          const matchesQuery = !q || 
+            tool.title.toLowerCase().includes(q) || 
+            tool.desc.toLowerCase().includes(q) || 
+            tool.keywords.toLowerCase().includes(q);
+          return matchesCat && matchesQuery;
+        });
 
-      grid.innerHTML = "";
+        grid.innerHTML = "";
 
-      if (filtered.length === 0) {
-        noResults.classList.remove("hidden");
-        return;
-      }
-      noResults.classList.add("hidden");
+        if (filtered.length === 0) {
+          noResults.classList.remove("hidden");
+          return;
+        }
+        noResults.classList.add("hidden");
 
-      filtered.forEach(tool => {
-        const card = document.createElement("a");
-        card.href = tool.path;
-        card.className = "group p-5 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-2xl transition-all shadow-sm hover:shadow-lg hover:shadow-blue-950/30 flex flex-col justify-between";
-        card.innerHTML = `
-          <div>
-            <div class="flex items-center justify-between gap-2 mb-2.5">
-              <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-400 group-hover:text-blue-400 transition-colors">
-                ${tool.badge}
-              </span>
-              <svg class="w-4 h-4 text-slate-600 group-hover:text-blue-400 transition-colors transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
+        filtered.forEach(tool => {
+          const card = document.createElement("a");
+          card.href = tool.path;
+          card.className = "group p-5 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-2xl transition-all shadow-sm hover:shadow-lg hover:shadow-blue-950/30 flex flex-col justify-between";
+          card.innerHTML = `
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2.5">
+                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-400 group-hover:text-blue-400 transition-colors">
+                  ${tool.badge}
+                </span>
+                <svg class="w-4 h-4 text-slate-600 group-hover:text-blue-400 transition-colors transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </div>
+              <h3 class="text-base font-bold text-slate-100 group-hover:text-blue-400 transition-colors">
+                ${tool.title}
+              </h3>
+              <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                ${tool.desc}
+              </p>
             </div>
-            <h3 class="text-base font-bold text-slate-100 group-hover:text-blue-400 transition-colors">
-              ${tool.title}
-            </h3>
-            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
-              ${tool.desc}
-            </p>
-          </div>
-          <div class="mt-4 pt-3 border-t border-slate-800/60 flex items-center text-[11px] font-medium text-slate-500 group-hover:text-slate-300 transition-colors">
-            Launch Tool &rarr;
-          </div>
-        `;
-        grid.appendChild(card);
-      });
+            <div class="mt-4 pt-3 border-t border-slate-800/60 flex items-center text-[11px] font-medium text-slate-500 group-hover:text-slate-300 transition-colors">
+              Launch Tool &rarr;
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Tool rendering error:", err);
+      }
     }
 
+    // 200ms Debounce 적용
     searchInput.addEventListener("input", (e) => {
-      searchQuery = e.target.value;
-      renderTools();
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        searchQuery = e.target.value;
+        renderTools();
+      }, 200);
+    });
+
+    // 한글 IME 엔터 중복 트리거 방어
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        if (e.isComposing) return;
+        clearTimeout(debounceTimer);
+        searchQuery = e.target.value;
+        renderTools();
+      }
     });
 
     catButtons.forEach(btn => {
       btn.addEventListener("click", () => {
         catButtons.forEach(b => {
-          b.className = "cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors";
+          b.className = "cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors cursor-pointer";
         });
-        btn.className = "cat-filter px-3 py-1.5 rounded-lg bg-blue-600 text-white transition-colors";
+        btn.className = "cat-filter px-3 py-1.5 rounded-lg bg-blue-600 text-white transition-colors cursor-pointer";
         currentCat = btn.dataset.category;
         renderTools();
       });
