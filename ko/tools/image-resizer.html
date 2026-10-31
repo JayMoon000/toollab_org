@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>이미지 일괄 리사이저 (사진 크기·해상도 조절) | ToolLab</title>
+  <meta name="description" content="서버 업로드 없이 브라우저 메모리 안에서 사진 크기를 원하는 가로/세로 픽셀이나 배율로 일괄 조절합니다." />
+  <meta name="keywords" content="이미지리사이즈, 사진크기조절, 해상도변경, 픽셀조절, 사진비율고정, 이미지변환" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/image-resizer.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../../js/analytics.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
+        <span class="text-slate-700">|</span>
+        <h1 class="text-base font-bold text-slate-100">이미지 일괄 리사이저</h1>
+      </div>
+      <span class="text-xs text-emerald-400 font-mono">Canvas 초고속 스케일링</span>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <div id="dropZone" class="border-2 border-dashed border-slate-700 hover:border-emerald-500 rounded-3xl p-8 text-center bg-slate-900/50 hover:bg-slate-900/80 transition cursor-pointer space-y-2">
+      <div class="text-3xl text-emerald-400">📐</div>
+      <p class="text-sm font-bold text-slate-200">리사이즈할 사진을 여기에 끌어다 놓거나 클릭하여 선택하세요</p>
+      <p class="text-xs text-slate-500">JPG, PNG, WebP 지원 (최대 30MB)</p>
+      <input type="file" id="fileInput" accept="image/*" class="hidden" />
+    </div>
+
+    <div id="editorPanel" class="hidden p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="space-y-1.5">
+          <label class="text-xs text-slate-400 font-semibold">가로 너비 (Width, px)</label>
+          <input type="number" id="widthInput" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm outline-none focus:border-emerald-500 text-slate-100" />
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-xs text-slate-400 font-semibold">세로 높이 (Height, px)</label>
+          <input type="number" id="heightInput" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm outline-none focus:border-emerald-500 text-slate-100" />
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <input type="checkbox" id="lockRatio" checked class="w-4 h-4 accent-emerald-500 rounded cursor-pointer" />
+        <label for="lockRatio" class="text-xs text-slate-300 font-medium cursor-pointer">원본 종횡비(가로세로 비율) 고정</label>
+      </div>
+
+      <div class="p-4 bg-slate-950/60 rounded-2xl border border-slate-800/80 text-xs text-slate-400 flex justify-between items-center">
+        <span>원본 해상도: <strong id="origDim" class="text-slate-200 font-mono">0 x 0 px</strong></span>
+        <span>변경 후 해상도: <strong id="targetDim" class="text-emerald-400 font-mono">0 x 0 px</strong></span>
+      </div>
+
+      <button id="downloadBtn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition shadow-lg shadow-emerald-950/50 flex items-center justify-center gap-2 cursor-pointer">
+        <span>💾</span>
+        <span>크기 조절된 이미지 다운로드</span>
+      </button>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
+    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
+  </footer>
+
+  <script>
+    const dropZone = document.getElementById("dropZone");
+    const fileInput = document.getElementById("fileInput");
+    const editorPanel = document.getElementById("editorPanel");
+    const widthInput = document.getElementById("widthInput");
+    const heightInput = document.getElementById("heightInput");
+    const lockRatio = document.getElementById("lockRatio");
+    const origDim = document.getElementById("origDim");
+    const targetDim = document.getElementById("targetDim");
+    const downloadBtn = document.getElementById("downloadBtn");
+
+    let currentFile = null;
+    let imgObj = null;
+    let aspectRatio = 1;
+
+    dropZone.addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", (e) => {
+      if (e.target.files.length) handleFile(e.target.files[0]);
+    });
+
+    function handleFile(file) {
+      if (file.size > 30 * 1024 * 1024) {
+        alert("30MB 이하의 이미지만 처리할 수 있습니다.");
+        return;
+      }
+      currentFile = file;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        imgObj = new Image();
+        imgObj.onload = () => {
+          aspectRatio = imgObj.naturalWidth / imgObj.naturalHeight;
+          origDim.innerText = `${imgObj.naturalWidth} x ${imgObj.naturalHeight} px`;
+          widthInput.value = imgObj.naturalWidth;
+          heightInput.value = imgObj.naturalHeight;
+          updateTargetDim();
+          editorPanel.classList.remove("hidden");
+        };
+        imgObj.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateTargetDim() {
+      targetDim.innerText = `${widthInput.value || 0} x ${heightInput.value || 0} px`;
+    }
+
+    widthInput.addEventListener("input", () => {
+      if (lockRatio.checked && aspectRatio) {
+        heightInput.value = Math.round(widthInput.value / aspectRatio);
+      }
+      updateTargetDim();
+    });
+
+    heightInput.addEventListener("input", () => {
+      if (lockRatio.checked && aspectRatio) {
+        widthInput.value = Math.round(heightInput.value * aspectRatio);
+      }
+      updateTargetDim();
+    });
+
+    downloadBtn.addEventListener("click", () => {
+      const w = parseInt(widthInput.value);
+      const h = parseInt(heightInput.value);
+      if (!w || !h || w <= 0 || h <= 0) {
+        alert("유효한 해상도를 입력하세요.");
+        return;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(imgObj, 0, 0, w, h);
+
+      canvas.toBlob((blob) => {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `resized_${currentFile.name}`;
+        a.click();
+      }, currentFile.type || "image/jpeg", 0.92);
+    });
+  </script>
+</body>
+</html>

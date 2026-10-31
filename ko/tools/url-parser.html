@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>URL 파서 &amp; 쿼리 파라미터(UTM) 분석기 | ToolLab</title>
+  <meta name="description" content="복잡한 URL을 프로토콜, 호스트, 경로, 포트별로 분해하고 마케팅용 UTM 쿼리스트링을 브라우저에서 시각적으로 편집합니다." />
+  <meta name="keywords" content="url파서, 쿼리스트링분석, utm파라미터, url디코딩, url분석기" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/url-parser.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../../js/analytics.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
+        <span class="text-slate-700">|</span>
+        <h1 class="text-base font-bold text-slate-100">URL 파서 &amp; 쿼리 분석기</h1>
+      </div>
+      <span class="text-xs text-emerald-400 font-mono">RFC 3986 표준</span>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <div class="space-y-2">
+      <label class="text-xs font-semibold text-slate-400">분석할 URL 입력</label>
+      <input type="text" id="urlInput" value="https://toollab.org/ko?utm_source=naver&utm_medium=blog&utm_campaign=launch"
+        placeholder="https://example.com/path?key=val"
+        class="w-full p-4 bg-slate-900 border border-slate-800 rounded-2xl text-xs font-mono text-slate-100 outline-none focus:border-emerald-500 transition shadow-inner" />
+    </div>
+
+    <!-- URL 구조 분해 카드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <h2 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">기본 구성 요소 (Components)</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
+        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between">
+          <span class="text-slate-500">프로토콜:</span>
+          <span id="pProtocol" class="text-slate-200 font-bold"></span>
+        </div>
+        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between">
+          <span class="text-slate-500">호스트(도메인):</span>
+          <span id="pHost" class="text-slate-200 font-bold"></span>
+        </div>
+        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between">
+          <span class="text-slate-500">경로 (Path):</span>
+          <span id="pPath" class="text-slate-200 font-bold"></span>
+        </div>
+        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between">
+          <span class="text-slate-500">포트 (Port):</span>
+          <span id="pPort" class="text-slate-200 font-bold"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 쿼리 파라미터 (테이블) -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <h2 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">쿼리스트링 파라미터 (Parameters)</h2>
+      <div id="paramsList" class="space-y-2 text-xs font-mono"></div>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
+    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
+  </footer>
+
+  <script>
+    const urlInput = document.getElementById("urlInput");
+    const pProtocol = document.getElementById("pProtocol");
+    const pHost = document.getElementById("pHost");
+    const pPath = document.getElementById("pPath");
+    const pPort = document.getElementById("pPort");
+    const paramsList = document.getElementById("paramsList");
+
+    function parseURL() {
+      const val = urlInput.value.trim();
+      if (!val) return;
+
+      try {
+        const u = new URL(val);
+        pProtocol.innerText = u.protocol;
+        pHost.innerText = u.hostname;
+        pPath.innerText = u.pathname;
+        pPort.innerText = u.port || "(기본 80/443)";
+
+        paramsList.innerHTML = "";
+        let count = 0;
+        u.searchParams.forEach((v, k) => {
+          count++;
+          const row = document.createElement("div");
+          row.className = "p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between";
+          row.innerHTML = `<span class="text-emerald-400 font-semibold">${k}</span><span class="text-slate-200">${v}</span>`;
+          paramsList.appendChild(row);
+        });
+
+        if (count === 0) {
+          paramsList.innerHTML = '<span class="text-slate-500 italic">쿼리 파라미터가 없습니다.</span>';
+        }
+      } catch (err) {
+        pProtocol.innerText = "✕ 올바른 URL이 아닙니다.";
+        pHost.innerText = "-";
+        pPath.innerText = "-";
+        pPort.innerText = "-";
+        paramsList.innerHTML = "";
+      }
+    }
+
+    urlInput.addEventListener("input", parseURL);
+    parseURL();
+  </script>
+</body>
+</html>

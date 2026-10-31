@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>글자수 세기 & 바이트 계산기 | ToolLab</title>
+  <meta name="description" content="자소서, 블로그 포스팅용 실시간 글자수, 공백 제외 글자수, 단어수, 바이트(Byte) 및 원고지 매수 계산기. 100% 브라우저 메모리 연산으로 텍스트 유출 제로." />
+  <meta name="keywords" content="글자수세기, 자소서 글자수, 바이트 계산기, 단어수 세기, 공백제외 글자수, 원고지 매수" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/word-counter.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../../js/analytics.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+
+  <!-- 헤더 -->
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
+        <span class="text-slate-700">|</span>
+        <h1 class="text-base font-bold text-slate-100">실시간 글자수 &amp; 바이트 계산기</h1>
+      </div>
+      <button id="copyBtn" class="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 transition cursor-pointer">
+        텍스트 전체 복사
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <!-- 메트릭 카드 대시보드 -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+      <div class="p-4 bg-slate-900/80 border border-slate-800 rounded-xl">
+        <span class="text-xs text-slate-400 block mb-1">공백 포함 글자수</span>
+        <span id="charWithSpaces" class="text-2xl font-black text-emerald-400 font-mono">0</span>
+      </div>
+      <div class="p-4 bg-slate-900/80 border border-slate-800 rounded-xl">
+        <span class="text-xs text-slate-400 block mb-1">공백 제외 글자수</span>
+        <span id="charNoSpaces" class="text-2xl font-black text-slate-100 font-mono">0</span>
+      </div>
+      <div class="p-4 bg-slate-900/80 border border-slate-800 rounded-xl">
+        <span class="text-xs text-slate-400 block mb-1">단어수 (어절)</span>
+        <span id="wordCount" class="text-2xl font-black text-slate-100 font-mono">0</span>
+      </div>
+      <div class="p-4 bg-slate-900/80 border border-slate-800 rounded-xl">
+        <span class="text-xs text-slate-400 block mb-1">용량 (바이트 / UTF-8)</span>
+        <span id="byteCount" class="text-2xl font-black text-teal-400 font-mono">0 B</span>
+      </div>
+    </div>
+
+    <!-- 세부 보조 지표 -->
+    <div class="flex flex-wrap items-center justify-between text-xs text-slate-400 px-1 gap-2">
+      <div class="flex items-center gap-4">
+        <span>줄 수: <strong id="lineCount" class="text-slate-200">0</strong>줄</span>
+        <span>200자 원고지: 약 <strong id="manuscriptCount" class="text-slate-200">0</strong>장</span>
+        <span>예상 낭독 시간: 약 <strong id="readingTime" class="text-slate-200">0</strong>분</span>
+      </div>
+      <button id="clearBtn" class="text-rose-400 hover:text-rose-300 text-xs underline cursor-pointer">
+        내용 비우기
+      </button>
+    </div>
+
+    <!-- 텍스트 입력창 -->
+    <div class="relative">
+      <textarea id="textInput" placeholder="여기에 글을 입력하거나 붙여넣으세요. 입력하는 즉시 글자수와 용량이 계산됩니다 (서버로 전송되지 않음)." 
+        class="w-full h-80 p-5 bg-slate-900 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-500 text-sm outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition shadow-inner font-sans leading-relaxed resize-y"></textarea>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
+    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
+  </footer>
+
+  <script>
+    const input = document.getElementById("textInput");
+    const charWithSpacesEl = document.getElementById("charWithSpaces");
+    const charNoSpacesEl = document.getElementById("charNoSpaces");
+    const wordCountEl = document.getElementById("wordCount");
+    const byteCountEl = document.getElementById("byteCount");
+    const lineCountEl = document.getElementById("lineCount");
+    const manuscriptCountEl = document.getElementById("manuscriptCount");
+    const readingTimeEl = document.getElementById("readingTime");
+    const copyBtn = document.getElementById("copyBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    let timer = null;
+
+    function calculateBytes(str) {
+      let bytes = 0;
+      for (let i = 0; i < str.length; i++) {
+        const code = str.charCodeAt(i);
+        if (code <= 0x7f) bytes += 1;
+        else if (code <= 0x7ff) bytes += 2;
+        else if (code >= 0xd800 && code <= 0xdbff) {
+          bytes += 4;
+          i++;
+        } else bytes += 3;
+      }
+      return bytes;
+    }
+
+    function updateMetrics() {
+      const text = input.value;
+      const charWithSpaces = text.length;
+      const charNoSpaces = text.replace(/\s/g, "").length;
+      
+      const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+      const lines = text ? text.split("\n").length : 0;
+      const bytes = calculateBytes(text);
+
+      const manuscripts = Math.ceil(charWithSpaces / 200) || 0;
+      const readingMinutes = Math.ceil(words / 300) || (text ? 1 : 0);
+
+      charWithSpacesEl.innerText = charWithSpaces.toLocaleString();
+      charNoSpacesEl.innerText = charNoSpaces.toLocaleString();
+      wordCountEl.innerText = words.toLocaleString();
+      byteCountEl.innerText = `${bytes.toLocaleString()} B`;
+      lineCountEl.innerText = lines.toLocaleString();
+      manuscriptCountEl.innerText = manuscripts.toLocaleString();
+      readingTimeEl.innerText = readingMinutes.toLocaleString();
+    }
+
+    // 디바운스 150ms 적용
+    input.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(updateMetrics, 150);
+    });
+
+    clearBtn.addEventListener("click", () => {
+      if (!input.value) return;
+      if (confirm("작성 중인 내용을 모두 지우시겠습니까?")) {
+        input.value = "";
+        updateMetrics();
+      }
+    });
+
+    copyBtn.addEventListener("click", () => {
+      if (!input.value) {
+        alert("복사할 내용이 없습니다.");
+        return;
+      }
+      navigator.clipboard.writeText(input.value).then(() => {
+        const org = copyBtn.innerText;
+        copyBtn.innerText = "✓ 복사 완료!";
+        copyBtn.classList.add("text-emerald-400", "border-emerald-500");
+        setTimeout(() => {
+          copyBtn.innerText = org;
+          copyBtn.classList.remove("text-emerald-400", "border-emerald-500");
+        }, 1500);
+      });
+    });
+  </script>
+</body>
+</html>

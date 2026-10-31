@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>이미지 무손실 압축 &amp; WebP 변환기 | ToolLab</title>
+  <meta name="description" content="서버 전송 없이 브라우저 안에서 JPG, PNG, WebP 사진 용량을 최대 80% 줄입니다. 개인정보 유출 없는 초고속 클라이언트 압축기." />
+  <meta name="keywords" content="이미지압축, 사진용량줄이기, webp변환, 이미지최적화, 블로그사진용량, png압축, jpg압축" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/image-compressor.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../../js/analytics.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
+        <span class="text-slate-700">|</span>
+        <h1 class="text-base font-bold text-slate-100">이미지 압축 &amp; WebP 변환</h1>
+      </div>
+      <span class="text-xs text-emerald-400 font-mono">100% 브라우저 로컬 연산</span>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <!-- 드래그앤드롭 업로드 박스 -->
+    <div id="dropZone" class="border-2 border-dashed border-slate-700 hover:border-emerald-500 rounded-3xl p-8 sm:p-12 text-center bg-slate-900/50 hover:bg-slate-900/80 transition cursor-pointer space-y-3">
+      <div class="w-14 h-14 bg-emerald-950/80 border border-emerald-800/80 rounded-2xl flex items-center justify-center mx-auto text-2xl text-emerald-400">
+        📷
+      </div>
+      <div>
+        <p class="text-sm font-bold text-slate-200">사진 파일을 여기에 끌어다 놓거나 클릭하여 선택하세요</p>
+        <p class="text-xs text-slate-500 mt-1">지원 포맷: JPG, PNG, WebP (최대 30MB, 서버 업로드 없음)</p>
+      </div>
+      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" class="hidden" />
+    </div>
+
+    <!-- 압축 옵션 & 결과 패널 (기본 숨김) -->
+    <div id="resultPanel" class="hidden space-y-6">
+      <!-- 조절 슬라이더 및 포맷 선택 -->
+      <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-2xl space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <span class="text-xs font-semibold text-slate-400">압축 품질 (Quality): <strong id="qualityVal" class="text-emerald-400 font-mono">80%</strong></span>
+            <input type="range" id="qualityRange" min="10" max="100" value="80" class="w-full sm:w-64 h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500" />
+          </div>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="text-slate-400 font-semibold">출력 포맷:</span>
+            <select id="formatSelect" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 outline-none focus:border-emerald-500 cursor-pointer">
+              <option value="image/webp">WebP (압축률 최고)</option>
+              <option value="image/jpeg">JPG (호환성 표준)</option>
+              <option value="image/png">PNG (투명배경 유지)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 전후 비교 카드 -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
+        <div class="p-5 bg-slate-900/60 border border-slate-800 rounded-2xl space-y-3">
+          <span class="text-xs text-slate-400 font-semibold block">원본 이미지</span>
+          <div class="h-44 flex items-center justify-center overflow-hidden rounded-xl bg-slate-950/60 border border-slate-800/80">
+            <img id="origImg" class="max-h-full max-w-full object-contain" />
+          </div>
+          <span id="origSize" class="text-sm font-bold text-slate-300 font-mono block">0 KB</span>
+        </div>
+
+        <div class="p-5 bg-slate-900/60 border border-emerald-950/80 rounded-2xl space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-emerald-400 font-semibold">압축 결과물</span>
+            <span id="saveBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-400">-0% 절약</span>
+          </div>
+          <div class="h-44 flex items-center justify-center overflow-hidden rounded-xl bg-slate-950/60 border border-slate-800/80">
+            <img id="compImg" class="max-h-full max-w-full object-contain" />
+          </div>
+          <span id="compSize" class="text-sm font-bold text-emerald-400 font-mono block">0 KB</span>
+        </div>
+      </div>
+
+      <!-- 다운로드 버튼 -->
+      <div class="flex justify-end gap-3 pt-2">
+        <button id="downloadBtn" class="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition shadow-lg shadow-emerald-950/50 flex items-center justify-center gap-2 cursor-pointer">
+          <span>💾</span>
+          <span>압축된 이미지 다운로드</span>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
+    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
+  </footer>
+
+  <script>
+    const dropZone = document.getElementById("dropZone");
+    const fileInput = document.getElementById("fileInput");
+    const resultPanel = document.getElementById("resultPanel");
+    const qualityRange = document.getElementById("qualityRange");
+    const qualityVal = document.getElementById("qualityVal");
+    const formatSelect = document.getElementById("formatSelect");
+    const origImg = document.getElementById("origImg");
+    const compImg = document.getElementById("compImg");
+    const origSize = document.getElementById("origSize");
+    const compSize = document.getElementById("compSize");
+    const saveBadge = document.getElementById("saveBadge");
+    const downloadBtn = document.getElementById("downloadBtn");
+
+    let currentFile = null;
+    let loadedImage = null;
+    let compressedBlob = null;
+    let compressTimer = null;
+
+    dropZone.addEventListener("click", () => fileInput.click());
+    dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.classList.add("border-emerald-500"); });
+    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("border-emerald-500"));
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.classList.remove("border-emerald-500");
+      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+
+    fileInput.addEventListener("change", (e) => {
+      if (e.target.files.length) handleFile(e.target.files[0]);
+    });
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return "0 Bytes";
+      const k = 1024;
+      const sizes = ["Bytes", "KB", "MB"];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+    }
+
+    function handleFile(file) {
+      // 30MB 상한선 가드 (메모리 OOM 방어)
+      if (file.size > 30 * 1024 * 1024) {
+        alert("브라우저 메모리 보호를 위해 30MB 이하의 이미지만 처리할 수 있습니다.");
+        return;
+      }
+      if (!file.type.startsWith("image/")) {
+        alert("이미지 파일만 선택해 주세요.");
+        return;
+      }
+
+      currentFile = file;
+      origSize.innerText = formatBytes(file.size);
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        origImg.src = e.target.result;
+        loadedImage = new Image();
+        loadedImage.onload = () => {
+          resultPanel.classList.remove("hidden");
+          compress();
+        };
+        loadedImage.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function compress() {
+      if (!loadedImage) return;
+
+      const quality = parseInt(qualityRange.value) / 100;
+      const format = formatSelect.value;
+      qualityVal.innerText = `${qualityRange.value}%`;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = loadedImage.naturalWidth;
+      canvas.height = loadedImage.naturalHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(loadedImage, 0, 0);
+
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        compressedBlob = blob;
+        compImg.src = URL.createObjectURL(blob);
+        compSize.innerText = formatBytes(blob.size);
+
+        const diff = currentFile.size - blob.size;
+        const pct = Math.round((diff / currentFile.size) * 100);
+        if (pct >= 0) {
+          saveBadge.innerText = `-${pct}% 절약`;
+          saveBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-400";
+        } else {
+          saveBadge.innerText = `+${Math.abs(pct)}% 증가`;
+          saveBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400";
+        }
+      }, format, quality);
+    }
+
+    // 200ms 디바운스
+    qualityRange.addEventListener("input", () => {
+      clearTimeout(compressTimer);
+      compressTimer = setTimeout(compress, 200);
+    });
+    formatSelect.addEventListener("change", compress);
+
+    downloadBtn.addEventListener("click", () => {
+      if (!compressedBlob) return;
+      const ext = formatSelect.value.split("/")[1];
+      const name = currentFile.name.replace(/\.[^/.]+$/, "") + `_optimized.${ext}`;
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(compressedBlob);
+      link.download = name;
+      link.click();
+    });
+  </script>
+</body>
+</html>

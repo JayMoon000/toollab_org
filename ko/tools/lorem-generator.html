@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>더미 텍스트(Lorem Ipsum) 생성기 (한글·영문 시안용) | ToolLab</title>
+  <meta name="description" content="웹 디자인, UI/UX 레이아웃 시안 및 출판 조판 테스트를 위한 한글·영문 가상 더미 텍스트를 문단, 문장, 단어 단위로 즉시 생성합니다." />
+  <meta name="keywords" content="로렘입숨, 더미텍스트, 한글로렘입숨, 가상문구생성기, 레이아웃테스트, 디자인시안텍스트" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/lorem-generator.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../../js/analytics.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
+        <span class="text-slate-700">|</span>
+        <h1 class="text-base font-bold text-slate-100">한글·영문 더미 텍스트 생성기</h1>
+      </div>
+      <span class="text-xs text-emerald-400 font-mono">UI/UX 조판 유틸리티</span>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <!-- 컨트롤 패널 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-5">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="space-y-1.5">
+          <label class="text-xs font-semibold text-slate-400">언어 선택</label>
+          <select id="langSelect" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 outline-none focus:border-emerald-500 cursor-pointer">
+            <option value="ko" selected>한국어 (디자인 시안용 문구)</option>
+            <option value="en">영문 (표준 라틴 스타일 단어)</option>
+          </select>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-xs font-semibold text-slate-400">생성 단위</label>
+          <select id="unitSelect" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 outline-none focus:border-emerald-500 cursor-pointer">
+            <option value="paragraphs" selected>문단 (Paragraphs)</option>
+            <option value="sentences">문장 (Sentences)</option>
+            <option value="words">단어 (Words)</option>
+          </select>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-xs font-semibold text-slate-400">수량 (1 ~ 50)</label>
+          <input type="number" id="countInput" value="4" min="1" max="50"
+            class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-xs text-slate-100 outline-none focus:border-emerald-500" />
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
+        <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+          <input type="checkbox" id="wrapP" class="w-4 h-4 accent-emerald-500 rounded cursor-pointer" />
+          <span>HTML <code>&lt;p&gt;</code> 태그로 감싸기</span>
+        </label>
+
+        <div class="flex items-center gap-2">
+          <button id="genBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition cursor-pointer">
+            새로 생성하기
+          </button>
+          <button id="copyBtn" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition cursor-pointer">
+            전체 복사
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 출력 영역 -->
+    <div class="space-y-2">
+      <div class="flex justify-between text-xs text-slate-400 px-1">
+        <span>생성된 더미 텍스트</span>
+        <span id="lengthInfo" class="font-mono text-emerald-400">0자</span>
+      </div>
+      <textarea id="outputArea" readonly
+        class="w-full h-96 p-5 bg-slate-900/60 border border-slate-800 rounded-3xl text-sm text-slate-200 leading-relaxed outline-none resize-y font-sans"></textarea>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
+    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
+  </footer>
+
+  <script>
+    const KO_SENTENCES = [
+      "디자인 시안과 타이포그래피의 시각적 균형을 점검하기 위한 가상 문장입니다.",
+      "클라이언트 브라우저 메모리에서 즉시 동작하는 초경량 웹 유틸리티 환경을 지향합니다.",
+      "여백과 행간, 글꼴의 가독성이 실제 화면에서 어떻게 표현되는지 한눈에 확인할 수 있습니다.",
+      "불필요한 서버 통신 없이 사용자의 기기 안에서 모든 데이터 처리가 안전하게 완료됩니다.",
+      "간결하고 명확한 인터페이스는 복잡한 작업의 피로도를 줄이고 업무 효율을 높여줍니다.",
+      "다양한 화면 해상도와 모바일 기기에서도 일관된 레이아웃 비율을 유지하는 것이 중요합니다.",
+      "빛과 그림자의 대비, 여백의 미학이 어우러질 때 비로소 편안한 사용자 경험이 완성됩니다.",
+      "빠른 응답 속도와 직관적인 구조는 현대 웹 애플리케이션이 갖춰야 할 핵심 가치입니다."
+    ];
+
+    const EN_WORDS = [
+      "alpha", "beta", "gamma", "delta", "vector", "matrix", "pixel", "canvas",
+      "layout", "system", "module", "render", "client", "engine", "memory", "buffer",
+      "syntax", "format", "filter", "modern", "design", "visual", "aspect", "grid",
+      "border", "shadow", "radius", "margin", "padding", "flex", "column", "inline"
+    ];
+
+    const langSelect = document.getElementById("langSelect");
+    const unitSelect = document.getElementById("unitSelect");
+    const countInput = document.getElementById("countInput");
+    const wrapP = document.getElementById("wrapP");
+    const genBtn = document.getElementById("genBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const outputArea = document.getElementById("outputArea");
+    const lengthInfo = document.getElementById("lengthInfo");
+
+    function randomItem(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function makeEnSentence() {
+      const len = Math.floor(Math.random() * 8) + 8;
+      const words = [];
+      for (let i = 0; i < len; i++) {
+        words.push(randomItem(EN_WORDS));
+      }
+      const first = words[0];
+      words[0] = first.charAt(0).toUpperCase() + first.slice(1);
+      return words.join(" ") + ".";
+    }
+
+    function generate() {
+      let count = parseInt(countInput.value) || 4;
+      if (count < 1) count = 1;
+      if (count > 50) count = 50;
+      countInput.value = count;
+
+      const lang = langSelect.value;
+      const unit = unitSelect.value;
+      const useTag = wrapP.checked;
+
+      let result = [];
+
+      if (unit === "words") {
+        const pool = lang === "ko" ? KO_SENTENCES.join(" ").split(" ") : EN_WORDS;
+        const wList = [];
+        for (let i = 0; i < count; i++) {
+          wList.push(randomItem(pool));
+        }
+        const line = wList.join(" ");
+        result.push(useTag ? `<p>${line}</p>` : line);
+      } else if (unit === "sentences") {
+        const sList = [];
+        for (let i = 0; i < count; i++) {
+          sList.push(lang === "ko" ? randomItem(KO_SENTENCES) : makeEnSentence());
+        }
+        const block = sList.join(" ");
+        result.push(useTag ? `<p>${block}</p>` : block);
+      } else {
+        for (let p = 0; p < count; p++) {
+          const sCount = Math.floor(Math.random() * 3) + 4;
+          const pSentences = [];
+          for (let s = 0; s < sCount; s++) {
+            pSentences.push(lang === "ko" ? randomItem(KO_SENTENCES) : makeEnSentence());
+          }
+          const para = pSentences.join(" ");
+          result.push(useTag ? `<p>${para}</p>` : para);
+        }
+      }
+
+      const finalStr = result.join("\n\n");
+      outputArea.value = finalStr;
+      lengthInfo.innerText = `${finalStr.length.toLocaleString()}자`;
+    }
+
+    genBtn.addEventListener("click", generate);
+    langSelect.addEventListener("change", generate);
+    unitSelect.addEventListener("change", generate);
+    countInput.addEventListener("input", generate);
+    wrapP.addEventListener("change", generate);
+
+    copyBtn.addEventListener("click", () => {
+      if (!outputArea.value) return;
+      navigator.clipboard.writeText(outputArea.value).then(() => {
+        const orig = copyBtn.innerText;
+        copyBtn.innerText = "✓ 복사 완료";
+        setTimeout(() => copyBtn.innerText = orig, 1500);
+      });
+    });
+
+    generate();
+  </script>
+</body>
+</html>

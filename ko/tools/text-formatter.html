@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>텍스트 포맷터 &amp; URL 슬러그 생성기 | ToolLab</title>
+  <meta name="description" content="대소문자 일괄 변환, URL 친화적 슬러그(Slug) 생성, 줄바꿈 정리, 중복 줄 제거 및 가나다 정렬을 브라우저에서 즉시 처리합니다." />
+  <meta name="keywords" content="텍스트변환기, 슬러그생성기, 대소문자변환, 중복줄제거, 줄바꿈제거, 카멜케이스, 스네이크케이스" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/text-formatter.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../../js/analytics.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
+        <span class="text-slate-700">|</span>
+        <h1 class="text-base font-bold text-slate-100">텍스트 포맷터 &amp; 슬러그 생성기</h1>
+      </div>
+      <button id="copyBtn" class="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 transition cursor-pointer">
+        결과 복사
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <!-- 변환 액션 버튼 툴바 -->
+    <div class="p-4 bg-slate-900/80 border border-slate-800 rounded-2xl flex flex-wrap gap-2 text-xs">
+      <span class="text-slate-500 font-semibold self-center mr-1">변환 옵션:</span>
+      <button onclick="applyTransform('slug')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition cursor-pointer">URL 슬러그화 (kebab-case)</button>
+      <button onclick="applyTransform('upper')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer">대문자로 (UPPERCASE)</button>
+      <button onclick="applyTransform('lower')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer">소문자로 (lowercase)</button>
+      <button onclick="applyTransform('camel')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer">카멜케이스 (camelCase)</button>
+      <button onclick="applyTransform('snake')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer">스네이크케이스 (snake_case)</button>
+      <button onclick="applyTransform('dedupe')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer">중복 줄 제거</button>
+      <button onclick="applyTransform('sort')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer">가나다/ABC 정렬</button>
+      <button onclick="applyTransform('trim')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer">양끝 공백 제거</button>
+    </div>
+
+    <!-- 에디터 영역 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="space-y-2">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span>원본 텍스트 입력</span>
+          <button onclick="document.getElementById('srcText').value=''; updateCounts();" class="text-rose-400 hover:underline cursor-pointer">비우기</button>
+        </div>
+        <textarea id="srcText" placeholder="여기에 변환할 텍스트를 입력하세요..."
+          class="w-full h-80 p-4 bg-slate-900 border border-slate-800 rounded-2xl text-xs font-mono text-slate-200 outline-none focus:border-emerald-500 transition leading-relaxed resize-y"></textarea>
+      </div>
+
+      <div class="space-y-2">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span>변환 결과</span>
+          <span id="charStatus" class="text-emerald-400 font-mono">0자</span>
+        </div>
+        <textarea id="destText" readonly placeholder="변환된 텍스트가 여기에 나타납니다."
+          class="w-full h-80 p-4 bg-slate-900/60 border border-slate-800 rounded-2xl text-xs font-mono text-emerald-400 outline-none leading-relaxed resize-y"></textarea>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
+    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
+  </footer>
+
+  <script>
+    const srcText = document.getElementById("srcText");
+    const destText = document.getElementById("destText");
+    const charStatus = document.getElementById("charStatus");
+    const copyBtn = document.getElementById("copyBtn");
+
+    function updateCounts() {
+      charStatus.innerText = `${destText.value.length.toLocaleString()}자`;
+    }
+
+    function applyTransform(type) {
+      const val = srcText.value;
+      if (!val) return;
+
+      let res = val;
+      if (type === "slug") {
+        res = val.toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9가-힣\s-]/g, "")
+          .replace(/[\s_]+/g, "-")
+          .replace(/^-+|-+$/g, "");
+      } else if (type === "upper") {
+        res = val.toUpperCase();
+      } else if (type === "lower") {
+        res = val.toLowerCase();
+      } else if (type === "camel") {
+        res = val.toLowerCase().replace(/[^a-zA-Z0-9가-힣]+(.)/g, (m, chr) => chr.toUpperCase());
+      } else if (type === "snake") {
+        res = val.toLowerCase().trim().replace(/[\s-]+/g, "_");
+      } else if (type === "dedupe") {
+        const lines = val.split("\n");
+        res = [...new Set(lines)].join("\n");
+      } else if (type === "sort") {
+        const lines = val.split("\n");
+        res = lines.sort((a, b) => a.localeCompare(b, "ko")).join("\n");
+      } else if (type === "trim") {
+        res = val.split("\n").map(l => l.trim()).join("\n");
+      }
+
+      destText.value = res;
+      updateCounts();
+    }
+
+    copyBtn.addEventListener("click", () => {
+      if (!destText.value) return;
+      navigator.clipboard.writeText(destText.value).then(() => {
+        const org = copyBtn.innerText;
+        copyBtn.innerText = "✓ 복사 완료!";
+        setTimeout(() => copyBtn.innerText = org, 1500);
+      });
+    });
+
+    srcText.addEventListener("input", () => {
+      destText.value = srcText.value;
+      updateCounts();
+    });
+  </script>
+</body>
+</html>

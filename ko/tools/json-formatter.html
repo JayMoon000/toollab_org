@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JSON 포맷터 &amp; 문법 검증기 (Beautify·Minify) | ToolLab</title>
+  <meta name="description" content="서버 전송 없이 브라우저 메모리 안에서 JSON 데이터를 정렬(Beautify)하고 압축(Minify)하며 문법 오류를 검출합니다." />
+  <meta name="keywords" content="json포맷터, json정렬, json검증, json문법검사, json압축, beautify, minify" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/json-formatter.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../../js/analytics.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
+        <span class="text-slate-700">|</span>
+        <h1 class="text-base font-bold text-slate-100">JSON 포맷터 &amp; 유효성 검사기</h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="beautifyBtn" class="px-3 py-1.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition cursor-pointer">
+          정렬 (Beautify)
+        </button>
+        <button id="minifyBtn" class="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition cursor-pointer">
+          압축 (Minify)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full space-y-4">
+    <!-- 상태 알림 바 -->
+    <div id="statusAlert" class="hidden px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between">
+      <span id="statusText"></span>
+      <span id="charMetrics" class="text-[11px] opacity-80 font-mono"></span>
+    </div>
+
+    <!-- 에디터 분할 뷰 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="space-y-2">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span>입력 JSON</span>
+          <button id="sampleBtn" class="text-emerald-400 hover:underline cursor-pointer">샘플 불러오기</button>
+        </div>
+        <textarea id="jsonInput" placeholder="여기에 JSON 문자열을 붙여넣으세요..."
+          class="w-full h-[520px] p-4 bg-slate-900 border border-slate-800 rounded-2xl font-mono text-xs text-slate-200 outline-none focus:border-emerald-500 transition leading-relaxed resize-none"></textarea>
+      </div>
+
+      <div class="space-y-2">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span>결과 출력</span>
+          <button id="copyBtn" class="text-emerald-400 hover:underline cursor-pointer">결과 복사</button>
+        </div>
+        <textarea id="jsonOutput" readonly placeholder="정렬 또는 압축된 결과가 여기에 표시됩니다."
+          class="w-full h-[520px] p-4 bg-slate-900/60 border border-slate-800 rounded-2xl font-mono text-xs text-emerald-400 outline-none leading-relaxed resize-none"></textarea>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
+    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
+  </footer>
+
+  <script>
+    const input = document.getElementById("jsonInput");
+    const output = document.getElementById("jsonOutput");
+    const statusAlert = document.getElementById("statusAlert");
+    const statusText = document.getElementById("statusText");
+    const charMetrics = document.getElementById("charMetrics");
+    const beautifyBtn = document.getElementById("beautifyBtn");
+    const minifyBtn = document.getElementById("minifyBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const sampleBtn = document.getElementById("sampleBtn");
+
+    function parseSafe(action = "beautify") {
+      const raw = input.value.trim();
+      if (!raw) {
+        output.value = "";
+        statusAlert.className = "hidden";
+        return;
+      }
+
+      try {
+        const obj = JSON.parse(raw);
+        const res = action === "beautify" ? JSON.stringify(obj, null, 2) : JSON.stringify(obj);
+        output.value = res;
+
+        statusAlert.className = "px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between bg-emerald-950/70 border border-emerald-800/80 text-emerald-400";
+        statusText.innerText = "✓ 올바른 JSON 형식입니다.";
+        charMetrics.innerText = `입력: ${raw.length.toLocaleString()}자 → 출력: ${res.length.toLocaleString()}자`;
+      } catch (err) {
+        output.value = "";
+        statusAlert.className = "px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between bg-rose-950/70 border border-rose-800/80 text-rose-400";
+        statusText.innerText = `✕ JSON 문법 오류: ${err.message}`;
+        charMetrics.innerText = "";
+      }
+    }
+
+    beautifyBtn.addEventListener("click", () => parseSafe("beautify"));
+    minifyBtn.addEventListener("click", () => parseSafe("minify"));
+
+    sampleBtn.addEventListener("click", () => {
+      input.value = JSON.stringify({
+        project: "ToolLab",
+        version: "2026.1",
+        features: ["zero-server-cost", "100%-client-side", "privacy-first"],
+        author: { name: "Jay", city: "Ilsan" }
+      });
+      parseSafe("beautify");
+    });
+
+    copyBtn.addEventListener("click", () => {
+      if (!output.value) return;
+      navigator.clipboard.writeText(output.value).then(() => {
+        alert("결과가 클립보드에 복사되었습니다.");
+      });
+    });
+  </script>
+</body>
+</html>

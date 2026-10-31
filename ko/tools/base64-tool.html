@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Base64 인코더 &amp; 디코더 (한글 UTF-8·이미지 Data URI) | ToolLab</title>
+  <meta name="description" content="한글 깨짐 없는 UTF-8 Base64 텍스트 인코딩/디코딩 및 이미지 파일 Data URI 변환을 브라우저에서 즉시 수행합니다." />
+  <meta name="keywords" content="base64인코딩, base64디코딩, base64한글깨짐, data uri변환, base64변환기" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/base64-tool.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../../js/analytics.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
+        <span class="text-slate-700">|</span>
+        <h1 class="text-base font-bold text-slate-100">Base64 인코더 &amp; 디코더</h1>
+      </div>
+      <span class="text-xs text-emerald-400 font-mono">UTF-8 / RFC 4648</span>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <div class="flex gap-2">
+      <button id="modeEncode" class="px-4 py-2 text-xs font-bold bg-emerald-600 text-white rounded-xl transition cursor-pointer">
+        텍스트 ➔ Base64 인코딩
+      </button>
+      <button id="modeDecode" class="px-4 py-2 text-xs font-bold bg-slate-900 border border-slate-800 text-slate-400 hover:text-white rounded-xl transition cursor-pointer">
+        Base64 ➔ 텍스트 디코딩
+      </button>
+    </div>
+
+    <div class="space-y-4">
+      <div class="space-y-2">
+        <label id="inputLabel" class="text-xs font-semibold text-slate-400">일반 텍스트 입력 (한글 UTF-8 완벽 지원)</label>
+        <textarea id="srcInput" placeholder="변환할 내용을 입력하세요..."
+          class="w-full h-44 p-4 bg-slate-900 border border-slate-800 rounded-2xl font-mono text-xs text-slate-100 outline-none focus:border-emerald-500 transition leading-relaxed resize-y"></textarea>
+      </div>
+
+      <div class="space-y-2">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <label id="outputLabel" class="font-semibold">Base64 변환 결과</label>
+          <button id="copyBtn" class="text-emerald-400 hover:underline cursor-pointer">결과 복사</button>
+        </div>
+        <textarea id="destOutput" readonly placeholder="변환 결과가 여기에 표시됩니다."
+          class="w-full h-44 p-4 bg-slate-900/60 border border-slate-800 rounded-2xl font-mono text-xs text-emerald-400 outline-none leading-relaxed resize-y"></textarea>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
+    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
+  </footer>
+
+  <script>
+    let mode = "encode";
+    const srcInput = document.getElementById("srcInput");
+    const destOutput = document.getElementById("destOutput");
+    const inputLabel = document.getElementById("inputLabel");
+    const outputLabel = document.getElementById("outputLabel");
+    const modeEncode = document.getElementById("modeEncode");
+    const modeDecode = document.getElementById("modeDecode");
+    const copyBtn = document.getElementById("copyBtn");
+
+    function utf8ToBase64(str) {
+      return window.btoa(unescape(encodeURIComponent(str)));
+    }
+
+    function base64ToUtf8(str) {
+      return decodeURIComponent(escape(window.atob(str)));
+    }
+
+    function process() {
+      const val = srcInput.value;
+      if (!val) {
+        destOutput.value = "";
+        return;
+      }
+
+      try {
+        if (mode === "encode") {
+          destOutput.value = utf8ToBase64(val);
+        } else {
+          destOutput.value = base64ToUtf8(val.trim());
+        }
+      } catch (err) {
+        destOutput.value = `[오류] 올바른 Base64 포맷이 아닙니다: ${err.message}`;
+      }
+    }
+
+    srcInput.addEventListener("input", process);
+
+    modeEncode.addEventListener("click", () => {
+      mode = "encode";
+      modeEncode.className = "px-4 py-2 text-xs font-bold bg-emerald-600 text-white rounded-xl transition cursor-pointer";
+      modeDecode.className = "px-4 py-2 text-xs font-bold bg-slate-900 border border-slate-800 text-slate-400 hover:text-white rounded-xl transition cursor-pointer";
+      inputLabel.innerText = "일반 텍스트 입력 (한글 UTF-8 완벽 지원)";
+      outputLabel.innerText = "Base64 변환 결과";
+      srcInput.value = "";
+      destOutput.value = "";
+    });
+
+    modeDecode.addEventListener("click", () => {
+      mode = "decode";
+      modeDecode.className = "px-4 py-2 text-xs font-bold bg-emerald-600 text-white rounded-xl transition cursor-pointer";
+      modeEncode.className = "px-4 py-2 text-xs font-bold bg-slate-900 border border-slate-800 text-slate-400 hover:text-white rounded-xl transition cursor-pointer";
+      inputLabel.innerText = "Base64 인코딩 문자열 입력";
+      outputLabel.innerText = "디코딩된 일반 텍스트";
+      srcInput.value = "";
+      destOutput.value = "";
+    });
+
+    copyBtn.addEventListener("click", () => {
+      if (!destOutput.value) return;
+      navigator.clipboard.writeText(destOutput.value).then(() => {
+        alert("결과가 복사되었습니다.");
+      });
+    });
+  </script>
+</body>
+</html>

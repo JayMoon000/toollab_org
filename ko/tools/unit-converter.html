@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>만능 단위 변환기 (평수·면적·길이·무게) | ToolLab</title>
+  <meta name="description" content="아파트 평수↔㎡(제곱미터), 인치↔cm, 파운드↔kg, 금 1돈/고기 1근 등 일상생활과 부동산 필수 단위를 1초 만에 상호 변환합니다." />
+  <meta name="keywords" content="단위변환기, 평수계산기, 제곱미터 평수, 인치센치, 파운드킬로, 금한돈무게, 고기한근무게" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/unit-converter.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../../js/analytics.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
+        <span class="text-slate-700">|</span>
+        <h1 class="text-base font-bold text-slate-100">만능 단위 변환기</h1>
+      </div>
+      <span class="text-xs text-emerald-400 font-mono">NIST / 법정계량단위</span>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <!-- 카테고리 탭 (부동산 면적 최우선) -->
+    <div class="flex flex-wrap items-center justify-center gap-2 p-1.5 bg-slate-900 border border-slate-800 rounded-2xl text-xs font-bold">
+      <button class="cat-btn active px-4 py-2 rounded-xl bg-emerald-600 text-white transition cursor-pointer" data-cat="area">📐 면적 (평 ↔ ㎡)</button>
+      <button class="cat-btn px-4 py-2 rounded-xl bg-transparent text-slate-400 hover:text-white transition cursor-pointer" data-cat="length">📏 길이 (cm ↔ inch)</button>
+      <button class="cat-btn px-4 py-2 rounded-xl bg-transparent text-slate-400 hover:text-white transition cursor-pointer" data-cat="weight">⚖️ 무게 (kg ↔ lb / 돈·근)</button>
+      <button class="cat-btn px-4 py-2 rounded-xl bg-transparent text-slate-400 hover:text-white transition cursor-pointer" data-cat="temp">🌡️ 온도 (℃ ↔ ℉)</button>
+    </div>
+
+    <!-- 변환 카드 컨테이너 -->
+    <div class="p-6 sm:p-8 bg-slate-900/80 border border-slate-800 rounded-3xl shadow-xl space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center relative">
+        <!-- 좌측 인풋 -->
+        <div class="space-y-2">
+          <label class="text-xs font-semibold text-slate-400">입력 단위 및 수치</label>
+          <div class="flex gap-2">
+            <input type="number" id="fromVal" value="34" step="any"
+              class="w-full p-4 bg-slate-950 border border-slate-800 rounded-2xl text-xl font-bold font-mono text-slate-100 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition" />
+            <select id="fromUnit" class="bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-200 outline-none focus:border-emerald-500 cursor-pointer shrink-0">
+            </select>
+          </div>
+        </div>
+
+        <!-- 스왑 버튼 -->
+        <button id="swapBtn" title="단위 맞바꾸기" class="md:absolute md:left-1/2 md:-translate-x-1/2 md:top-1/2 md:-translate-y-1/2 w-10 h-10 mx-auto bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-full border border-slate-700 flex items-center justify-center transition cursor-pointer shadow-lg z-10">
+          ⇄
+        </button>
+
+        <!-- 우측 아웃풋 -->
+        <div class="space-y-2">
+          <label class="text-xs font-semibold text-slate-400">변환 결과 단위 및 수치</label>
+          <div class="flex gap-2">
+            <input type="number" id="toVal" readonly
+              class="w-full p-4 bg-slate-950/60 border border-slate-800/80 rounded-2xl text-xl font-bold font-mono text-emerald-400 outline-none" />
+            <select id="toUnit" class="bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-200 outline-none focus:border-emerald-500 cursor-pointer shrink-0">
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 빠른 변환 프리셋 칩 바 -->
+      <div id="quickPresets" class="pt-4 border-t border-slate-800/70 flex flex-wrap items-center gap-2">
+        <span class="text-xs text-slate-500 font-medium">자주 찾는 수치:</span>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
+    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
+  </footer>
+
+  <script>
+    const UNITS = {
+      area: {
+        units: [
+          { key: "pyeong", name: "평 (坪)", factor: 3.305785 },
+          { key: "sqm", name: "제곱미터 (㎡)", factor: 1 },
+          { key: "sqft", name: "스퀘어피트 (sq ft)", factor: 0.092903 },
+          { key: "danbo", name: "단보 (300평)", factor: 991.7355 }
+        ],
+        presets: [
+          { label: "국민평형 34평 (84㎡)", val: 34, from: "pyeong", to: "sqm" },
+          { label: "소형 24평 (59㎡)", val: 24, from: "pyeong", to: "sqm" },
+          { label: "대형 45평 (115㎡)", val: 45, from: "pyeong", to: "sqm" }
+        ]
+      },
+      length: {
+        units: [
+          { key: "cm", name: "센티미터 (cm)", factor: 0.01 },
+          { key: "m", name: "미터 (m)", factor: 1 },
+          { key: "inch", name: "인치 (in)", factor: 0.0254 },
+          { key: "ft", name: "피트 (ft)", factor: 0.3048 },
+          { key: "km", name: "킬로미터 (km)", factor: 1000 },
+          { key: "mile", name: "마일 (mi)", factor: 1609.344 }
+        ],
+        presets: [
+          { label: "모니터 32인치", val: 32, from: "inch", to: "cm" },
+          { label: "키 6피트 (6ft)", val: 6, from: "ft", to: "cm" }
+        ]
+      },
+      weight: {
+        units: [
+          { key: "kg", name: "킬로그램 (kg)", factor: 1 },
+          { key: "g", name: "그램 (g)", factor: 0.001 },
+          { key: "lb", name: "파운드 (lb)", factor: 0.453592 },
+          { key: "oz", name: "온스 (oz)", factor: 0.0283495 },
+          { key: "don", name: "금 1돈 (3.75g)", factor: 0.00375 },
+          { key: "geun", name: "고기 1근 (600g)", factor: 0.6 }
+        ],
+        presets: [
+          { label: "순금 10돈", val: 10, from: "don", to: "g" },
+          { label: "삼겹살 2근", val: 2, from: "geun", to: "g" },
+          { label: "볼링공 15파운드", val: 15, from: "lb", to: "kg" }
+        ]
+      },
+      temp: {
+        units: [
+          { key: "c", name: "섭씨 (℃)" },
+          { key: "f", name: "화씨 (℉)" }
+        ],
+        presets: [
+          { label: "체온 36.5℃", val: 36.5, from: "c", to: "f" },
+          { label: "오븐 350℉", val: 350, from: "f", to: "c" }
+        ]
+      }
+    };
+
+    let curCat = "area";
+    const fromVal = document.getElementById("fromVal");
+    const toVal = document.getElementById("toVal");
+    const fromUnit = document.getElementById("fromUnit");
+    const toUnit = document.getElementById("toUnit");
+    const swapBtn = document.getElementById("swapBtn");
+    const quickPresets = document.getElementById("quickPresets");
+
+    function renderSelects() {
+      const data = UNITS[curCat];
+      fromUnit.innerHTML = "";
+      toUnit.innerHTML = "";
+
+      data.units.forEach((u, i) => {
+        fromUnit.add(new Option(u.name, u.key, false, i === 0));
+        toUnit.add(new Option(u.name, u.key, false, i === 1));
+      });
+
+      renderPresets();
+      convert();
+    }
+
+    function renderPresets() {
+      const data = UNITS[curCat];
+      quickPresets.innerHTML = '<span class="text-xs text-slate-500 font-medium">자주 찾는 수치:</span>';
+      data.presets.forEach(p => {
+        const btn = document.createElement("button");
+        btn.className = "px-2.5 py-1 text-xs bg-slate-950 border border-slate-800 hover:border-emerald-500/50 rounded-lg text-slate-300 hover:text-emerald-400 transition cursor-pointer";
+        btn.innerText = p.label;
+        btn.onclick = () => {
+          fromVal.value = p.val;
+          fromUnit.value = p.from;
+          toUnit.value = p.to;
+          convert();
+        };
+        quickPresets.appendChild(btn);
+      });
+    }
+
+    function convert() {
+      const val = parseFloat(fromVal.value);
+      if (isNaN(val) || !isFinite(val)) {
+        toVal.value = "";
+        return;
+      }
+
+      const uFrom = fromUnit.value;
+      const uTo = toUnit.value;
+
+      if (curCat === "temp") {
+        if (uFrom === uTo) toVal.value = val;
+        else if (uFrom === "c" && uTo === "f") toVal.value = ((val * 9/5) + 32).toFixed(2);
+        else if (uFrom === "f" && uTo === "c") toVal.value = ((val - 32) * 5/9).toFixed(2);
+        return;
+      }
+
+      const fData = UNITS[curCat].units.find(u => u.key === uFrom);
+      const tData = UNITS[curCat].units.find(u => u.key === uTo);
+
+      if (fData && tData) {
+        const baseVal = val * fData.factor;
+        const result = baseVal / tData.factor;
+        toVal.value = parseFloat(result.toFixed(6));
+      }
+    }
+
+    fromVal.addEventListener("input", convert);
+    fromUnit.addEventListener("change", convert);
+    toUnit.addEventListener("change", convert);
+
+    swapBtn.addEventListener("click", () => {
+      const temp = fromUnit.value;
+      fromUnit.value = toUnit.value;
+      toUnit.value = temp;
+      convert();
+    });
+
+    document.querySelectorAll(".cat-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        document.querySelectorAll(".cat-btn").forEach(b => {
+          b.className = "cat-btn px-4 py-2 rounded-xl bg-transparent text-slate-400 hover:text-white transition cursor-pointer";
+        });
+        e.currentTarget.className = "cat-btn px-4 py-2 rounded-xl bg-emerald-600 text-white transition cursor-pointer";
+        curCat = e.currentTarget.dataset.cat;
+        renderSelects();
+      });
+    });
+
+    renderSelects();
+  </script>
+</body>
+</html>

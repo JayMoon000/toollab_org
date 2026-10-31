@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>대출 상환 &amp; 월 복리 투자 계산기 | ToolLab</title>
+  <meta name="description" content="원리금균등 대출 상환 스케줄과 월 적립식 복리 스노우볼 자산 증식을 브라우저에서 실시간 계산합니다." />
+  <meta name="keywords" content="대출이자계산기, 원리금균등상환, 복리계산기, 적금복리, 투자수익률계산, 모기지계산기" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/loan-compound-calc.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../../js/analytics.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
+        <span class="text-slate-700">|</span>
+        <h1 class="text-base font-bold text-slate-100">대출 상환 &amp; 월 복리 계산기</h1>
+      </div>
+      <span class="text-xs text-emerald-400 font-mono">원리금균등 / 복리스노우볼</span>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <!-- 모드 선택 탭 -->
+    <div class="flex gap-2 p-1.5 bg-slate-900 border border-slate-800 rounded-2xl">
+      <button id="tabLoan" class="flex-1 py-2.5 text-xs font-bold rounded-xl bg-emerald-600 text-white transition cursor-pointer">
+        🏦 대출 상환액 계산 (원리금균등)
+      </button>
+      <button id="tabCompound" class="flex-1 py-2.5 text-xs font-bold rounded-xl bg-transparent text-slate-400 hover:text-white transition cursor-pointer">
+        📈 월 복리 투자 시뮬레이션
+      </button>
+    </div>
+
+    <!-- 1. 대출 상환 패널 -->
+    <div id="panelLoan" class="p-6 sm:p-8 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="space-y-1.5">
+          <label class="text-xs text-slate-400 font-semibold">대출 원금 (원)</label>
+          <input type="number" id="loanPrincipal" value="100000000" step="1000000" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm outline-none focus:border-emerald-500 text-slate-100" />
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-xs text-slate-400 font-semibold">연이자율 (%)</label>
+          <input type="number" id="loanRate" value="4.5" step="0.1" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm outline-none focus:border-emerald-500 text-slate-100" />
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-xs text-slate-400 font-semibold">대출 기간 (년)</label>
+          <input type="number" id="loanYears" value="30" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm outline-none focus:border-emerald-500 text-slate-100" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center pt-2">
+        <div class="p-5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+          <span class="text-xs text-slate-400 block">매월 상환액</span>
+          <span id="monthlyPayment" class="text-2xl font-black text-emerald-400 font-mono">0원</span>
+        </div>
+        <div class="p-5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+          <span class="text-xs text-slate-400 block">총 이자 납입액</span>
+          <span id="totalInterest" class="text-2xl font-black text-rose-400 font-mono">0원</span>
+        </div>
+        <div class="p-5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+          <span class="text-xs text-slate-400 block">원금+이자 총합</span>
+          <span id="totalPayment" class="text-2xl font-black text-slate-100 font-mono">0원</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 월 복리 투자 패널 -->
+    <div id="panelCompound" class="hidden p-6 sm:p-8 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="space-y-1.5">
+          <label class="text-xs text-slate-400 font-semibold">매월 적립금 (원)</label>
+          <input type="number" id="compMonthly" value="500000" step="50000" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm outline-none focus:border-emerald-500 text-slate-100" />
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-xs text-slate-400 font-semibold">연간 기대수익률 (%)</label>
+          <input type="number" id="compRate" value="8.0" step="0.5" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm outline-none focus:border-emerald-500 text-slate-100" />
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-xs text-slate-400 font-semibold">투자 기간 (년)</label>
+          <input type="number" id="compYears" value="10" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm outline-none focus:border-emerald-500 text-slate-100" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center pt-2">
+        <div class="p-5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+          <span class="text-xs text-slate-400 block">최종 만기 자산</span>
+          <span id="compTotal" class="text-2xl font-black text-emerald-400 font-mono">0원</span>
+        </div>
+        <div class="p-5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+          <span class="text-xs text-slate-400 block">총 납입 원금</span>
+          <span id="compPrincipal" class="text-2xl font-black text-slate-100 font-mono">0원</span>
+        </div>
+        <div class="p-5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+          <span class="text-xs text-slate-400 block">복리 이자 수익</span>
+          <span id="compInterest" class="text-2xl font-black text-teal-400 font-mono">0원</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
+    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
+  </footer>
+
+  <script>
+    function calcLoan() {
+      const p = parseFloat(document.getElementById("loanPrincipal").value) || 0;
+      const r = (parseFloat(document.getElementById("loanRate").value) || 0) / 100 / 12;
+      const n = (parseFloat(document.getElementById("loanYears").value) || 0) * 12;
+
+      if (p <= 0 || n <= 0) return;
+
+      let monthly = 0;
+      if (r === 0) {
+        monthly = p / n;
+      } else {
+        monthly = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+      }
+
+      const total = monthly * n;
+      const interest = total - p;
+
+      document.getElementById("monthlyPayment").innerText = Math.round(monthly).toLocaleString() + "원";
+      document.getElementById("totalInterest").innerText = Math.round(interest).toLocaleString() + "원";
+      document.getElementById("totalPayment").innerText = Math.round(total).toLocaleString() + "원";
+    }
+
+    function calcCompound() {
+      const p = parseFloat(document.getElementById("compMonthly").value) || 0;
+      const r = (parseFloat(document.getElementById("compRate").value) || 0) / 100 / 12;
+      const n = (parseFloat(document.getElementById("compYears").value) || 0) * 12;
+
+      if (p <= 0 || n <= 0) return;
+
+      let futureVal = 0;
+      if (r === 0) {
+        futureVal = p * n;
+      } else {
+        futureVal = p * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
+      }
+
+      const totalPrincipal = p * n;
+      const interestProfit = futureVal - totalPrincipal;
+
+      document.getElementById("compTotal").innerText = Math.round(futureVal).toLocaleString() + "원";
+      document.getElementById("compPrincipal").innerText = Math.round(totalPrincipal).toLocaleString() + "원";
+      document.getElementById("compInterest").innerText = "+" + Math.round(interestProfit).toLocaleString() + "원";
+    }
+
+    ["loanPrincipal", "loanRate", "loanYears"].forEach(id => document.getElementById(id).addEventListener("input", calcLoan));
+    ["compMonthly", "compRate", "compYears"].forEach(id => document.getElementById(id).addEventListener("input", calcCompound));
+
+    document.getElementById("tabLoan").addEventListener("click", () => {
+      document.getElementById("tabLoan").className = "flex-1 py-2.5 text-xs font-bold rounded-xl bg-emerald-600 text-white transition cursor-pointer";
+      document.getElementById("tabCompound").className = "flex-1 py-2.5 text-xs font-bold rounded-xl bg-transparent text-slate-400 hover:text-white transition cursor-pointer";
+      document.getElementById("panelLoan").classList.remove("hidden");
+      document.getElementById("panelCompound").classList.add("hidden");
+    });
+
+    document.getElementById("tabCompound").addEventListener("click", () => {
+      document.getElementById("tabCompound").className = "flex-1 py-2.5 text-xs font-bold rounded-xl bg-emerald-600 text-white transition cursor-pointer";
+      document.getElementById("tabLoan").className = "flex-1 py-2.5 text-xs font-bold rounded-xl bg-transparent text-slate-400 hover:text-white transition cursor-pointer";
+      document.getElementById("panelCompound").classList.remove("hidden");
+      document.getElementById("panelLoan").classList.add("hidden");
+      calcCompound();
+    });
+
+    calcLoan();
+  </script>
+</body>
+</html>

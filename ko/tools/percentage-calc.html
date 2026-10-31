@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>퍼센트 &amp; 마진 계산기 (할인율·증감률) | ToolLab</title>
+  <meta name="description" content="원가 대비 유통 마진율, 백분율 계산, 세일 할인율, 전년/전월 대비 상승·하락 증감률을 즉시 계산합니다." />
+  <meta name="keywords" content="퍼센트계산기, 마진율계산기, 할인율계산, 원가율, 백분율계산기, 증감율계산" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/percentage-calc.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../../js/analytics.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
+        <span class="text-slate-700">|</span>
+        <h1 class="text-base font-bold text-slate-100">퍼센트 &amp; 마진 계산기</h1>
+      </div>
+      <span class="text-xs text-emerald-400 font-mono">실전 비즈니스·재테크</span>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- 1. 판매가 & 마진율 계산 (이커머스/도소매 특화) -->
+      <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+        <h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+          <span>🏷️</span> 원가 대비 마진율 계산
+        </h2>
+        <div class="space-y-3">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">원가 (원)</label>
+            <input type="number" id="marginCost" value="10000" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm outline-none focus:border-emerald-500" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">판매가 (원)</label>
+            <input type="number" id="marginPrice" value="15000" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm outline-none focus:border-emerald-500" />
+          </div>
+          <div class="p-4 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1">
+            <div class="flex justify-between text-xs text-slate-400">
+              <span>순이익:</span>
+              <strong id="marginProfit" class="text-slate-200 font-mono">5,000원</strong>
+            </div>
+            <div class="flex justify-between text-xs text-slate-400">
+              <span>마진율(이익/판매가):</span>
+              <strong id="marginRate" class="text-emerald-400 font-mono font-bold text-sm">33.33%</strong>
+            </div>
+            <div class="flex justify-between text-xs text-slate-400">
+              <span>수익률(이익/원가):</span>
+              <strong id="markupRate" class="text-teal-400 font-mono">50.00%</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 퍼센트 할인율 계산 -->
+      <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+        <h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+          <span>🔥</span> 세일 할인율 &amp; 최종 결제액
+        </h2>
+        <div class="space-y-3">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">원래 가격 (원)</label>
+            <input type="number" id="discOrig" value="50000" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm outline-none focus:border-emerald-500" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">할인율 (%)</label>
+            <input type="number" id="discPercent" value="20" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm outline-none focus:border-emerald-500" />
+          </div>
+          <div class="p-4 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1">
+            <div class="flex justify-between text-xs text-slate-400">
+              <span>할인 금액:</span>
+              <strong id="discSave" class="text-rose-400 font-mono">-10,000원</strong>
+            </div>
+            <div class="flex justify-between text-xs text-slate-400">
+              <span>최종 구매가:</span>
+              <strong id="discFinal" class="text-emerald-400 font-mono font-bold text-sm">40,000원</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 상승·하락 증감률 계산 -->
+      <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+        <h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+          <span>📈</span> 전후 증감률 (상승 / 하락)
+        </h2>
+        <div class="space-y-3">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">이전 값 (기준값)</label>
+            <input type="number" id="changeBefore" value="80" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm outline-none focus:border-emerald-500" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">이후 값 (변동값)</label>
+            <input type="number" id="changeAfter" value="100" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm outline-none focus:border-emerald-500" />
+          </div>
+          <div class="p-4 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1">
+            <div class="flex justify-between text-xs text-slate-400">
+              <span>변동 크기:</span>
+              <strong id="changeDiff" class="text-slate-200 font-mono">+20</strong>
+            </div>
+            <div class="flex justify-between text-xs text-slate-400">
+              <span>증감률:</span>
+              <strong id="changeRate" class="text-emerald-400 font-mono font-bold text-sm">+25.00%</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. 전체 대비 백분율(지분) 계산 -->
+      <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+        <h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+          <span>🍰</span> 전체값 중 일부의 비율
+        </h2>
+        <div class="space-y-3">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">전체 총합 (기준값)</label>
+            <input type="number" id="shareTotal" value="200" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm outline-none focus:border-emerald-500" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">일부 값 (내 지분/수치)</label>
+            <input type="number" id="sharePart" value="30" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm outline-none focus:border-emerald-500" />
+          </div>
+          <div class="p-4 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1">
+            <div class="flex justify-between text-xs text-slate-400">
+              <span>점유 비율:</span>
+              <strong id="shareRate" class="text-emerald-400 font-mono font-bold text-sm">15.00%</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
+    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
+  </footer>
+
+  <script>
+    function calcMargin() {
+      const c = parseFloat(document.getElementById("marginCost").value) || 0;
+      const p = parseFloat(document.getElementById("marginPrice").value) || 0;
+      const profit = p - c;
+      const margin = p > 0 ? (profit / p) * 100 : 0;
+      const markup = c > 0 ? (profit / c) * 100 : 0;
+
+      document.getElementById("marginProfit").innerText = profit.toLocaleString() + "원";
+      document.getElementById("marginRate").innerText = margin.toFixed(2) + "%";
+      document.getElementById("markupRate").innerText = markup.toFixed(2) + "%";
+    }
+
+    function calcDiscount() {
+      const orig = parseFloat(document.getElementById("discOrig").value) || 0;
+      const pct = parseFloat(document.getElementById("discPercent").value) || 0;
+      const save = orig * (pct / 100);
+      const fin = orig - save;
+
+      document.getElementById("discSave").innerText = "-" + Math.round(save).toLocaleString() + "원";
+      document.getElementById("discFinal").innerText = Math.round(fin).toLocaleString() + "원";
+    }
+
+    function calcChange() {
+      const b = parseFloat(document.getElementById("changeBefore").value) || 0;
+      const a = parseFloat(document.getElementById("changeAfter").value) || 0;
+      const diff = a - b;
+      const rate = b !== 0 ? (diff / b) * 100 : 0;
+
+      document.getElementById("changeDiff").innerText = (diff >= 0 ? "+" : "") + diff.toLocaleString();
+      document.getElementById("changeRate").innerText = (rate >= 0 ? "+" : "") + rate.toFixed(2) + "%";
+    }
+
+    function calcShare() {
+      const t = parseFloat(document.getElementById("shareTotal").value) || 0;
+      const p = parseFloat(document.getElementById("sharePart").value) || 0;
+      const rate = t > 0 ? (p / t) * 100 : 0;
+
+      document.getElementById("shareRate").innerText = rate.toFixed(2) + "%";
+    }
+
+    ["marginCost", "marginPrice"].forEach(id => document.getElementById(id).addEventListener("input", calcMargin));
+    ["discOrig", "discPercent"].forEach(id => document.getElementById(id).addEventListener("input", calcDiscount));
+    ["changeBefore", "changeAfter"].forEach(id => document.getElementById(id).addEventListener("input", calcChange));
+    ["shareTotal", "sharePart"].forEach(id => document.getElementById(id).addEventListener("input", calcShare));
+
+    calcMargin();
+    calcDiscount();
+    calcChange();
+    calcShare();
+  </script>
+</body>
+</html>
