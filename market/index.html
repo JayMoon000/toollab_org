@@ -291,15 +291,173 @@
   </article>
 
   <!-- 푸터 -->
-  <footer class="bg-slate-950 border-t border-slate-800/80 px-4 py-6 text-center text-xs text-slate-500 mt-auto shrink-0">
-    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
-      <p>&copy; 2026 ToolLab.org - Nationwide 5-Day Market Viewer. All rights reserved.</p>
-      <div class="flex gap-4 text-slate-400">
-        <a href="https://toollab.org" class="hover:text-slate-200">ToolLab Home</a>
-        <a href="https://data.go.kr" target="_blank" rel="noopener" class="hover:text-slate-200">데이터 출처: 소상공인시장진흥공단</a>
+<!-- 5일장 검색기 전용 푸터 (애드센스 규정 충족 4종 링크) -->
+  <footer class="no-print border-t border-slate-200 bg-white py-8 mt-12 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 space-y-3">
+      <!-- 정책 링크 4종 -->
+      <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-slate-600">
+        <button type="button" onclick="openLegalModal('about')" class="hover:text-indigo-600 hover:underline transition-colors cursor-pointer">
+          About Us
+        </button>
+        <span class="text-slate-300">|</span>
+        <button type="button" onclick="openLegalModal('contact')" class="hover:text-indigo-600 hover:underline transition-colors cursor-pointer">
+          Contact
+        </button>
+        <span class="text-slate-300">|</span>
+        <button type="button" onclick="openLegalModal('privacy')" class="hover:text-indigo-600 hover:underline transition-colors cursor-pointer">
+          Privacy Policy
+        </button>
+        <span class="text-slate-300">|</span>
+        <button type="button" onclick="openLegalModal('terms')" class="hover:text-indigo-600 hover:underline transition-colors cursor-pointer">
+          Terms of Service
+        </button>
       </div>
+
+      <!-- 서비스 설명 및 면책 조항 -->
+      <div class="space-y-1">
+        <p class="font-medium text-slate-700">
+          ToolLab 전국 5일장 검색기 · 공공데이터 기반 무설치 마이크로 유틸리티
+        </p>
+        <p class="text-[11px] text-slate-400 max-w-2xl mx-auto leading-relaxed">
+          본 서비스는 전국 전통 5일장 일정 및 편의시설 정보를 제공하는 참고용 툴킷입니다. 
+          기상 악화, 지자체 축제 및 명절 연휴 등에 따라 실제 개장 여부가 변동될 수 있으므로 방문 전 지자체 확인을 권장합니다.
+        </p>
+      </div>
+
+      <!-- 카피라이트 -->
+      <p class="text-[11px] text-slate-400 pt-2 border-t border-slate-100">
+        © 2026 ToolLab.org. All rights reserved.
+      </p>
     </div>
   </footer>
+
+  <!-- 법적 정책 및 안내 통합 모달 -->
+  <div id="legalModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden text-left" role="dialog" aria-modal="true">
+      
+      <!-- 모달 헤더 & 4대 탭 바 -->
+      <div class="border-b border-slate-100 px-6 pt-5 pb-0 bg-slate-50/50">
+        <div class="flex items-center justify-between pb-4">
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved text-indigo-600"></i>
+            <span>서비스 안내 및 정책</span>
+          </h2>
+          <button type="button" onclick="closeLegalModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer" aria-label="닫기">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <!-- 4단 탭 버튼 -->
+        <div class="flex gap-1 sm:gap-2">
+          <button type="button" id="tabBtn-about" onclick="switchLegalTab('about')" class="flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 bg-white rounded-t-lg transition-colors cursor-pointer">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>About Us</span>
+          </button>
+          <button type="button" id="tabBtn-contact" onclick="switchLegalTab('contact')" class="flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition-colors cursor-pointer">
+            <i class="fa-solid fa-envelope"></i>
+            <span>Contact</span>
+          </button>
+          <button type="button" id="tabBtn-privacy" onclick="switchLegalTab('privacy')" class="flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition-colors cursor-pointer">
+            <i class="fa-solid fa-user-shield"></i>
+            <span>Privacy</span>
+          </button>
+          <button type="button" id="tabBtn-terms" onclick="switchLegalTab('terms')" class="flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition-colors cursor-pointer">
+            <i class="fa-solid fa-file-contract"></i>
+            <span>Terms</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 모달 본문 영역 (탭 내용) -->
+      <div class="p-6 overflow-y-auto text-sm text-slate-600 leading-relaxed space-y-4">
+        
+        <!-- About Us -->
+        <div id="tabContent-about" class="space-y-3">
+          <h3 class="text-base font-bold text-slate-900">ToolLab 전국 5일장 검색기 소개</h3>
+          <p>
+            ToolLab 5일장 검색기는 복잡한 설치나 번거로운 회원가입 없이, 
+            <strong class="text-slate-900">오늘 열리는 전국의 전통 5일장과 주말 장터를 3초 안에 찾아주는 초경량 라이프스타일 유틸리티</strong>입니다.
+          </p>
+          <p>
+            소상공인시장진흥공단의 전국 전통시장 표준 데이터를 정밀 가공하여, 
+            장날 끝자리 날짜 계산, 네이버 지도 검색 연동, 주차장 및 공중화장실 유무, 온누리상품권 사용처 정보를 한눈에 제공합니다.
+          </p>
+          <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 text-xs text-slate-600 space-y-1">
+            <p class="font-semibold text-slate-800">서비스 핵심 철학</p>
+            <p>• Zero-Server-Cost: 일체의 사용자 추적 DB 없이 순수 브라우저(Client-Side) 100% 필터링 연산</p>
+            <p>• Zero-Barrier UX: 앱 설치나 권한 요구 없이 즉시 날짜별·지역별 장터 확인</p>
+            <p>• Verified Local Data: 공공데이터포털 검증 좌표와 정제된 로컬 인프라 정보 매핑</p>
+          </div>
+        </div>
+
+        <!-- Contact -->
+        <div id="tabContent-contact" class="hidden space-y-3">
+          <h3 class="text-base font-bold text-slate-900">문의 및 데이터 제보 (Contact Us)</h3>
+          <p>
+            전통 5일장의 개장 주기 변경, 신규 장터 제보, 주차 시설 정보 업데이트 등 여러분의 제보로 데이터가 더욱 풍성해집니다.
+          </p>
+          <div class="space-y-2 mt-3">
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80">
+              <span class="block text-xs font-semibold text-slate-500 uppercase">공식 문의 이메일</span>
+              <a href="mailto:contact@toollab.org" class="text-indigo-600 font-bold hover:underline">
+                contact@toollab.org
+              </a>
+            </div>
+            <ul class="text-xs text-slate-500 space-y-1 pl-1">
+              <li>• 전국 5일장 장날 주기(예: 4일·9일장 등) 변동 제보</li>
+              <li>• 신설 전통시장 및 주차장/화장실 편의시설 정보 수정 요청</li>
+              <li>• 지역 문화 및 오일장 콘텐츠 협업 문의</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Privacy -->
+        <div id="tabContent-privacy" class="hidden space-y-3">
+          <h3 class="text-base font-bold text-slate-900">개인정보처리방침 (Privacy Policy)</h3>
+          <p>
+            ToolLab은 이용자의 위치정보 및 개인정보를 보호하며, 불필요한 일체의 개인정보를 수집하거나 저장하지 않습니다.
+          </p>
+          <div class="space-y-2 text-xs">
+            <h4 className="font-bold text-slate-800">1. 개인 위치정보(GPS) 미수집 원칙</h4>
+            <p>
+              본 서비스는 사용자의 실시간 GPS 위치를 서버로 전송하거나 데이터베이스에 기록하지 않습니다. 모든 지역 선택과 날짜 필터링 연산은 사용자의 기기 브라우저 메모리상에서만 독립적으로 처리됩니다.
+            </p>
+            <h4 class="font-bold text-slate-800">2. 웹 분석 및 광고 게재 쿠키</h4>
+            <p>
+              서비스 품질 관리와 안정적인 호스팅 제공을 위해 Cloudflare Web Analytics 및 Google AdSense 광고 모듈이 익명화된 트래픽 통계를 수집할 수 있습니다. 브라우저 설정을 통해 쿠키 저장을 언제든 거부할 수 있습니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- Terms -->
+        <div id="tabContent-terms" class="hidden space-y-3">
+          <h3 class="text-base font-bold text-slate-900">이용약관 및 유의사항 (Terms of Service)</h3>
+          <div class="space-y-2 text-xs">
+            <h4 class="font-bold text-slate-800">1. 데이터 제공의 한계 및 면책 조항</h4>
+            <p>
+              본 서비스에서 안내하는 장날 정보는 공공기관 공시 데이터에 기반한 참고 정보입니다. 각 지자체의 사정, 지역 축제, 기상 재해, 명절 전후 임시 개장 등에 따라 실제 장터 운영일이 일부 달라질 수 있습니다. 방문 전 관할 지자체나 상인회에 유선 확인을 권장하며, 서비스 정보 이용에 따른 간접적 손해에 대해 법적 책임을 지지 않습니다.
+            </p>
+            <h4 class="font-bold text-slate-800">2. 외부 링크(지도 서비스) 연결</h4>
+            <p>
+              본 웹사이트에 포함된 네이버 지도 등의 외부 링크는 이용자의 편의를 돕기 위한 기능이며, 해당 외부 플랫폼의 운영 정책 및 서비스 품질에 대해서는 관여하지 않습니다.
+            </p>
+            <h4 class="font-bold text-slate-800">3. 저작권</h4>
+            <p>
+              본 서비스의 웹 UI/UX 디자인, 필터링 알고리즘 로직 및 자체 콘텐츠에 대한 저작권은 ToolLab에 있습니다.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 모달 푸터 닫기 버튼 -->
+      <div class="border-t border-slate-100 px-6 py-3.5 bg-slate-50 flex justify-end">
+        <button type="button" onclick="closeLegalModal()" class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer">
+          확인 및 닫기
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -359,27 +517,28 @@
       }
     }
 
-    function initMap() {
-      map = L.map('map', {
-        zoomControl: true,
-        fadeAnimation: true,
-        tap: false,
-        touchZoom: true,
-        dragging: true,
-        bounceAtZoomLimits: false
-      }).setView([36.35, 127.75], 7);
-      
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
-        maxZoom: 18
-      }).addTo(map);
+	function initMap() {
+		  map = L.map('map', {
+			zoomControl: true,
+			fadeAnimation: true,
+			tap: false,
+			touchZoom: true,
+			dragging: true,
+			bounceAtZoomLimits: false
+		  }).setView([36.35, 127.75], 7);
+		  
+		  // API 키 필요 없고 한글 지명이 완벽한 OSM 미러 서버 적용
+		  L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
+			attribution: '&copy; OpenStreetMap contributors',
+			maxZoom: 18
+		  }).addTo(map);
 
-      markerGroup = L.layerGroup().addTo(map);
+		  markerGroup = L.layerGroup().addTo(map);
 
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 200);
-    }
+		  setTimeout(() => {
+			map.invalidateSize();
+		  }, 200);
+		}
 
     function createMarkerIcon(isToday) {
       const color = isToday ? '#ef4444' : '#38bdf8';
@@ -395,7 +554,7 @@
 
     async function loadData() {
       try {
-        const res = await fetch('/market/markets_5day.json');
+        const res = await fetch('markets_5day.json');
         allMarkets = await res.json();
         renderFilteredMarkets(allMarkets, true);
       } catch (err) {
@@ -750,6 +909,60 @@
         }
       );
     });
+
+	// 법적 정책 모달 컨트롤러
+	function openLegalModal(tabName) {
+	  const modal = document.getElementById('legalModal');
+	  if (modal) {
+		modal.classList.remove('hidden');
+		modal.classList.add('flex');
+		switchLegalTab(tabName || 'about');
+		document.body.style.overflow = 'hidden'; // 배경 스크롤 차단
+	  }
+	}
+
+	function closeLegalModal() {
+	  const modal = document.getElementById('legalModal');
+	  if (modal) {
+		modal.classList.add('hidden');
+		modal.classList.remove('flex');
+		document.body.style.overflow = '';
+	  }
+	}
+
+	// 탭 전환 로직
+	function switchLegalTab(tabKey) {
+	  const tabs = ['about', 'contact', 'privacy', 'terms'];
+	  
+	  tabs.forEach(t => {
+		const btn = document.getElementById(`tabBtn-${t}`);
+		const content = document.getElementById(`tabContent-${t}`);
+		
+		if (t === tabKey) {
+		  if (btn) {
+			btn.className = "flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 bg-white rounded-t-lg transition-colors cursor-pointer";
+		  }
+		  if (content) content.classList.remove('hidden');
+		} else {
+		  if (btn) {
+			btn.className = "flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition-colors cursor-pointer";
+		  }
+		  if (content) content.classList.add('hidden');
+		}
+	  });
+	}
+
+	// 모달 배경 클릭 시 닫기
+	document.addEventListener('DOMContentLoaded', () => {
+	  const modal = document.getElementById('legalModal');
+	  if (modal) {
+		modal.addEventListener('click', (e) => {
+		  if (e.target === modal) {
+			closeLegalModal();
+		  }
+		});
+	  }
+	});
 
     window.onload = () => {
       initMap();
