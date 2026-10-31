@@ -226,7 +226,7 @@
 
   <!-- 로직 스크립트: 압축 엔진 + 한글 추천 도구 모듈 -->
   <script src="../../js/utils/imageCompressor.js"></script>
-  <script>
+    <script>
     const dropZone = document.getElementById("dropZone");
     const fileInput = document.getElementById("fileInput");
     const qualityRange = document.getElementById("qualityRange");
@@ -243,21 +243,15 @@
     let rawFiles = [];       // 원본 파일 보관용
     let processedItems = []; // 현재 압축된 결과물
     let debounceTimer = null;
+    let currentProcessId = 0; // 비동기 경쟁 방지용 고유 토큰
 
-    // 1. 설정 변경 시 자동 재압축 트리거
     function triggerRecompression() {
       if (!rawFiles.length) return;
       clearTimeout(debounceTimer);
-      // 슬라이더 조작 시 버벅임을 방지하기 위한 80ms 디바운스
       debounceTimer = setTimeout(() => {
         recompressAll();
-      }, 80);
+      }, 120);
     }
-
-    qualityRange.addEventListener("input", (e) => {
-      qualityVal.textContent = `${e.target.value}%`;
-      triggerRecompression();
-    });
 
     function updateQualityControlState() {
       const isPng = formatSelect.value === "image/png";
@@ -284,16 +278,18 @@
       }
     }
 
+    qualityRange.addEventListener("input", (e) => {
+      qualityVal.textContent = `${e.target.value}%`;
+      triggerRecompression();
+    });
+
     formatSelect.addEventListener("change", () => {
       updateQualityControlState();
       triggerRecompression();
     });
 
-    // 초기 상태 1회 반영
-    updateQualityControlState();
     resSelect.addEventListener("change", triggerRecompression);
 
-    // 2. 파일 드롭 및 선택 이벤트
     dropZone.addEventListener("click", () => fileInput.click());
     dropZone.addEventListener("dragover", (e) => {
       e.preventDefault();
@@ -305,45 +301,37 @@
     dropZone.addEventListener("drop", (e) => {
       e.preventDefault();
       dropZone.classList.remove("border-emerald-500");
-      if (e.dataTransfer.files.length) {
-        addFiles(e.dataTransfer.files);
-      }
+      if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
     });
 
     fileInput.addEventListener("change", (e) => {
-      if (e.target.files.length) {
-        addFiles(e.target.files);
-      }
+      if (e.target.files.length) addFiles(e.target.files);
     });
 
     function addFiles(files) {
       const validImages = Array.from(files).filter(f => f.type.startsWith("image/"));
       if (!validImages.length) return;
-
-      // 새 파일 추가 및 압축 실행
       rawFiles = validImages;
       recompressAll();
     }
 
-    // 3. 전체 일괄 압축 실행 로직
+    // 전체 일괄 압축 실행 로직 (토큰 가드 탑재)
     async function recompressAll() {
       if (!rawFiles.length) return;
 
+      const processId = ++currentProcessId;
       const quality = parseFloat(qualityRange.value) / 100;
       const format = formatSelect.value;
       const resVal = resSelect.value;
       const maxDim = resVal === "original" ? 10000 : parseInt(resVal, 10);
 
-      // 기존 Blob URL 메모리 해제
-      processedItems.forEach(item => {
-        if (item.blobUrl) URL.revokeObjectURL(item.blobUrl);
-      });
-      processedItems = [];
-      resultsList.innerHTML = "";
+      const tempResults = [];
 
       for (let i = 0; i < rawFiles.length; i++) {
-        const file = rawFiles[i];
+        // 루프 도중 새 요청이 들어왔으면 즉시 중단
+        if (processId !== currentProcessId) return;
 
+        const file = rawFiles[i];
         try {
           const result = await ImageCompressor.compressFile(file, {
             quality,
@@ -352,33 +340,43 @@
             maxHeight: maxDim
           });
 
+          if (processId !== currentProcessId) return;
+
           const extension = result.outputFormat === "image/webp" ? ".webp" : result.outputFormat === "image/png" ? ".png" : ".jpg";
           const downloadName = file.name.substring(0, file.name.lastIndexOf(".")) + "_compressed" + extension;
           const blobUrl = URL.createObjectURL(result.blob);
 
-          const itemData = {
-            id: "img_" + Date.now() + "_" + i,
+          tempResults.push({
             name: file.name,
             downloadName,
             originalSize: result.originalSize,
             compressedSize: result.compressedSize,
             savedRatio: result.savedRatio,
-            blob: result.blob,
             blobUrl,
             format: result.outputFormat
-          };
-
-          processedItems.push(itemData);
-          renderItemCard(itemData);
+          });
         } catch (err) {
           console.error("압축 처리 오류:", err);
         }
       }
 
+      // 최종 단계에서 여전히 최신 작업인지 확인
+      if (processId !== currentProcessId) {
+        tempResults.forEach(item => URL.revokeObjectURL(item.blobUrl));
+        return;
+      }
+
+      // 이전 리소스 해제 후 단 한 번만 온전히 렌더링
+      processedItems.forEach(item => {
+        if (item.blobUrl) URL.revokeObjectURL(item.blobUrl);
+      });
+      processedItems = tempResults;
+      resultsList.innerHTML = "";
+
+      processedItems.forEach(item => renderItemCard(item));
       updateBatchSummary();
     }
 
-    // 4. 개별 결과 카드 렌더링
     function renderItemCard(item) {
       const card = document.createElement("div");
       card.className = "p-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl flex items-center justify-between gap-3 text-xs";
@@ -401,7 +399,6 @@
       resultsList.appendChild(card);
     }
 
-    // 5. 상단 일괄 요약 업데이트
     function updateBatchSummary() {
       if (!processedItems.length) {
         batchSummary.classList.add("hidden");
@@ -421,7 +418,6 @@
       batchSavings.textContent = `총 절감 용량: ${ImageCompressor.formatBytes(totalSaved)} (-${ratio}%)`;
     }
 
-    // 6. 전체 일괄 다운로드
     downloadAllBtn.addEventListener("click", () => {
       processedItems.forEach((item, index) => {
         setTimeout(() => {
@@ -434,6 +430,8 @@
         }, index * 150);
       });
     });
+
+    updateQualityControlState();
   </script>
   <script src="../../js/related-tools-ko.js"></script>
 </body>

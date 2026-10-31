@@ -257,7 +257,7 @@
   </div>
 
   <script src="../js/utils/imageCompressor.js"></script>
-  <script>
+    <script>
     const dropZone = document.getElementById("dropZone");
     const fileInput = document.getElementById("fileInput");
     const qualityRange = document.getElementById("qualityRange");
@@ -271,16 +271,17 @@
     const downloadAllBtn = document.getElementById("downloadAllBtn");
     const resultsList = document.getElementById("resultsList");
 
-    let rawFiles = [];
-    let processedItems = [];
+    let rawFiles = [];       // 원본 파일 보관용
+    let processedItems = []; // 현재 압축된 결과물
     let debounceTimer = null;
+    let currentProcessId = 0; // 비동기 경쟁 방지용 고유 토큰
 
     function triggerRecompression() {
       if (!rawFiles.length) return;
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
         recompressAll();
-      }, 80);
+      }, 120);
     }
 
     function updateQualityControlState() {
@@ -294,7 +295,7 @@
         qualityVal.className = "text-amber-400 font-mono text-[11px] font-bold";
         if (guideText) {
           guideText.textContent = "💡 PNG is lossless. Lower Max Dimension to reduce file weight.";
-          guideText.className = "text-[10px] text-amber-400/90 block mt-1 font-medium";
+          guideText.className = "text-[10px] text-amber-400/90 block font-medium";
         }
       } else {
         qualityRange.disabled = false;
@@ -303,7 +304,7 @@
         qualityVal.className = "text-blue-400 font-mono font-bold";
         if (guideText) {
           guideText.textContent = "Recommended 80%: Strips 50–70% size with no visible loss";
-          guideText.className = "text-[10px] text-slate-500 block mt-1";
+          guideText.className = "text-[10px] text-slate-500 block";
         }
       }
     }
@@ -345,23 +346,23 @@
       recompressAll();
     }
 
+    // 전체 일괄 압축 실행 로직 (토큰 가드 탑재)
     async function recompressAll() {
       if (!rawFiles.length) return;
 
+      const processId = ++currentProcessId;
       const quality = parseFloat(qualityRange.value) / 100;
       const format = formatSelect.value;
       const resVal = resSelect.value;
       const maxDim = resVal === "original" ? 10000 : parseInt(resVal, 10);
 
-      processedItems.forEach(item => {
-        if (item.blobUrl) URL.revokeObjectURL(item.blobUrl);
-      });
-      processedItems = [];
-      resultsList.innerHTML = "";
+      const tempResults = [];
 
       for (let i = 0; i < rawFiles.length; i++) {
-        const file = rawFiles[i];
+        // 루프 도중 새 요청이 들어왔으면 즉시 중단
+        if (processId !== currentProcessId) return;
 
+        const file = rawFiles[i];
         try {
           const result = await ImageCompressor.compressFile(file, {
             quality,
@@ -370,48 +371,59 @@
             maxHeight: maxDim
           });
 
+          if (processId !== currentProcessId) return;
+
           const extension = result.outputFormat === "image/webp" ? ".webp" : result.outputFormat === "image/png" ? ".png" : ".jpg";
           const downloadName = file.name.substring(0, file.name.lastIndexOf(".")) + "_compressed" + extension;
           const blobUrl = URL.createObjectURL(result.blob);
 
-          const itemData = {
-            id: "img_" + Date.now() + "_" + i,
+          tempResults.push({
             name: file.name,
             downloadName,
             originalSize: result.originalSize,
             compressedSize: result.compressedSize,
             savedRatio: result.savedRatio,
-            blob: result.blob,
             blobUrl,
             format: result.outputFormat
-          };
-
-          processedItems.push(itemData);
-          renderItemCard(itemData);
+          });
         } catch (err) {
-          console.error("Compression error:", err);
+          console.error("압축 처리 오류:", err);
         }
       }
 
+      // 최종 단계에서 여전히 최신 작업인지 확인
+      if (processId !== currentProcessId) {
+        tempResults.forEach(item => URL.revokeObjectURL(item.blobUrl));
+        return;
+      }
+
+      // 이전 리소스 해제 후 단 한 번만 온전히 렌더링
+      processedItems.forEach(item => {
+        if (item.blobUrl) URL.revokeObjectURL(item.blobUrl);
+      });
+      processedItems = tempResults;
+      resultsList.innerHTML = "";
+
+      processedItems.forEach(item => renderItemCard(item));
       updateBatchSummary();
     }
 
     function renderItemCard(item) {
       const card = document.createElement("div");
-      card.className = "p-3.5 bg-slate-950/80 border border-slate-800 rounded-xl flex items-center justify-between gap-3 text-xs";
+      card.className = "p-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl flex items-center justify-between gap-3 text-xs";
       card.innerHTML = `
         <div class="flex items-center gap-3 overflow-hidden">
-          <img src="${item.blobUrl}" class="w-12 h-12 object-cover rounded-lg border border-slate-800 flex-shrink-0" />
+          <img src="${item.blobUrl}" class="w-12 h-12 object-cover rounded-xl border border-slate-800 flex-shrink-0" />
           <div class="overflow-hidden">
             <span class="font-bold text-slate-200 block truncate">${item.name}</span>
             <div class="flex items-center gap-2 mt-0.5 text-[11px] font-mono">
               <span class="text-slate-500 line-through">${ImageCompressor.formatBytes(item.originalSize)}</span>
               <span class="text-blue-400 font-bold">${ImageCompressor.formatBytes(item.compressedSize)}</span>
-              <span class="text-emerald-400 font-bold">(-${item.savedRatio}%)</span>
+              <span class="text-emerald-500 font-bold">(-${item.savedRatio}%)</span>
             </div>
           </div>
         </div>
-        <a href="${item.blobUrl}" download="${item.downloadName}" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold flex-shrink-0 transition-colors">
+        <a href="${item.blobUrl}" download="${item.downloadName}" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-blue-400 font-bold flex-shrink-0 transition border border-slate-700 cursor-pointer">
           Download
         </a>
       `;
@@ -424,6 +436,7 @@
         batchSummary.classList.remove("flex");
         return;
       }
+
       batchSummary.classList.remove("hidden");
       batchSummary.classList.add("flex");
 
@@ -432,7 +445,7 @@
       const totalSaved = Math.max(0, totalOrig - totalComp);
       const ratio = totalOrig > 0 ? ((totalSaved / totalOrig) * 100).toFixed(1) : 0;
 
-      batchCount.textContent = `${processedItems.length} file${processedItems.length > 1 ? "s" : ""} processed`;
+      batchCount.textContent = `${processedItems.length} file(s) compressed`;
       batchSavings.textContent = `Total saved: ${ImageCompressor.formatBytes(totalSaved)} (-${ratio}%)`;
     }
 
