@@ -3,152 +3,414 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>글자수 세기 & 바이트 계산기 | ToolLab</title>
-  <meta name="description" content="자소서, 블로그 포스팅용 실시간 글자수, 공백 제외 글자수, 단어수, 바이트(Byte) 및 원고지 매수 계산기. 100% 브라우저 메모리 연산으로 텍스트 유출 제로." />
-  <meta name="keywords" content="글자수세기, 자소서 글자수, 바이트 계산기, 단어수 세기, 공백제외 글자수, 원고지 매수" />
-  <link rel="canonical" href="https://toollab.org/ko/tools/word-counter.html" />
-  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <title>글자수 세기 & 형태소 분석기 (공백 포함/제외·단어수) | ToolLab</title>
+  <meta name="description" content="블로그 포스팅, 자기소개서, 과제용 공백 포함/제외 글자수와 단어수를 실시간으로 측정합니다." />
+  <meta name="keywords" content="word counter, character counter, character count online, byte counter, reading time calculator, social media text length, ToolLab" />
+  
+      <!-- Tailwind CDN & Config -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="../../js/analytics.js"></script>
-</head>
-<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
-
-  <!-- 헤더 -->
-  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
-        <span class="text-slate-700">|</span>
-        <h1 class="text-base font-bold text-slate-100">실시간 글자수 &amp; 바이트 계산기</h1>
-      </div>
-      <button id="copyBtn" class="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 transition cursor-pointer">
-        텍스트 전체 복사
-      </button>
-    </div>
-  </header>
-
-  <main class="max-w-5xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
-    <!-- 메트릭 카드 대시보드 -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-      <div class="p-4 bg-slate-900/80 border border-slate-800 rounded-xl">
-        <span class="text-xs text-slate-400 block mb-1">공백 포함 글자수</span>
-        <span id="charWithSpaces" class="text-2xl font-black text-emerald-400 font-mono">0</span>
-      </div>
-      <div class="p-4 bg-slate-900/80 border border-slate-800 rounded-xl">
-        <span class="text-xs text-slate-400 block mb-1">공백 제외 글자수</span>
-        <span id="charNoSpaces" class="text-2xl font-black text-slate-100 font-mono">0</span>
-      </div>
-      <div class="p-4 bg-slate-900/80 border border-slate-800 rounded-xl">
-        <span class="text-xs text-slate-400 block mb-1">단어수 (어절)</span>
-        <span id="wordCount" class="text-2xl font-black text-slate-100 font-mono">0</span>
-      </div>
-      <div class="p-4 bg-slate-900/80 border border-slate-800 rounded-xl">
-        <span class="text-xs text-slate-400 block mb-1">용량 (바이트 / UTF-8)</span>
-        <span id="byteCount" class="text-2xl font-black text-teal-400 font-mono">0 B</span>
-      </div>
-    </div>
-
-    <!-- 세부 보조 지표 -->
-    <div class="flex flex-wrap items-center justify-between text-xs text-slate-400 px-1 gap-2">
-      <div class="flex items-center gap-4">
-        <span>줄 수: <strong id="lineCount" class="text-slate-200">0</strong>줄</span>
-        <span>200자 원고지: 약 <strong id="manuscriptCount" class="text-slate-200">0</strong>장</span>
-        <span>예상 낭독 시간: 약 <strong id="readingTime" class="text-slate-200">0</strong>분</span>
-      </div>
-      <button id="clearBtn" class="text-rose-400 hover:text-rose-300 text-xs underline cursor-pointer">
-        내용 비우기
-      </button>
-    </div>
-
-    <!-- 텍스트 입력창 -->
-    <div class="relative">
-      <textarea id="textInput" placeholder="여기에 글을 입력하거나 붙여넣으세요. 입력하는 즉시 글자수와 용량이 계산됩니다 (서버로 전송되지 않음)." 
-        class="w-full h-80 p-5 bg-slate-900 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-500 text-sm outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition shadow-inner font-sans leading-relaxed resize-y"></textarea>
-    </div>
-  </main>
-
-  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
-    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
-  </footer>
-
   <script>
-    const input = document.getElementById("textInput");
-    const charWithSpacesEl = document.getElementById("charWithSpaces");
-    const charNoSpacesEl = document.getElementById("charNoSpaces");
-    const wordCountEl = document.getElementById("wordCount");
-    const byteCountEl = document.getElementById("byteCount");
-    const lineCountEl = document.getElementById("lineCount");
-    const manuscriptCountEl = document.getElementById("manuscriptCount");
-    const readingTimeEl = document.getElementById("readingTime");
-    const copyBtn = document.getElementById("copyBtn");
-    const clearBtn = document.getElementById("clearBtn");
-
-    let timer = null;
-
-    function calculateBytes(str) {
-      let bytes = 0;
-      for (let i = 0; i < str.length; i++) {
-        const code = str.charCodeAt(i);
-        if (code <= 0x7f) bytes += 1;
-        else if (code <= 0x7ff) bytes += 2;
-        else if (code >= 0xd800 && code <= 0xdbff) {
-          bytes += 4;
-          i++;
-        } else bytes += 3;
-      }
-      return bytes;
+    tailwind.config = {
+      darkMode: 'class'
     }
+  </script>
 
-    function updateMetrics() {
-      const text = input.value;
-      const charWithSpaces = text.length;
-      const charNoSpaces = text.replace(/\s/g, "").length;
+  <!-- Open Graph & Rich Snippets -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ToolLab" />
+  <meta property="og:title" content="Word & Character Counter | ToolLab" />
+  <meta property="og:description" content="Real-time character, word, byte, and reading duration counter with social media limits." />
+  <meta property="og:url" content="https://toollab.org/tools/word-counter.html" />
+  <meta property="og:image" content="https://toollab.org/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Word & Character Counter | ToolLab" />
+  <meta name="twitter:description" content="Real-time character, word, byte, and reading duration counter with social media limits." />
+  <meta name="twitter:image" content="https://toollab.org/og-image.png" />
+  <link rel="canonical" href="https://toollab.org/tools/word-counter.html" />
+
+  <!-- ToolLab Analytics Tracker -->
+  <script src="/js/analytics.js"></script>
+  <!-- Google AdSense Official Loader -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1512367949140208" crossorigin="anonymous"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
+  <div class="max-w-3xl mx-auto">
+    
+    <!-- Main Counter Card -->
+    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 md:p-7">
       
-      const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-      const lines = text ? text.split("\n").length : 0;
-      const bytes = calculateBytes(text);
+      <!-- Top Bar -->
+      <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="/ko" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </a>
+          <div>
+            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Word & Character Counter</h1>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="clearBtn" class="text-xs px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition-colors">Clear</button>
+          <button id="copyBtn" class="text-xs px-2.5 py-1 rounded bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-800/60 transition-colors">Copy Text</button>
+        </div>
+      </div>
 
-      const manuscripts = Math.ceil(charWithSpaces / 200) || 0;
-      const readingMinutes = Math.ceil(words / 300) || (text ? 1 : 0);
+      <!-- Live Metric Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5">
+        <div class="p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl text-center">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Words</span>
+          <span id="statWords" class="text-2xl md:text-3xl font-black text-blue-400">0</span>
+        </div>
+        <div class="p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl text-center">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Characters</span>
+          <span id="statChars" class="text-2xl md:text-3xl font-black text-slate-100">0</span>
+        </div>
+        <div class="p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl text-center">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">No Spaces</span>
+          <span id="statCharsNoSpaces" class="text-2xl md:text-3xl font-black text-slate-300">0</span>
+        </div>
+        <div class="p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl text-center">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Bytes (UTF-8)</span>
+          <span id="statBytes" class="text-2xl md:text-3xl font-black text-emerald-400">0</span>
+        </div>
+      </div>
 
-      charWithSpacesEl.innerText = charWithSpaces.toLocaleString();
-      charNoSpacesEl.innerText = charNoSpaces.toLocaleString();
-      wordCountEl.innerText = words.toLocaleString();
-      byteCountEl.innerText = `${bytes.toLocaleString()} B`;
-      lineCountEl.innerText = lines.toLocaleString();
-      manuscriptCountEl.innerText = manuscripts.toLocaleString();
-      readingTimeEl.innerText = readingMinutes.toLocaleString();
+      <!-- Text Input Area -->
+      <div class="relative">
+        <textarea id="textInput" rows="10" 
+          placeholder="Paste or type your content here to inspect real-time word statistics, byte sizes, and social media constraints..." 
+          class="w-full p-4 bg-slate-950/80 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 font-sans text-sm md:text-base leading-relaxed resize-y"></textarea>
+      </div>
+
+      <!-- Secondary Metrics & Reading Times -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4 text-xs">
+        <div class="p-2.5 bg-slate-950/40 border border-slate-800/80 rounded-lg flex justify-between">
+          <span class="text-slate-400">Sentences</span>
+          <span id="statSentences" class="font-bold text-slate-200">0</span>
+        </div>
+        <div class="p-2.5 bg-slate-950/40 border border-slate-800/80 rounded-lg flex justify-between">
+          <span class="text-slate-400">Paragraphs</span>
+          <span id="statParagraphs" class="font-bold text-slate-200">0</span>
+        </div>
+        <div class="p-2.5 bg-slate-950/40 border border-slate-800/80 rounded-lg flex justify-between">
+          <span class="text-slate-400">Reading Time</span>
+          <span id="statReading" class="font-bold text-blue-400">0 min</span>
+        </div>
+        <div class="p-2.5 bg-slate-950/40 border border-slate-800/80 rounded-lg flex justify-between">
+          <span class="text-slate-400">Speaking Time</span>
+          <span id="statSpeaking" class="font-bold text-indigo-400">0 min</span>
+        </div>
+      </div>
+
+      <!-- Social Media Constraints -->
+      <div class="mt-6 pt-5 border-t border-slate-800">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Social Media Character Limits</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          
+          <!-- X (Twitter) -->
+          <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl space-y-1.5">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-300">X (Twitter)</span>
+              <span id="twitterRemain" class="text-slate-400 font-mono">280</span>
+            </div>
+            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div id="twitterBar" class="bg-blue-500 h-full w-0 transition-all"></div>
+            </div>
+          </div>
+
+          <!-- LinkedIn Post -->
+          <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl space-y-1.5">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-300">LinkedIn Post</span>
+              <span id="linkedinRemain" class="text-slate-400 font-mono">3,000</span>
+            </div>
+            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div id="linkedinBar" class="bg-blue-600 h-full w-0 transition-all"></div>
+            </div>
+          </div>
+
+          <!-- Instagram Bio -->
+          <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl space-y-1.5">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-300">Instagram Bio</span>
+              <span id="instaRemain" class="text-slate-400 font-mono">150</span>
+            </div>
+            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div id="instaBar" class="bg-pink-500 h-full w-0 transition-all"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SEO Reference & Knowledge Base -->
+    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
+      
+      <!-- Benchmark Table -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          Standard Editorial & Content Word Count Benchmarks
+        </h2>
+        <p class="text-xs text-slate-400 mb-4">Target lengths across major content formats to maximize user engagement and search visibility.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
+                <th class="p-2.5">Content Type</th>
+                <th class="p-2.5">Target Word Count</th>
+                <th class="p-2.5">Avg. Reading Time</th>
+                <th class="p-2.5">Primary Purpose</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300">
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">Social Media Caption</td>
+                <td class="p-2.5 text-blue-400 font-medium">25 – 50 words</td>
+                <td class="p-2.5 text-slate-400">&lt; 20 sec</td>
+                <td class="p-2.5 text-slate-400">Immediate feed engagement</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">SEO Blog Post</td>
+                <td class="p-2.5 text-blue-400 font-medium">1,200 – 2,500 words</td>
+                <td class="p-2.5 text-slate-400">6 – 12 min</td>
+                <td class="p-2.5 text-slate-400">Comprehensive organic ranking</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">Whitepaper / Report</td>
+                <td class="p-2.5 text-blue-400 font-medium">3,000 – 6,000 words</td>
+                <td class="p-2.5 text-slate-400">15 – 30 min</td>
+                <td class="p-2.5 text-slate-400">In-depth industry authority</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">Standard Novel Chapter</td>
+                <td class="p-2.5 text-blue-400 font-medium">2,000 – 4,000 words</td>
+                <td class="p-2.5 text-slate-400">10 – 20 min</td>
+                <td class="p-2.5 text-slate-400">Narrative pacing & fiction</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Practical Guide -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
+        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          Text Metrics Explained
+        </h2>
+        
+        <div class="space-y-2.5 text-xs leading-relaxed">
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">1. Characters vs. Bytes</h3>
+            <p>A character is a human-readable symbol, whereas a byte represents physical storage memory. For standard English, 1 character = 1 byte. For international scripts (Korean, Chinese, Arabic) and modern emoji, a single glyph requires 3 to 4 bytes in UTF-8 databases.</p>
+          </div>
+
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">2. Speech vs. Reading Speed</h3>
+            <p>Silent reading occurs at roughly 200–250 words per minute (WPM), while natural speaking pace for presentations, podcasts, and speeches averages 130–150 WPM.</p>
+          </div>
+        </div>
+      </section>
+
+      
+      <!-- ToolLab Clean Ad Unit -->
+      <div class="my-8 flex flex-col items-center justify-center">
+        <span class="text-[10px] font-mono tracking-widest text-slate-600 uppercase mb-1.5">ADVERTISEMENT</span>
+        <div class="w-full max-w-3xl min-h-[100px] sm:min-h-[250px] bg-slate-900/40 border border-slate-800/80 rounded-2xl flex items-center justify-center overflow-hidden">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-1512367949140208"
+               data-ad-slot="5185318921"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>
+               (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+          Frequently Asked Questions
+        </h2>
+
+        <div class="space-y-3.5 text-xs">
+          <div>
+            <h3 class="font-bold text-slate-200 mb-1">Q. Is there any character limit for analysis on this page?</h3>
+            <p class="text-slate-400">No. Since execution runs locally in your browser without hitting an API endpoint, you can paste entire book chapters or research papers with no server quotas or size caps.</p>
+          </div>
+          <div class="border-t border-slate-800 pt-3">
+            <h3 class="font-bold text-slate-200 mb-1">Q. Does deleting my text also delete it from your database?</h3>
+            <p class="text-slate-400">There is no database. Nothing is ever sent to or saved on an external server. Once you clear the box or close the tab, your text is completely erased from your browser's temporary memory.</p>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- Standard Minimal Footer -->
+    
+    <!-- 한국어 SEO 가이드 & FAQ 복합 섹션 -->
+    <section class="max-w-4xl mx-auto px-4 py-8 space-y-6 border-t border-slate-800/80 mt-12">
+      <div class="space-y-3">
+        <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+          <span class="text-emerald-400">📖</span>
+          <span>효과적인 글쓰기를 위한 글자수 관리 가이드</span>
+        </h2>
+        <p class="text-xs text-slate-400 leading-relaxed">네이버 블로그, 티스토리 등 주요 포털 검색엔진은 충분한 정보량을 담은 1,500자~2,500자 내외의 포스팅을 선호합니다. 자기소개서나 공공기관 입사지원서 역시 공백 포함 여부에 따라 엄격한 글자수 제한을 두고 있습니다.</p>
+        <p class="text-xs text-slate-400 leading-relaxed">ToolLab 글자수 세기는 100% 브라우저 메모리 안에서 실시간으로 동작하므로, 작성 중인 소중한 원고가 외부 서버로 전송되거나 유출될 위험이 전혀 없습니다.</p>
+      </div>
+
+      <!-- 애드센스 인피드 슬롯 -->
+      <div class="my-6 p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
+        <div class="text-[11px] text-slate-600 font-mono tracking-wider mb-2">SPONSORED</div>
+        <div class="min-h-[100px] flex items-center justify-center text-xs text-slate-600">
+          <!-- 애드센스 반응형 광고 태그 자리 -->
+          <span>반응형 광고 영역 (Google AdSense)</span>
+        </div>
+      </div>
+
+      <div class="space-y-3 pt-4"><h3 class="text-sm font-bold text-slate-200">자주 묻는 질문 (FAQ)</h3>
+        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
+          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
+            <span>Q. 공백 포함 글자수와 공백 제외 글자수는 어떻게 다른가요?</span>
+            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">공백 포함은 띄어쓰기, 줄바꿈, 탭을 모두 1자로 카운트하며, 공백 제외는 순수 활자(한글, 영문, 숫자, 특수기호)만을 집계합니다.</p>
+        </details>
+        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
+          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
+            <span>Q. 네이버 블로그 권장 글자수는 얼마인가요?</span>
+            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">정보성 포스팅 기준 공백 제외 1,500자~2,000자 내외가 검색 상위 노출(C-Rank 및 D.I.A.)에 가장 안정적인 분량으로 평가받습니다.</p>
+        </details></div>
+
+      <!-- 한국어 관련 툴 내부 링크 추천 바 -->
+      <div class="pt-8 border-t border-slate-800/60">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">함께 쓰면 유용한 추천 도구</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <a href="/ko/tools/unit-converter.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>📐</span> <span>단위 변환기</span>
+          </a>
+          <a href="/ko/tools/percentage-calc.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>🏷️</span> <span>퍼센트 계산기</span>
+          </a>
+          <a href="/ko/tools/image-compressor.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>📷</span> <span>이미지 압축기</span>
+          </a>
+          <a href="/ko" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>⚡</span> <span>전체 도구 보기</span>
+          </a>
+        </div>
+      </div>
+    </section>
+    
+<footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+        <div class="space-y-0.5">
+          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
+        </div>
+        <div class="flex items-center gap-3 font-semibold text-slate-400">
+          <a href="../about.html" class="hover:text-emerald-400 transition-colors">About</a>
+        <span>·</span>
+        <a href="../contact.html" class="hover:text-emerald-400 transition-colors">Contact</a>
+        <span>·</span>
+        <a href="../privacy.html" class="hover:text-emerald-400 transition-colors">Privacy</a>
+        <span>·</span>
+        <a href="../terms.html" class="hover:text-emerald-400 transition-colors">Terms</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../js/utils/wordCounter.js"></script>
+  <script>
+    const textarea = document.getElementById("textInput");
+    const statWords = document.getElementById("statWords");
+    const statChars = document.getElementById("statChars");
+    const statCharsNoSpaces = document.getElementById("statCharsNoSpaces");
+    const statBytes = document.getElementById("statBytes");
+    const statSentences = document.getElementById("statSentences");
+    const statParagraphs = document.getElementById("statParagraphs");
+    const statReading = document.getElementById("statReading");
+    const statSpeaking = document.getElementById("statSpeaking");
+
+    const twitterRemain = document.getElementById("twitterRemain");
+    const twitterBar = document.getElementById("twitterBar");
+    const linkedinRemain = document.getElementById("linkedinRemain");
+    const linkedinBar = document.getElementById("linkedinBar");
+    const instaRemain = document.getElementById("instaRemain");
+    const instaBar = document.getElementById("instaBar");
+
+    function updateStats() {
+      const text = textarea.value;
+      const stats = WordCounter.analyze(text);
+
+      statWords.textContent = stats.words.toLocaleString();
+      statChars.textContent = stats.charsTotal.toLocaleString();
+      statCharsNoSpaces.textContent = stats.charsNoSpaces.toLocaleString();
+      statBytes.textContent = stats.bytes.toLocaleString();
+      statSentences.textContent = stats.sentences.toLocaleString();
+      statParagraphs.textContent = stats.paragraphs.toLocaleString();
+      statReading.textContent = stats.readingTime;
+      statSpeaking.textContent = stats.speakingTime;
+
+      // Update Social Media Bars
+      updateSocialBar(stats.social.twitter, twitterRemain, twitterBar, 280);
+      updateSocialBar(stats.social.linkedin, linkedinRemain, linkedinBar, 3000);
+      updateSocialBar(stats.social.instagramBio, instaRemain, instaBar, 150);
     }
 
-    // 디바운스 150ms 적용
-    input.addEventListener("input", () => {
-      clearTimeout(timer);
-      timer = setTimeout(updateMetrics, 150);
+    function updateSocialBar(socialData, textEl, barEl, maxLimit) {
+      if (socialData.isOver) {
+        textEl.textContent = `${socialData.remaining} (Over)`;
+        textEl.className = "text-rose-400 font-bold font-mono";
+        barEl.style.width = "100%";
+        barEl.className = "bg-rose-500 h-full transition-all";
+      } else {
+        textEl.textContent = socialData.remaining.toLocaleString();
+        textEl.className = "text-slate-400 font-mono";
+        const percent = Math.min(100, ( (maxLimit - socialData.remaining) / maxLimit ) * 100);
+        barEl.style.width = `${percent}%`;
+        barEl.className = barEl.id === "instaBar" ? "bg-pink-500 h-full transition-all" : "bg-blue-500 h-full transition-all";
+      }
+    }
+
+    textarea.addEventListener("input", updateStats);
+
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      textarea.value = "";
+      updateStats();
+      textarea.focus();
     });
 
-    clearBtn.addEventListener("click", () => {
-      if (!input.value) return;
-      if (confirm("작성 중인 내용을 모두 지우시겠습니까?")) {
-        input.value = "";
-        updateMetrics();
-      }
-    });
-
-    copyBtn.addEventListener("click", () => {
-      if (!input.value) {
-        alert("복사할 내용이 없습니다.");
-        return;
-      }
-      navigator.clipboard.writeText(input.value).then(() => {
-        const org = copyBtn.innerText;
-        copyBtn.innerText = "✓ 복사 완료!";
-        copyBtn.classList.add("text-emerald-400", "border-emerald-500");
+    document.getElementById("copyBtn").addEventListener("click", () => {
+      if (!textarea.value) return;
+      navigator.clipboard.writeText(textarea.value).then(() => {
+        const originalText = document.getElementById("copyBtn").textContent;
+        document.getElementById("copyBtn").textContent = "Copied!";
         setTimeout(() => {
-          copyBtn.innerText = org;
-          copyBtn.classList.remove("text-emerald-400", "border-emerald-500");
+          document.getElementById("copyBtn").textContent = originalText;
         }, 1500);
       });
     });
+
+    updateStats();
   </script>
+  <script src="../js/related-tools.js"></script>
 </body>
 </html>

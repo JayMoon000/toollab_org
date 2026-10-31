@@ -3,222 +3,459 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>만능 단위 변환기 (평수·면적·길이·무게) | ToolLab</title>
-  <meta name="description" content="아파트 평수↔㎡(제곱미터), 인치↔cm, 파운드↔kg, 금 1돈/고기 1근 등 일상생활과 부동산 필수 단위를 1초 만에 상호 변환합니다." />
-  <meta name="keywords" content="단위변환기, 평수계산기, 제곱미터 평수, 인치센치, 파운드킬로, 금한돈무게, 고기한근무게" />
-  <link rel="canonical" href="https://toollab.org/ko/tools/unit-converter.html" />
-  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  
+  <!-- SEO: 최우선 검색어 'Unit Converter' 전진 배치 및 롱테일 결합 -->
+  <title>만능 단위 변환기 (아파트 평수↔㎡·인치·무게) | ToolLab</title>
+  <meta name="description" content="아파트 평수↔제곱미터(㎡), 인치↔cm, 파운드↔kg, 금 1돈/고기 1근 등 실생활과 부동산 단위를 즉시 상호 변환합니다." />
+  <meta name="keywords" content="unit converter, metric to imperial converter, precision unit converter, converter units of measure, imperial system calculator, convert to imperial units, imperial converter, sqft to sqm, lbs to kg, feet to meters, fahrenheit to celsius, ToolLab" />
+  
+  <!-- Tailwind CDN & Config -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="../../js/analytics.js"></script>
-</head>
-<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
-  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
-        <span class="text-slate-700">|</span>
-        <h1 class="text-base font-bold text-slate-100">만능 단위 변환기</h1>
-      </div>
-      <span class="text-xs text-emerald-400 font-mono">NIST / 법정계량단위</span>
-    </div>
-  </header>
-
-  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
-    <!-- 카테고리 탭 (부동산 면적 최우선) -->
-    <div class="flex flex-wrap items-center justify-center gap-2 p-1.5 bg-slate-900 border border-slate-800 rounded-2xl text-xs font-bold">
-      <button class="cat-btn active px-4 py-2 rounded-xl bg-emerald-600 text-white transition cursor-pointer" data-cat="area">📐 면적 (평 ↔ ㎡)</button>
-      <button class="cat-btn px-4 py-2 rounded-xl bg-transparent text-slate-400 hover:text-white transition cursor-pointer" data-cat="length">📏 길이 (cm ↔ inch)</button>
-      <button class="cat-btn px-4 py-2 rounded-xl bg-transparent text-slate-400 hover:text-white transition cursor-pointer" data-cat="weight">⚖️ 무게 (kg ↔ lb / 돈·근)</button>
-      <button class="cat-btn px-4 py-2 rounded-xl bg-transparent text-slate-400 hover:text-white transition cursor-pointer" data-cat="temp">🌡️ 온도 (℃ ↔ ℉)</button>
-    </div>
-
-    <!-- 변환 카드 컨테이너 -->
-    <div class="p-6 sm:p-8 bg-slate-900/80 border border-slate-800 rounded-3xl shadow-xl space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center relative">
-        <!-- 좌측 인풋 -->
-        <div class="space-y-2">
-          <label class="text-xs font-semibold text-slate-400">입력 단위 및 수치</label>
-          <div class="flex gap-2">
-            <input type="number" id="fromVal" value="34" step="any"
-              class="w-full p-4 bg-slate-950 border border-slate-800 rounded-2xl text-xl font-bold font-mono text-slate-100 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition" />
-            <select id="fromUnit" class="bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-200 outline-none focus:border-emerald-500 cursor-pointer shrink-0">
-            </select>
-          </div>
-        </div>
-
-        <!-- 스왑 버튼 -->
-        <button id="swapBtn" title="단위 맞바꾸기" class="md:absolute md:left-1/2 md:-translate-x-1/2 md:top-1/2 md:-translate-y-1/2 w-10 h-10 mx-auto bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-full border border-slate-700 flex items-center justify-center transition cursor-pointer shadow-lg z-10">
-          ⇄
-        </button>
-
-        <!-- 우측 아웃풋 -->
-        <div class="space-y-2">
-          <label class="text-xs font-semibold text-slate-400">변환 결과 단위 및 수치</label>
-          <div class="flex gap-2">
-            <input type="number" id="toVal" readonly
-              class="w-full p-4 bg-slate-950/60 border border-slate-800/80 rounded-2xl text-xl font-bold font-mono text-emerald-400 outline-none" />
-            <select id="toUnit" class="bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-200 outline-none focus:border-emerald-500 cursor-pointer shrink-0">
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- 빠른 변환 프리셋 칩 바 -->
-      <div id="quickPresets" class="pt-4 border-t border-slate-800/70 flex flex-wrap items-center gap-2">
-        <span class="text-xs text-slate-500 font-medium">자주 찾는 수치:</span>
-      </div>
-    </div>
-  </main>
-
-  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
-    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
-  </footer>
-
   <script>
-    const UNITS = {
-      area: {
-        units: [
-          { key: "pyeong", name: "평 (坪)", factor: 3.305785 },
-          { key: "sqm", name: "제곱미터 (㎡)", factor: 1 },
-          { key: "sqft", name: "스퀘어피트 (sq ft)", factor: 0.092903 },
-          { key: "danbo", name: "단보 (300평)", factor: 991.7355 }
-        ],
-        presets: [
-          { label: "국민평형 34평 (84㎡)", val: 34, from: "pyeong", to: "sqm" },
-          { label: "소형 24평 (59㎡)", val: 24, from: "pyeong", to: "sqm" },
-          { label: "대형 45평 (115㎡)", val: 45, from: "pyeong", to: "sqm" }
-        ]
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+
+  <!-- Open Graph & Rich Snippets -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ToolLab" />
+  <meta property="og:title" content="Free Unit Converter - Metric to Imperial & Precision Conversion" />
+  <meta property="og:description" content="Fast, high-precision online unit converter. Instant local browser calculation with zero server latency." />
+  <meta property="og:url" content="https://toollab.org/tools/unit-converter.html" />
+  <meta property="og:image" content="https://toollab.org/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Free Unit Converter - Metric to Imperial & Precision Conversion" />
+  <meta name="twitter:description" content="Fast, high-precision online unit converter. Instant local browser calculation with zero server latency." />
+  <meta name="twitter:image" content="https://toollab.org/og-image.png" />
+  <link rel="canonical" href="https://toollab.org/tools/unit-converter.html" />
+
+  <!-- Schema.org FAQ & SoftwareApplication JSON-LD (검색 리치 스니펫) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "ToolLab Unit Converter",
+        "url": "https://toollab.org/tools/unit-converter.html",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "All",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "description": "Accurate, client-side online unit converter for metric and imperial measurement systems."
       },
-      length: {
-        units: [
-          { key: "cm", name: "센티미터 (cm)", factor: 0.01 },
-          { key: "m", name: "미터 (m)", factor: 1 },
-          { key: "inch", name: "인치 (in)", factor: 0.0254 },
-          { key: "ft", name: "피트 (ft)", factor: 0.3048 },
-          { key: "km", name: "킬로미터 (km)", factor: 1000 },
-          { key: "mile", name: "마일 (mi)", factor: 1609.344 }
-        ],
-        presets: [
-          { label: "모니터 32인치", val: 32, from: "inch", to: "cm" },
-          { label: "키 6피트 (6ft)", val: 6, from: "ft", to: "cm" }
-        ]
-      },
-      weight: {
-        units: [
-          { key: "kg", name: "킬로그램 (kg)", factor: 1 },
-          { key: "g", name: "그램 (g)", factor: 0.001 },
-          { key: "lb", name: "파운드 (lb)", factor: 0.453592 },
-          { key: "oz", name: "온스 (oz)", factor: 0.0283495 },
-          { key: "don", name: "금 1돈 (3.75g)", factor: 0.00375 },
-          { key: "geun", name: "고기 1근 (600g)", factor: 0.6 }
-        ],
-        presets: [
-          { label: "순금 10돈", val: 10, from: "don", to: "g" },
-          { label: "삼겹살 2근", val: 2, from: "geun", to: "g" },
-          { label: "볼링공 15파운드", val: 15, from: "lb", to: "kg" }
-        ]
-      },
-      temp: {
-        units: [
-          { key: "c", name: "섭씨 (℃)" },
-          { key: "f", name: "화씨 (℉)" }
-        ],
-        presets: [
-          { label: "체온 36.5℃", val: 36.5, from: "c", to: "f" },
-          { label: "오븐 350℉", val: 350, from: "f", to: "c" }
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do I accurately convert metric to imperial units?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Select your measurement category, enter the value, and select your target imperial unit. The calculator uses standardized international conversion ratios (e.g., 1 inch = 25.4 mm, 1 lb = 0.45359237 kg) to deliver exact results."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this tool require data transmission to an external server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. All calculations execute 100% locally inside your browser via client-side JavaScript. No data or input values are ever sent across a network, ensuring zero latency and total privacy."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between an Acre and a Hectare?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "An acre (standard US/UK land unit) is approximately 4,046.86 m². A hectare (metric standard) is exactly 10,000 m² (about 2.471 acres), making a hectare roughly 2.5 times larger than an acre."
+            }
+          }
         ]
       }
-    };
+    ]
+  }
+  </script>
+  
+  <!-- ToolLab Analytics Tracker -->
+  <script src="/js/analytics.js"></script>
+  <!-- Google AdSense Official Loader -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1512367949140208" crossorigin="anonymous"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
+  <div class="max-w-2xl mx-auto">
+    
+    <!-- Main Converter Card -->
+    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 md:p-7">
+      
+      <!-- Header Navigation -->
+      <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="/ko" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </a>
+          <div>
+            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Free Online Unit Converter</h1>
+          </div>
+        </div>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-950/80 text-blue-400 border border-blue-800">
+          SI Standard
+        </span>
+      </div>
 
-    let curCat = "area";
-    const fromVal = document.getElementById("fromVal");
-    const toVal = document.getElementById("toVal");
-    const fromUnit = document.getElementById("fromUnit");
-    const toUnit = document.getElementById("toUnit");
-    const swapBtn = document.getElementById("swapBtn");
-    const quickPresets = document.getElementById("quickPresets");
+      <!-- Category Tab Bar -->
+      <div class="grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-xl text-xs font-bold text-slate-400 mb-6 border border-slate-800/80">
+        <button class="cat-btn py-2 rounded-lg transition-colors bg-blue-600 text-white shadow" data-cat="area">Area</button>
+        <button class="cat-btn py-2 rounded-lg transition-colors hover:text-slate-200" data-cat="length">Length</button>
+        <button class="cat-btn py-2 rounded-lg transition-colors hover:text-slate-200" data-cat="weight">Weight</button>
+        <button class="cat-btn py-2 rounded-lg transition-colors hover:text-slate-200" data-cat="volume">Volume</button>
+        <button class="cat-btn py-2 rounded-lg transition-colors hover:text-slate-200" data-cat="temperature">Temp</button>
+      </div>
 
-    function renderSelects() {
-      const data = UNITS[curCat];
-      fromUnit.innerHTML = "";
-      toUnit.innerHTML = "";
+      <!-- Conversion Interactive Inputs -->
+      <div class="space-y-4">
+        <!-- Input Value -->
+        <div class="p-4 bg-slate-950/70 border border-slate-800 rounded-xl space-y-2">
+          <div class="flex justify-between items-center text-xs font-semibold text-slate-400">
+            <span>From</span>
+            <select id="fromUnit" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-slate-200 font-bold outline-none focus:border-blue-500"></select>
+          </div>
+          <input type="number" id="fromValue" value="1000" class="w-full text-2xl font-black bg-transparent text-slate-100 outline-none focus:text-blue-400" placeholder="0" />
+        </div>
 
-      data.units.forEach((u, i) => {
-        fromUnit.add(new Option(u.name, u.key, false, i === 0));
-        toUnit.add(new Option(u.name, u.key, false, i === 1));
+        <!-- Swap Button -->
+        <div class="flex justify-center -my-2 relative z-10">
+          <button id="swapBtn" class="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 shadow-md hover:border-blue-500 hover:text-blue-400 flex items-center justify-center text-slate-300 transition-all active:scale-95" title="Swap Units">
+            ⇅
+          </button>
+        </div>
+
+        <!-- Output Result -->
+        <div class="p-4 bg-blue-950/30 border border-blue-900/60 rounded-xl space-y-2">
+          <div class="flex justify-between items-center text-xs font-semibold text-blue-400">
+            <span>Result</span>
+            <select id="toUnit" class="bg-slate-900 border border-blue-800 rounded-lg px-2.5 py-1 text-blue-300 font-bold outline-none focus:border-blue-400"></select>
+          </div>
+          <div id="toValue" class="text-2xl font-black text-blue-400 truncate">0</div>
+        </div>
+      </div>
+
+      <!-- Multiple Unit Overview Grid -->
+      <div class="mt-6 pt-5 border-t border-slate-800">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">Instant Multi-Unit Comparison</h3>
+        <div id="multiResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs"></div>
+      </div>
+
+    </div>
+
+    <!-- SEO / Reference Article Section -->
+    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
+      
+      <!-- 0. Comprehensive Measurement Overview (SEO Boost) -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
+        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+          Precision Multi-Unit Conversion Engine
+        </h2>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          ToolLab provides an instant, universal converter for all standard units of measure. Whether you need to convert imperial units to metric equivalents for engineering, calculate room floor plans (sq ft to m²), or check international baking temperatures, our calculator computes high-precision conversions instantly in your browser with zero latency.
+        </p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 text-[11px] text-slate-400">
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Length:</strong> mm, cm, m, km, in, ft, yd, mi</div>
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Weight:</strong> mg, g, kg, oz, lb, ton</div>
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Area:</strong> sq ft, sq m, acre, hectare</div>
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Volume:</strong> mL, L, gal, fl oz, cup</div>
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Temperature:</strong> °C, °F, Kelvin</div>
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Privacy:</strong> 100% Client-side JS</div>
+        </div>
+      </section>
+
+      <!-- 1. Real Estate & Floor Space Reference Table -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          Standard Area & Real Estate Conversion Reference
+        </h2>
+        <p class="text-xs text-slate-400 mb-4">Quick lookup guide for architectural, residential, and commercial floor plans across international standards.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
+                <th class="p-2.5">Square Feet (sq ft)</th>
+                <th class="p-2.5">Square Meters (m²)</th>
+                <th class="p-2.5">Square Yards (yd²)</th>
+                <th class="p-2.5">Typical Context</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300">
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">500 sq ft</td>
+                <td class="p-2.5 text-blue-400 font-medium">46.45 m²</td>
+                <td class="p-2.5 text-slate-200">55.56 yd²</td>
+                <td class="p-2.5 text-slate-400">Studio / 1-Bedroom Apartment</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">800 sq ft</td>
+                <td class="p-2.5 text-blue-400 font-medium">74.32 m²</td>
+                <td class="p-2.5 text-slate-200">88.89 yd²</td>
+                <td class="p-2.5 text-slate-400">Standard 2-Bedroom Condo</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">1,200 sq ft</td>
+                <td class="p-2.5 text-blue-400 font-medium">111.48 m²</td>
+                <td class="p-2.5 text-slate-200">133.33 yd²</td>
+                <td class="p-2.5 text-slate-400">Spacious 3-Bedroom Family Home</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">2,500 sq ft</td>
+                <td class="p-2.5 text-blue-400 font-medium">232.26 m²</td>
+                <td class="p-2.5 text-slate-200">277.78 yd²</td>
+                <td class="p-2.5 text-slate-400">Large Single-Family Detached Residence</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 2. Essential Cross-Border Conversion Guide -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
+        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          Essential Practical Conversion Guides
+        </h2>
+        
+        <div class="space-y-2.5 text-xs leading-relaxed">
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">1. Weight & Mass: Pounds (lb) vs. Kilograms (kg)</h3>
+            <p>One pound corresponds to exactly 0.45359237 kg. When shipping internationally or traveling, multiply kilograms by 2.2 for an approximate weight in pounds (e.g., a 23 kg airline check-in allowance is roughly 50.7 lbs).</p>
+          </div>
+
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">2. Culinary Temperature: Fahrenheit (°F) vs. Celsius (°C)</h3>
+            <p>Baking instructions in US recipes use Fahrenheit, while European standards use Celsius. Common benchmarks include 350°F (177°C moderate oven), 400°F (204°C hot oven), and 450°F (232°C high-heat roasting).</p>
+          </div>
+
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">3. Liquid Measures: US Fluid Ounces vs. Metric Milliliters</h3>
+            <p>One US fluid ounce equals 29.57 mL. Beverage sizes, skincare packaging, and cooking oils regularly rely on this measurement (e.g., 16 US fl oz is roughly 473 mL, standard US pint).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Frequently Asked Questions -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+          Frequently Asked Questions (FAQ)
+        </h2>
+
+        <div class="space-y-3.5 text-xs">
+          <div>
+            <h3 class="font-bold text-slate-200 mb-1">Q. Does this tool require data transmission to an external server?</h3>
+            <p class="text-slate-400">No. All calculations execute 100% locally inside your browser via client-side JavaScript. No data or input values are ever sent across a network, ensuring zero latency and total privacy.</p>
+          </div>
+          <div class="border-t border-slate-800 pt-3">
+            <h3 class="font-bold text-slate-200 mb-1">Q. How accurate are the conversion coefficients used here?</h3>
+            <p class="text-slate-400">The conversion rates strictly adhere to international definitions set by the General Conference on Weights and Measures (CGPM) and the National Institute of Standards and Technology (NIST).</p>
+          </div>
+          <div class="border-t border-slate-800 pt-3">
+            <h3 class="font-bold text-slate-200 mb-1">Q. What is the difference between an Acre and a Hectare?</h3>
+            <p class="text-slate-400">An acre (standard US/UK land unit) is approximately 4,046.86 m². A hectare (metric standard) is exactly 10,000 m² (about 2.471 acres), making a hectare roughly 2.5 times larger than an acre.</p>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- Standard Minimal Footer -->
+    
+      <!-- ToolLab Clean Ad Unit -->
+      <div class="my-8 flex flex-col items-center justify-center">
+        <span class="text-[10px] font-mono tracking-widest text-slate-600 uppercase mb-1.5">ADVERTISEMENT</span>
+        <div class="w-full max-w-3xl min-h-[100px] sm:min-h-[250px] bg-slate-900/40 border border-slate-800/80 rounded-2xl flex items-center justify-center overflow-hidden">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-1512367949140208"
+               data-ad-slot="5185318921"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>
+               (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+      </div>
+
+      
+    <!-- 한국어 SEO 가이드 & FAQ 복합 섹션 -->
+    <section class="max-w-4xl mx-auto px-4 py-8 space-y-6 border-t border-slate-800/80 mt-12">
+      <div class="space-y-3">
+        <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+          <span class="text-emerald-400">📖</span>
+          <span>부동산 법정계량단위와 일상 단위 환산 팁</span>
+        </h2>
+        <p class="text-xs text-slate-400 leading-relaxed">국내 부동산 거래에서는 법정계량단위인 제곱미터(㎡) 사용이 의무화되어 있지만, 실생활에서는 여전히 '34평형', '24평형' 같은 평 단위가 훨씬 익숙합니다. 1평은 정확히 약 3.305785㎡입니다.</p>
+        <p class="text-xs text-slate-400 leading-relaxed">해외 직구나 해외 규격 제품을 구매할 때 자주 마주치는 인치(inch), 피트(ft), 파운드(lb)뿐만 아니라 전통 시장에서 통용되는 금 1돈(3.75g), 고기 1근(600g)도 간편하게 상호 변환할 수 있습니다.</p>
+      </div>
+
+      <!-- 애드센스 인피드 슬롯 -->
+      <div class="my-6 p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
+        <div class="text-[11px] text-slate-600 font-mono tracking-wider mb-2">SPONSORED</div>
+        <div class="min-h-[100px] flex items-center justify-center text-xs text-slate-600">
+          <!-- 애드센스 반응형 광고 태그 자리 -->
+          <span>반응형 광고 영역 (Google AdSense)</span>
+        </div>
+      </div>
+
+      <div class="space-y-3 pt-4"><h3 class="text-sm font-bold text-slate-200">자주 묻는 질문 (FAQ)</h3>
+        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
+          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
+            <span>Q. 아파트 84㎡는 몇 평인가요?</span>
+            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">전용면적 84㎡는 약 25.4평이며, 공용면적을 포함한 공급면적 기준으로는 흔히 '국민평형 34평형'으로 부릅니다.</p>
+        </details>
+        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
+          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
+            <span>Q. 금 1돈과 고기 1근의 무게는 얼마인가요?</span>
+            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">순금 1돈은 3.75g이며, 정육점에서 고기 1근은 600g, 채소류 1근은 보통 375g 또는 400g을 뜻합니다.</p>
+        </details></div>
+
+      <!-- 한국어 관련 툴 내부 링크 추천 바 -->
+      <div class="pt-8 border-t border-slate-800/60">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">함께 쓰면 유용한 추천 도구</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <a href="/ko/tools/unit-converter.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>📐</span> <span>단위 변환기</span>
+          </a>
+          <a href="/ko/tools/percentage-calc.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>🏷️</span> <span>퍼센트 계산기</span>
+          </a>
+          <a href="/ko/tools/image-compressor.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>📷</span> <span>이미지 압축기</span>
+          </a>
+          <a href="/ko" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>⚡</span> <span>전체 도구 보기</span>
+          </a>
+        </div>
+      </div>
+    </section>
+    
+<footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+        <div class="space-y-0.5">
+          <p class="font-bold text-slate-400">ToolLab.org · Ultra-lightweight Utility Toolkit</p>
+          <p class="text-[11px]">Compliant with CGPM International System of Units (SI) & NIST conversion standards.</p>
+        </div>
+        <div class="flex items-center gap-3 font-semibold text-slate-400">
+          <a href="../about.html" class="hover:text-emerald-400 transition-colors">About</a>
+        <span>·</span>
+        <a href="../contact.html" class="hover:text-emerald-400 transition-colors">Contact</a>
+        <span>·</span>
+        <a href="../privacy.html" class="hover:text-emerald-400 transition-colors">Privacy</a>
+        <span>·</span>
+        <a href="../terms.html" class="hover:text-emerald-400 transition-colors">Terms</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Decoupled Pure Engine -->
+  <script src="../js/utils/unitConverter.js"></script>
+
+  <!-- UI Event Binding -->
+  <script>
+    let currentCat = "area";
+
+    function populateSelects() {
+      const data = UNIT_DATA[currentCat];
+      const fromSel = document.getElementById("fromUnit");
+      const toSel = document.getElementById("toUnit");
+      fromSel.innerHTML = "";
+      toSel.innerHTML = "";
+
+      Object.entries(data.labels).forEach(([k, label]) => {
+        fromSel.add(new Option(label, k));
+        toSel.add(new Option(label, k));
       });
 
-      renderPresets();
-      convert();
+      fromSel.value = data.defaultFrom;
+      toSel.value = data.defaultTo;
+      document.getElementById("fromValue").value = data.defaultVal;
     }
 
-    function renderPresets() {
-      const data = UNITS[curCat];
-      quickPresets.innerHTML = '<span class="text-xs text-slate-500 font-medium">자주 찾는 수치:</span>';
-      data.presets.forEach(p => {
-        const btn = document.createElement("button");
-        btn.className = "px-2.5 py-1 text-xs bg-slate-950 border border-slate-800 hover:border-emerald-500/50 rounded-lg text-slate-300 hover:text-emerald-400 transition cursor-pointer";
-        btn.innerText = p.label;
-        btn.onclick = () => {
-          fromVal.value = p.val;
-          fromUnit.value = p.from;
-          toUnit.value = p.to;
-          convert();
-        };
-        quickPresets.appendChild(btn);
-      });
-    }
+    function calculate() {
+      const val = parseFloat(document.getElementById("fromValue").value);
+      const from = document.getElementById("fromUnit").value;
+      const to = document.getElementById("toUnit").value;
+      const toEl = document.getElementById("toValue");
+      const multiEl = document.getElementById("multiResults");
 
-    function convert() {
-      const val = parseFloat(fromVal.value);
-      if (isNaN(val) || !isFinite(val)) {
-        toVal.value = "";
+      if (isNaN(val)) {
+        toEl.textContent = "0";
+        multiEl.innerHTML = "";
         return;
       }
 
-      const uFrom = fromUnit.value;
-      const uTo = toUnit.value;
+      const res = UnitConverter.convert(currentCat, val, from, to);
+      toEl.textContent = Number(res.toFixed(6)).toLocaleString(undefined, { maximumFractionDigits: 4 });
 
-      if (curCat === "temp") {
-        if (uFrom === uTo) toVal.value = val;
-        else if (uFrom === "c" && uTo === "f") toVal.value = ((val * 9/5) + 32).toFixed(2);
-        else if (uFrom === "f" && uTo === "c") toVal.value = ((val - 32) * 5/9).toFixed(2);
-        return;
-      }
-
-      const fData = UNITS[curCat].units.find(u => u.key === uFrom);
-      const tData = UNITS[curCat].units.find(u => u.key === uTo);
-
-      if (fData && tData) {
-        const baseVal = val * fData.factor;
-        const result = baseVal / tData.factor;
-        toVal.value = parseFloat(result.toFixed(6));
-      }
+      multiEl.innerHTML = "";
+      const labels = UNIT_DATA[currentCat].labels;
+      Object.keys(labels).forEach(k => {
+        if (k !== from) {
+          const v = UnitConverter.convert(currentCat, val, from, k);
+          const item = document.createElement("div");
+          item.className = "bg-slate-950/80 p-2.5 rounded-lg border border-slate-800/80 flex justify-between items-center";
+          item.innerHTML = `
+            <span class="text-slate-400 text-[11px]">${labels[k]}</span>
+            <span class="font-bold text-slate-200 text-xs">${Number(v.toFixed(6)).toLocaleString(undefined, { maximumFractionDigits: 4 })}</span>
+          `;
+          multiEl.appendChild(item);
+        }
+      });
     }
-
-    fromVal.addEventListener("input", convert);
-    fromUnit.addEventListener("change", convert);
-    toUnit.addEventListener("change", convert);
-
-    swapBtn.addEventListener("click", () => {
-      const temp = fromUnit.value;
-      fromUnit.value = toUnit.value;
-      toUnit.value = temp;
-      convert();
-    });
 
     document.querySelectorAll(".cat-btn").forEach(btn => {
-      btn.addEventListener("click", (e) => {
+      btn.addEventListener("click", () => {
         document.querySelectorAll(".cat-btn").forEach(b => {
-          b.className = "cat-btn px-4 py-2 rounded-xl bg-transparent text-slate-400 hover:text-white transition cursor-pointer";
+          b.className = "cat-btn py-2 rounded-lg transition-colors hover:text-slate-200";
         });
-        e.currentTarget.className = "cat-btn px-4 py-2 rounded-xl bg-emerald-600 text-white transition cursor-pointer";
-        curCat = e.currentTarget.dataset.cat;
-        renderSelects();
+        btn.className = "cat-btn py-2 rounded-lg transition-colors bg-blue-600 text-white shadow";
+        currentCat = btn.dataset.cat;
+        populateSelects();
+        calculate();
       });
     });
 
-    renderSelects();
+    document.getElementById("swapBtn").addEventListener("click", () => {
+      const fromSel = document.getElementById("fromUnit");
+      const toSel = document.getElementById("toUnit");
+      const temp = fromSel.value;
+      fromSel.value = toSel.value;
+      toSel.value = temp;
+      calculate();
+    });
+
+    document.getElementById("fromValue").addEventListener("input", calculate);
+    document.getElementById("fromUnit").addEventListener("change", calculate);
+    document.getElementById("toUnit").addEventListener("change", calculate);
+
+    populateSelects();
+    calculate();
   </script>
+  <script src="../js/related-tools.js"></script>
 </body>
 </html>

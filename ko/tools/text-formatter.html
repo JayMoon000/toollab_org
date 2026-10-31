@@ -3,124 +3,414 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>텍스트 포맷터 &amp; URL 슬러그 생성기 | ToolLab</title>
-  <meta name="description" content="대소문자 일괄 변환, URL 친화적 슬러그(Slug) 생성, 줄바꿈 정리, 중복 줄 제거 및 가나다 정렬을 브라우저에서 즉시 처리합니다." />
-  <meta name="keywords" content="텍스트변환기, 슬러그생성기, 대소문자변환, 중복줄제거, 줄바꿈제거, 카멜케이스, 스네이크케이스" />
-  <link rel="canonical" href="https://toollab.org/ko/tools/text-formatter.html" />
-  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <title>텍스트 포맷터 & URL 슬러그 생성기 | ToolLab</title>
+  <meta name="description" content="대소문자 일괄 변환, URL 슬러그 생성, 중복 줄 제거 및 가나다 정렬을 브라우저에서 즉시 처리합니다." />
+  <meta name="keywords" content="text formatter, case converter, seo slug generator, remove duplicate lines, clean text online, camelCase converter, ToolLab" />
+  
+      <!-- Tailwind CDN & Config -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="../../js/analytics.js"></script>
-</head>
-<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
-  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
-        <span class="text-slate-700">|</span>
-        <h1 class="text-base font-bold text-slate-100">텍스트 포맷터 &amp; 슬러그 생성기</h1>
-      </div>
-      <button id="copyBtn" class="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 transition cursor-pointer">
-        결과 복사
-      </button>
-    </div>
-  </header>
-
-  <main class="max-w-5xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
-    <!-- 변환 액션 버튼 툴바 -->
-    <div class="p-4 bg-slate-900/80 border border-slate-800 rounded-2xl flex flex-wrap gap-2 text-xs">
-      <span class="text-slate-500 font-semibold self-center mr-1">변환 옵션:</span>
-      <button onclick="applyTransform('slug')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition cursor-pointer">URL 슬러그화 (kebab-case)</button>
-      <button onclick="applyTransform('upper')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer">대문자로 (UPPERCASE)</button>
-      <button onclick="applyTransform('lower')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer">소문자로 (lowercase)</button>
-      <button onclick="applyTransform('camel')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer">카멜케이스 (camelCase)</button>
-      <button onclick="applyTransform('snake')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer">스네이크케이스 (snake_case)</button>
-      <button onclick="applyTransform('dedupe')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer">중복 줄 제거</button>
-      <button onclick="applyTransform('sort')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer">가나다/ABC 정렬</button>
-      <button onclick="applyTransform('trim')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer">양끝 공백 제거</button>
-    </div>
-
-    <!-- 에디터 영역 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="space-y-2">
-        <div class="flex items-center justify-between text-xs text-slate-400">
-          <span>원본 텍스트 입력</span>
-          <button onclick="document.getElementById('srcText').value=''; updateCounts();" class="text-rose-400 hover:underline cursor-pointer">비우기</button>
-        </div>
-        <textarea id="srcText" placeholder="여기에 변환할 텍스트를 입력하세요..."
-          class="w-full h-80 p-4 bg-slate-900 border border-slate-800 rounded-2xl text-xs font-mono text-slate-200 outline-none focus:border-emerald-500 transition leading-relaxed resize-y"></textarea>
-      </div>
-
-      <div class="space-y-2">
-        <div class="flex items-center justify-between text-xs text-slate-400">
-          <span>변환 결과</span>
-          <span id="charStatus" class="text-emerald-400 font-mono">0자</span>
-        </div>
-        <textarea id="destText" readonly placeholder="변환된 텍스트가 여기에 나타납니다."
-          class="w-full h-80 p-4 bg-slate-900/60 border border-slate-800 rounded-2xl text-xs font-mono text-emerald-400 outline-none leading-relaxed resize-y"></textarea>
-      </div>
-    </div>
-  </main>
-
-  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
-    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
-  </footer>
-
   <script>
-    const srcText = document.getElementById("srcText");
-    const destText = document.getElementById("destText");
-    const charStatus = document.getElementById("charStatus");
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+
+  <!-- Open Graph & Rich Snippets -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ToolLab" />
+  <meta property="og:title" content="Text Formatter & Slugifier | ToolLab" />
+  <meta property="og:description" content="Transform text casing, generate clean URL slugs, remove duplicate lines, and sort text in browser memory." />
+  <meta property="og:url" content="https://toollab.org/tools/text-formatter.html" />
+  <meta property="og:image" content="https://toollab.org/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Text Formatter & Slugifier | ToolLab" />
+  <meta name="twitter:description" content="Transform text casing, generate clean URL slugs, remove duplicate lines, and sort text in browser memory." />
+  <meta name="twitter:image" content="https://toollab.org/og-image.png" />
+  <link rel="canonical" href="https://toollab.org/tools/text-formatter.html" />
+
+  <!-- ToolLab Analytics Tracker -->
+  <script src="/js/analytics.js"></script>
+  <!-- Google AdSense Official Loader -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1512367949140208" crossorigin="anonymous"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Main Card -->
+    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 md:p-7">
+      
+      <!-- Top Navigation -->
+      <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="/ko" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </a>
+          <div>
+            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Text Formatter & Slugifier</h1>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="clearBtn" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition-colors">Clear</button>
+          <button id="copyBtn" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-800/60 font-bold transition-colors">Copy Result</button>
+        </div>
+      </div>
+
+      <!-- Action Button Clusters -->
+      <div class="space-y-3 mb-5">
+        <!-- Letter Case Transformations -->
+        <div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Case Conversion</span>
+          <div class="flex flex-wrap gap-1.5">
+            <button class="action-btn px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors" data-action="upper">UPPERCASE</button>
+            <button class="action-btn px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors" data-action="lower">lowercase</button>
+            <button class="action-btn px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors" data-action="title">Title Case</button>
+            <button class="action-btn px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors" data-action="sentence">Sentence case</button>
+          </div>
+        </div>
+
+        <!-- Developer & Coding Cases -->
+        <div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Code & URL Formats</span>
+          <div class="flex flex-wrap gap-1.5">
+            <button class="action-btn px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 text-xs font-mono font-medium transition-colors" data-action="slug">seo-slug</button>
+            <button class="action-btn px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 text-xs font-mono font-medium transition-colors" data-action="camel">camelCase</button>
+            <button class="action-btn px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 text-xs font-mono font-medium transition-colors" data-action="pascal">PascalCase</button>
+            <button class="action-btn px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 text-xs font-mono font-medium transition-colors" data-action="snake">snake_case</button>
+            <button class="action-btn px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 text-xs font-mono font-medium transition-colors" data-action="kebab">kebab-case</button>
+          </div>
+        </div>
+
+        <!-- Cleaning & Sorting -->
+        <div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Clean & Organize Lines</span>
+          <div class="flex flex-wrap gap-1.5">
+            <button class="action-btn px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors" data-action="dedupe">Remove Duplicate Lines</button>
+            <button class="action-btn px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors" data-action="strip-empty">Remove Empty Lines</button>
+            <button class="action-btn px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors" data-action="trim-spaces">Trim Extra Spaces</button>
+            <button class="action-btn px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors" data-action="sort-asc">Sort Lines (A-Z)</button>
+            <button class="action-btn px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors" data-action="sort-desc">Sort Lines (Z-A)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Textarea -->
+      <div class="relative">
+        <textarea id="textInput" rows="12" spellcheck="false"
+          placeholder="Paste or type content here, then click any formatting button above to transform your text instantly..." 
+          class="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 font-mono text-xs md:text-sm leading-relaxed resize-y"></textarea>
+      </div>
+
+      <!-- Live Character Counter Row -->
+      <div class="flex justify-between items-center mt-3 text-xs text-slate-500 font-mono">
+        <span id="actionFeedback" class="text-blue-400">Ready</span>
+        <div class="flex gap-4">
+          <span id="charCount">Chars: 0</span>
+          <span id="lineCount">Lines: 0</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SEO & Technical Reference Guide -->
+    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
+      
+      <!-- Casing Reference Table -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          Variable Casing Standards Matrix
+        </h2>
+        <p class="text-xs text-slate-400 mb-4">Standard conventions across modern programming languages and web development architectures.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
+                <th class="p-2.5">Style</th>
+                <th class="p-2.5">Example</th>
+                <th class="p-2.5">Common Programming Context</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300 font-mono">
+              <tr>
+                <td class="p-2.5 font-bold text-blue-400">camelCase</td>
+                <td class="p-2.5 text-slate-200">userProfileData</td>
+                <td class="p-2.5 text-slate-400 font-sans">JavaScript variables, JSON keys, Java methods</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-blue-400">PascalCase</td>
+                <td class="p-2.5 text-slate-200">UserProfileData</td>
+                <td class="p-2.5 text-slate-400 font-sans">React components, TypeScript classes, C# structures</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-blue-400">snake_case</td>
+                <td class="p-2.5 text-slate-200">user_profile_data</td>
+                <td class="p-2.5 text-slate-400 font-sans">Python variables, SQL table columns, PostgreSQL schemas</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-blue-400">kebab-case / slug</td>
+                <td class="p-2.5 text-slate-200">user-profile-data</td>
+                <td class="p-2.5 text-slate-400 font-sans">SEO URLs, CSS class selectors, HTML attributes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Practical Strategy Guides -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
+        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          Formatting Best Practices
+        </h2>
+        
+        <div class="space-y-2.5 text-xs leading-relaxed">
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">1. URL Slug Optimization</h3>
+            <p>Clean URL slugs strip stop words, non-ASCII characters, and special punctuation, resulting in human-readable search queries that improve organic click-through rates.</p>
+          </div>
+
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">2. Line Deduplication Efficiency</h3>
+            <p>Cleaning email lists, CSV records, or server log entries by removing duplicate lines reduces file size and prevents redundant queries before database ingestion.</p>
+          </div>
+        </div>
+      </section>
+
+      
+      <!-- ToolLab Clean Ad Unit -->
+      <div class="my-8 flex flex-col items-center justify-center">
+        <span class="text-[10px] font-mono tracking-widest text-slate-600 uppercase mb-1.5">ADVERTISEMENT</span>
+        <div class="w-full max-w-3xl min-h-[100px] sm:min-h-[250px] bg-slate-900/40 border border-slate-800/80 rounded-2xl flex items-center justify-center overflow-hidden">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-1512367949140208"
+               data-ad-slot="5185318921"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>
+               (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+          Frequently Asked Questions
+        </h2>
+
+        <div class="space-y-3.5 text-xs">
+          <div>
+            <h3 class="font-bold text-slate-200 mb-1">Q. Does line deduplication alter the original order of lines?</h3>
+            <p class="text-slate-400">No. The first occurrence of each unique line is preserved in its original relative order; only subsequent identical duplicates are dropped.</p>
+          </div>
+          <div class="border-t border-slate-800 pt-3">
+            <h3 class="font-bold text-slate-200 mb-1">Q. Are my confidential lists and text snippets saved anywhere?</h3>
+            <p class="text-slate-400">Never. All operations execute entirely in browser memory. Nothing is ever logged or transferred to an external server.</p>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- Standard Minimal Footer -->
+    
+    <!-- 한국어 SEO 가이드 & FAQ 복합 섹션 -->
+    <section class="max-w-4xl mx-auto px-4 py-8 space-y-6 border-t border-slate-800/80 mt-12">
+      <div class="space-y-3">
+        <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+          <span class="text-emerald-400">📖</span>
+          <span>SEO 친화적 URL 슬러그(Slug)와 텍스트 정제</span>
+        </h2>
+        <p class="text-xs text-slate-400 leading-relaxed">블로그나 웹사이트 주소에 들어가는 URL 슬러그는 검색엔진 크롤러가 문서의 주제를 파악하는 핵심 요소입니다. 띄어쓰기를 하이픈(-)으로 바꾸고 특수문자를 정제하여 깔끔한 주소를 만듭니다.</p>
+        <p class="text-xs text-slate-400 leading-relaxed">수백 줄의 데이터나 키워드 목록에서 중복된 줄을 한 번에 제거하고 가나다/ABC 순서로 정렬하여 업무 시간을 대폭 단축할 수 있습니다.</p>
+      </div>
+
+      <!-- 애드센스 인피드 슬롯 -->
+      <div class="my-6 p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
+        <div class="text-[11px] text-slate-600 font-mono tracking-wider mb-2">SPONSORED</div>
+        <div class="min-h-[100px] flex items-center justify-center text-xs text-slate-600">
+          <!-- 애드센스 반응형 광고 태그 자리 -->
+          <span>반응형 광고 영역 (Google AdSense)</span>
+        </div>
+      </div>
+
+      <div class="space-y-3 pt-4"><h3 class="text-sm font-bold text-slate-200">자주 묻는 질문 (FAQ)</h3>
+        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
+          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
+            <span>Q. 카멜케이스(camelCase)와 스네이크케이스(snake_case)는 언제 쓰나요?</span>
+            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">프로그래밍 변수명 표기법으로 주로 쓰이며, 자바스크립트는 camelCase, 파이썬이나 데이터베이스 컬럼명은 snake_case를 표준으로 사용합니다.</p>
+        </details>
+        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
+          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
+            <span>Q. 중복 줄 제거 시 순서가 섞이나요?</span>
+            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">중복된 항목 중 첫 번째 출현 순서를 보존하며 뒤이어 나타나는 중복 라인만 정확히 제거합니다.</p>
+        </details></div>
+
+      <!-- 한국어 관련 툴 내부 링크 추천 바 -->
+      <div class="pt-8 border-t border-slate-800/60">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">함께 쓰면 유용한 추천 도구</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <a href="/ko/tools/unit-converter.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>📐</span> <span>단위 변환기</span>
+          </a>
+          <a href="/ko/tools/percentage-calc.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>🏷️</span> <span>퍼센트 계산기</span>
+          </a>
+          <a href="/ko/tools/image-compressor.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>📷</span> <span>이미지 압축기</span>
+          </a>
+          <a href="/ko" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>⚡</span> <span>전체 도구 보기</span>
+          </a>
+        </div>
+      </div>
+    </section>
+    
+<footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+        <div class="space-y-0.5">
+          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
+        </div>
+        <div class="flex items-center gap-3 font-semibold text-slate-400">
+          <a href="../about.html" class="hover:text-emerald-400 transition-colors">About</a>
+        <span>·</span>
+        <a href="../contact.html" class="hover:text-emerald-400 transition-colors">Contact</a>
+        <span>·</span>
+        <a href="../privacy.html" class="hover:text-emerald-400 transition-colors">Privacy</a>
+        <span>·</span>
+        <a href="../terms.html" class="hover:text-emerald-400 transition-colors">Terms</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../js/utils/textFormatter.js"></script>
+  <script>
+    const textarea = document.getElementById("textInput");
+    const actionFeedback = document.getElementById("actionFeedback");
+    const charCountEl = document.getElementById("charCount");
+    const lineCountEl = document.getElementById("lineCount");
+    const clearBtn = document.getElementById("clearBtn");
     const copyBtn = document.getElementById("copyBtn");
 
-    function updateCounts() {
-      charStatus.innerText = `${destText.value.length.toLocaleString()}자`;
+    function updateMetrics() {
+      const val = textarea.value;
+      charCountEl.textContent = `Chars: ${val.length.toLocaleString()}`;
+      const lines = val ? val.split(/\r?\n/).length : 0;
+      lineCountEl.textContent = `Lines: ${lines.toLocaleString()}`;
     }
 
-    function applyTransform(type) {
-      const val = srcText.value;
-      if (!val) return;
-
-      let res = val;
-      if (type === "slug") {
-        res = val.toLowerCase()
-          .trim()
-          .replace(/[^a-z0-9가-힣\s-]/g, "")
-          .replace(/[\s_]+/g, "-")
-          .replace(/^-+|-+$/g, "");
-      } else if (type === "upper") {
-        res = val.toUpperCase();
-      } else if (type === "lower") {
-        res = val.toLowerCase();
-      } else if (type === "camel") {
-        res = val.toLowerCase().replace(/[^a-zA-Z0-9가-힣]+(.)/g, (m, chr) => chr.toUpperCase());
-      } else if (type === "snake") {
-        res = val.toLowerCase().trim().replace(/[\s-]+/g, "_");
-      } else if (type === "dedupe") {
-        const lines = val.split("\n");
-        res = [...new Set(lines)].join("\n");
-      } else if (type === "sort") {
-        const lines = val.split("\n");
-        res = lines.sort((a, b) => a.localeCompare(b, "ko")).join("\n");
-      } else if (type === "trim") {
-        res = val.split("\n").map(l => l.trim()).join("\n");
-      }
-
-      destText.value = res;
-      updateCounts();
+    function setFeedback(msg) {
+      actionFeedback.textContent = msg;
+      setTimeout(() => {
+        actionFeedback.textContent = "Ready";
+      }, 2000);
     }
 
-    copyBtn.addEventListener("click", () => {
-      if (!destText.value) return;
-      navigator.clipboard.writeText(destText.value).then(() => {
-        const org = copyBtn.innerText;
-        copyBtn.innerText = "✓ 복사 완료!";
-        setTimeout(() => copyBtn.innerText = org, 1500);
+    document.querySelectorAll(".action-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const action = btn.dataset.action;
+        const text = textarea.value;
+        if (!text) return;
+
+        let result = text;
+        switch (action) {
+          case "upper":
+            result = TextFormatter.toUpper(text);
+            setFeedback("Converted to UPPERCASE");
+            break;
+          case "lower":
+            result = TextFormatter.toLower(text);
+            setFeedback("Converted to lowercase");
+            break;
+          case "title":
+            result = TextFormatter.toTitleCase(text);
+            setFeedback("Converted to Title Case");
+            break;
+          case "sentence":
+            result = TextFormatter.toSentenceCase(text);
+            setFeedback("Converted to Sentence case");
+            break;
+          case "slug":
+            result = TextFormatter.slugify(text);
+            setFeedback("Generated SEO Slug");
+            break;
+          case "camel":
+            result = TextFormatter.toCamelCase(text);
+            setFeedback("Converted to camelCase");
+            break;
+          case "pascal":
+            result = TextFormatter.toPascalCase(text);
+            setFeedback("Converted to PascalCase");
+            break;
+          case "snake":
+            result = TextFormatter.toSnakeCase(text);
+            setFeedback("Converted to snake_case");
+            break;
+          case "kebab":
+            result = TextFormatter.toKebabCase(text);
+            setFeedback("Converted to kebab-case");
+            break;
+          case "dedupe":
+            result = TextFormatter.removeDuplicateLines(text);
+            setFeedback("Removed duplicate lines");
+            break;
+          case "strip-empty":
+            result = TextFormatter.removeEmptyLines(text);
+            setFeedback("Removed empty lines");
+            break;
+          case "trim-spaces":
+            result = TextFormatter.trimExtraSpaces(text);
+            setFeedback("Trimmed extra spaces");
+            break;
+          case "sort-asc":
+            result = TextFormatter.sortLines(text, "asc");
+            setFeedback("Sorted lines (A-Z)");
+            break;
+          case "sort-desc":
+            result = TextFormatter.sortLines(text, "desc");
+            setFeedback("Sorted lines (Z-A)");
+            break;
+        }
+
+        textarea.value = result;
+        updateMetrics();
       });
     });
 
-    srcText.addEventListener("input", () => {
-      destText.value = srcText.value;
-      updateCounts();
+    copyBtn.addEventListener("click", () => {
+      if (!textarea.value) return;
+      navigator.clipboard.writeText(textarea.value).then(() => {
+        const orig = copyBtn.textContent;
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => (copyBtn.textContent = orig), 1500);
+      });
     });
+
+    clearBtn.addEventListener("click", () => {
+      textarea.value = "";
+      updateMetrics();
+      setFeedback("Cleared");
+      textarea.focus();
+    });
+
+    textarea.addEventListener("input", updateMetrics);
+    updateMetrics();
   </script>
+  <script src="../js/related-tools.js"></script>
 </body>
 </html>

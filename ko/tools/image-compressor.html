@@ -3,209 +3,446 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>이미지 무손실 압축 &amp; WebP 변환기 | ToolLab</title>
-  <meta name="description" content="서버 전송 없이 브라우저 안에서 JPG, PNG, WebP 사진 용량을 최대 80% 줄입니다. 개인정보 유출 없는 초고속 클라이언트 압축기." />
-  <meta name="keywords" content="이미지압축, 사진용량줄이기, webp변환, 이미지최적화, 블로그사진용량, png압축, jpg압축" />
-  <link rel="canonical" href="https://toollab.org/ko/tools/image-compressor.html" />
-  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <title>이미지 무손실 압축 & WebP 변환기 | ToolLab</title>
+  <meta name="description" content="서버 업로드 없이 브라우저 안에서 JPG, PNG, WebP 사진 용량을 최대 80% 줄입니다." />
+  <meta name="keywords" content="image compressor, compress image online, webp converter, png compressor, bulk image optimizer, privacy image compress, ToolLab" />
+  
+      <!-- Tailwind CDN & Config -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="../../js/analytics.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+
+  <!-- Open Graph & Rich Snippets -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ToolLab" />
+  <meta property="og:title" content="Image Compressor & WebP | ToolLab" />
+  <meta property="og:description" content="Compress JPG, PNG, and WebP locally via HTML5 Canvas with 100% data privacy and zero server transfer." />
+  <meta property="og:url" content="https://toollab.org/tools/image-compressor.html" />
+  <meta property="og:image" content="https://toollab.org/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Image Compressor & WebP | ToolLab" />
+  <meta name="twitter:description" content="Compress JPG, PNG, and WebP locally via HTML5 Canvas with 100% data privacy and zero server transfer." />
+  <meta name="twitter:image" content="https://toollab.org/og-image.png" />
+  <link rel="canonical" href="https://toollab.org/tools/image-compressor.html" />
+
+  <!-- ToolLab Analytics Tracker -->
+  <script src="/js/analytics.js"></script>
+  <!-- Google AdSense Official Loader -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1512367949140208" crossorigin="anonymous"></script>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
-  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
-        <span class="text-slate-700">|</span>
-        <h1 class="text-base font-bold text-slate-100">이미지 압축 &amp; WebP 변환</h1>
-      </div>
-      <span class="text-xs text-emerald-400 font-mono">100% 브라우저 로컬 연산</span>
-    </div>
-  </header>
-
-  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
-    <!-- 드래그앤드롭 업로드 박스 -->
-    <div id="dropZone" class="border-2 border-dashed border-slate-700 hover:border-emerald-500 rounded-3xl p-8 sm:p-12 text-center bg-slate-900/50 hover:bg-slate-900/80 transition cursor-pointer space-y-3">
-      <div class="w-14 h-14 bg-emerald-950/80 border border-emerald-800/80 rounded-2xl flex items-center justify-center mx-auto text-2xl text-emerald-400">
-        📷
-      </div>
-      <div>
-        <p class="text-sm font-bold text-slate-200">사진 파일을 여기에 끌어다 놓거나 클릭하여 선택하세요</p>
-        <p class="text-xs text-slate-500 mt-1">지원 포맷: JPG, PNG, WebP (최대 30MB, 서버 업로드 없음)</p>
-      </div>
-      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" class="hidden" />
-    </div>
-
-    <!-- 압축 옵션 & 결과 패널 (기본 숨김) -->
-    <div id="resultPanel" class="hidden space-y-6">
-      <!-- 조절 슬라이더 및 포맷 선택 -->
-      <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-2xl space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="space-y-1">
-            <span class="text-xs font-semibold text-slate-400">압축 품질 (Quality): <strong id="qualityVal" class="text-emerald-400 font-mono">80%</strong></span>
-            <input type="range" id="qualityRange" min="10" max="100" value="80" class="w-full sm:w-64 h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500" />
+<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Main Card -->
+    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 md:p-7">
+      
+      <!-- Header Navigation -->
+      <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="/ko" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </a>
+          <div>
+            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Image Compressor & WebP Engine</h1>
           </div>
-          <div class="flex items-center gap-2 text-xs">
-            <span class="text-slate-400 font-semibold">출력 포맷:</span>
-            <select id="formatSelect" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 outline-none focus:border-emerald-500 cursor-pointer">
-              <option value="image/webp">WebP (압축률 최고)</option>
-              <option value="image/jpeg">JPG (호환성 표준)</option>
-              <option value="image/png">PNG (투명배경 유지)</option>
+        </div>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950/80 text-emerald-400 border border-emerald-800">
+          Client-Side Zero-Upload
+        </span>
+      </div>
+
+      <!-- Compression Options Control Bar -->
+      <div class="p-4 bg-slate-950/70 border border-slate-800 rounded-xl space-y-4 mb-5">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          
+          <!-- Quality Slider -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-slate-400">Quality</span>
+              <span id="qualityVal" class="text-blue-400 font-mono">80%</span>
+            </div>
+            <input type="range" id="qualityRange" min="10" max="100" value="80" step="5"
+              class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500" />
+          </div>
+
+          <!-- Output Format -->
+          <div class="space-y-1">
+            <label class="block text-xs font-semibold text-slate-400">Target Format</label>
+            <select id="formatSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-xs font-bold text-slate-200 outline-none focus:border-blue-500">
+              <option value="image/webp">WebP (Recommended)</option>
+              <option value="image/jpeg">JPEG (.jpg)</option>
+              <option value="image/png">PNG (.png)</option>
             </select>
           </div>
+
+          <!-- Max Resolution -->
+          <div class="space-y-1">
+            <label class="block text-xs font-semibold text-slate-400">Max Dimension</label>
+            <select id="resSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-xs font-bold text-slate-200 outline-none focus:border-blue-500">
+              <option value="original">Original Resolution</option>
+              <option value="1920">Full HD (Max 1920px)</option>
+              <option value="1280">HD (Max 1280px)</option>
+              <option value="800">Compact (Max 800px)</option>
+            </select>
+          </div>
+
         </div>
       </div>
 
-      <!-- 전후 비교 카드 -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
-        <div class="p-5 bg-slate-900/60 border border-slate-800 rounded-2xl space-y-3">
-          <span class="text-xs text-slate-400 font-semibold block">원본 이미지</span>
-          <div class="h-44 flex items-center justify-center overflow-hidden rounded-xl bg-slate-950/60 border border-slate-800/80">
-            <img id="origImg" class="max-h-full max-w-full object-contain" />
-          </div>
-          <span id="origSize" class="text-sm font-bold text-slate-300 font-mono block">0 KB</span>
-        </div>
-
-        <div class="p-5 bg-slate-900/60 border border-emerald-950/80 rounded-2xl space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-emerald-400 font-semibold">압축 결과물</span>
-            <span id="saveBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-400">-0% 절약</span>
-          </div>
-          <div class="h-44 flex items-center justify-center overflow-hidden rounded-xl bg-slate-950/60 border border-slate-800/80">
-            <img id="compImg" class="max-h-full max-w-full object-contain" />
-          </div>
-          <span id="compSize" class="text-sm font-bold text-emerald-400 font-mono block">0 KB</span>
+      <!-- Drag & Drop Upload Zone -->
+      <div id="dropZone" class="border-2 border-dashed border-slate-800 hover:border-blue-500/60 bg-slate-950/40 rounded-2xl p-8 text-center transition-all cursor-pointer mb-5">
+        <input type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/webp" class="hidden" />
+        <div class="flex flex-col items-center justify-center gap-2 pointer-events-none">
+          <svg class="w-10 h-10 text-slate-600 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          <span class="text-sm font-bold text-slate-200">Drop your images here, or <span class="text-blue-400 underline">browse</span></span>
+          <span class="text-xs text-slate-500">Supports JPG, PNG, WebP · Fast batch in-browser compression</span>
         </div>
       </div>
 
-      <!-- 다운로드 버튼 -->
-      <div class="flex justify-end gap-3 pt-2">
-        <button id="downloadBtn" class="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition shadow-lg shadow-emerald-950/50 flex items-center justify-center gap-2 cursor-pointer">
-          <span>💾</span>
-          <span>압축된 이미지 다운로드</span>
+      <!-- Global Actions & Summary -->
+      <div id="batchSummary" class="flex items-center justify-between p-3 bg-slate-950/60 border border-slate-800 rounded-xl mb-4 hidden">
+        <div class="text-xs">
+          <span id="batchCount" class="font-bold text-slate-200">0 files processed</span>
+          <span id="batchSavings" class="text-emerald-400 font-mono ml-2">Total saved: 0 B (0%)</span>
+        </div>
+        <button id="downloadAllBtn" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-colors">
+          Download All
         </button>
       </div>
+
+      <!-- Processed Images List -->
+      <div id="resultsList" class="space-y-3">
+        <!-- Dynamically injected cards -->
+      </div>
+
     </div>
-  </main>
 
-  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
-    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
-  </footer>
+    <!-- SEO & Technical Documentation -->
+    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
+      
+      <!-- Comparison Matrix Table -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          Web Image Format Compression Matrix
+        </h2>
+        <p class="text-xs text-slate-400 mb-4">Standard trade-offs between compression efficiency, transparency support, and web compatibility.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
+                <th class="p-2.5">Format</th>
+                <th class="p-2.5">Compression Type</th>
+                <th class="p-2.5">Transparency (Alpha)</th>
+                <th class="p-2.5">Best Application</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300 font-mono">
+              <tr>
+                <td class="p-2.5 font-bold text-blue-400 font-sans">WebP</td>
+                <td class="p-2.5 text-slate-300">Lossy & Lossless</td>
+                <td class="p-2.5 text-emerald-400 font-sans">Supported</td>
+                <td class="p-2.5 text-slate-400 font-sans">Modern websites, Core Web Vitals boost</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">JPEG / JPG</td>
+                <td class="p-2.5 text-slate-300">Lossy</td>
+                <td class="p-2.5 text-rose-400 font-sans">No</td>
+                <td class="p-2.5 text-slate-400 font-sans">Photographs, legacy browser fallbacks</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100 font-sans">PNG</td>
+                <td class="p-2.5 text-slate-300">Lossless</td>
+                <td class="p-2.5 text-emerald-400 font-sans">Supported</td>
+                <td class="p-2.5 text-slate-400 font-sans">Logos, sharp line art, screenshots</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
+      <!-- Practical Strategy Guides -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
+        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          Web Performance Optimization Guidelines
+        </h2>
+        
+        <div class="space-y-2.5 text-xs leading-relaxed">
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">1. The 80% Quality Sweet Spot</h3>
+            <p>Reducing image quality from 100% to 80% typically strips 50% to 70% of the byte weight while retaining structural sharpness that is imperceptible to the human eye.</p>
+          </div>
+
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">2. Local Browser Compute Architecture</h3>
+            <p>By executing compression via browser-native Canvas APIs, high-volume image batches are processed without waiting in cloud queues or uploading sensitive internal screenshots to third-party servers.</p>
+          </div>
+        </div>
+      </section>
+
+      
+      <!-- ToolLab Clean Ad Unit -->
+      <div class="my-8 flex flex-col items-center justify-center">
+        <span class="text-[10px] font-mono tracking-widest text-slate-600 uppercase mb-1.5">ADVERTISEMENT</span>
+        <div class="w-full max-w-3xl min-h-[100px] sm:min-h-[250px] bg-slate-900/40 border border-slate-800/80 rounded-2xl flex items-center justify-center overflow-hidden">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-1512367949140208"
+               data-ad-slot="5185318921"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>
+               (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+          Frequently Asked Questions
+        </h2>
+
+        <div class="space-y-3.5 text-xs">
+          <div>
+            <h3 class="font-bold text-slate-200 mb-1">Q. Does this tool store or log image metadata (EXIF)?</h3>
+            <p class="text-slate-400">No. During canvas drawing, EXIF metadata (GPS coordinates, camera serial numbers) is automatically stripped, protecting your privacy before web publishing.</p>
+          </div>
+          <div class="border-t border-slate-800 pt-3">
+            <h3 class="font-bold text-slate-200 mb-1">Q. Are there limits on the number of photos I can compress?</h3>
+            <p class="text-slate-400">Zero limits. The tool executes directly on your hardware's CPU and memory, entirely free of external API quotas.</p>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- Standard Minimal Footer -->
+    
+    <!-- 한국어 SEO 가이드 & FAQ 복합 섹션 -->
+    <section class="max-w-4xl mx-auto px-4 py-8 space-y-6 border-t border-slate-800/80 mt-12">
+      <div class="space-y-3">
+        <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+          <span class="text-emerald-400">📖</span>
+          <span>웹 페이지 로딩 속도를 높이는 이미지 최적화</span>
+        </h2>
+        <p class="text-xs text-slate-400 leading-relaxed">구글 코어 웹 바이탈(Core Web Vitals)과 SEO에서 가장 중요한 요소는 첫 화면 로딩 속도(LCP)입니다. 고용량 원본 사진을 그대로 업로드하면 웹사이트 이탈률이 급증합니다.</p>
+        <p class="text-xs text-slate-400 leading-relaxed">WebP 포맷은 구글이 개발한 차세대 웹 이미지 규격으로, 기존 JPG나 PNG 대비 30% 이상 적은 용량으로 동일한 화질을 유지합니다.</p>
+      </div>
+
+      <!-- 애드센스 인피드 슬롯 -->
+      <div class="my-6 p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
+        <div class="text-[11px] text-slate-600 font-mono tracking-wider mb-2">SPONSORED</div>
+        <div class="min-h-[100px] flex items-center justify-center text-xs text-slate-600">
+          <!-- 애드센스 반응형 광고 태그 자리 -->
+          <span>반응형 광고 영역 (Google AdSense)</span>
+        </div>
+      </div>
+
+      <div class="space-y-3 pt-4"><h3 class="text-sm font-bold text-slate-200">자주 묻는 질문 (FAQ)</h3>
+        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
+          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
+            <span>Q. 내 사진이 외부 서버로 유출되지 않나요?</span>
+            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">네, ToolLab의 모든 이미지 처리는 사용자의 브라우저 HTML5 Canvas 메모리에서만 100% 실행되므로 서버로 단 1바이트도 전송되지 않습니다.</p>
+        </details>
+        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
+          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
+            <span>Q. PNG 투명 배경도 유지되나요?</span>
+            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">포맷 옵션에서 PNG 또는 WebP를 선택하시면 배경 투명도가 그대로 유지된 채 용량만 압축됩니다.</p>
+        </details></div>
+
+      <!-- 한국어 관련 툴 내부 링크 추천 바 -->
+      <div class="pt-8 border-t border-slate-800/60">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">함께 쓰면 유용한 추천 도구</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <a href="/ko/tools/unit-converter.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>📐</span> <span>단위 변환기</span>
+          </a>
+          <a href="/ko/tools/percentage-calc.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>🏷️</span> <span>퍼센트 계산기</span>
+          </a>
+          <a href="/ko/tools/image-compressor.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>📷</span> <span>이미지 압축기</span>
+          </a>
+          <a href="/ko" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>⚡</span> <span>전체 도구 보기</span>
+          </a>
+        </div>
+      </div>
+    </section>
+    
+<footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+        <div class="space-y-0.5">
+          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
+        </div>
+        <div class="flex items-center gap-3 font-semibold text-slate-400">
+          <a href="../about.html" class="hover:text-emerald-400 transition-colors">About</a>
+        <span>·</span>
+        <a href="../contact.html" class="hover:text-emerald-400 transition-colors">Contact</a>
+        <span>·</span>
+        <a href="../privacy.html" class="hover:text-emerald-400 transition-colors">Privacy</a>
+        <span>·</span>
+        <a href="../terms.html" class="hover:text-emerald-400 transition-colors">Terms</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../js/utils/imageCompressor.js"></script>
   <script>
     const dropZone = document.getElementById("dropZone");
     const fileInput = document.getElementById("fileInput");
-    const resultPanel = document.getElementById("resultPanel");
     const qualityRange = document.getElementById("qualityRange");
     const qualityVal = document.getElementById("qualityVal");
     const formatSelect = document.getElementById("formatSelect");
-    const origImg = document.getElementById("origImg");
-    const compImg = document.getElementById("compImg");
-    const origSize = document.getElementById("origSize");
-    const compSize = document.getElementById("compSize");
-    const saveBadge = document.getElementById("saveBadge");
-    const downloadBtn = document.getElementById("downloadBtn");
+    const resSelect = document.getElementById("resSelect");
 
-    let currentFile = null;
-    let loadedImage = null;
-    let compressedBlob = null;
-    let compressTimer = null;
+    const batchSummary = document.getElementById("batchSummary");
+    const batchCount = document.getElementById("batchCount");
+    const batchSavings = document.getElementById("batchSavings");
+    const downloadAllBtn = document.getElementById("downloadAllBtn");
+    const resultsList = document.getElementById("resultsList");
+
+    let processedItems = [];
+
+    qualityRange.addEventListener("input", (e) => {
+      qualityVal.textContent = `${e.target.value}%`;
+    });
 
     dropZone.addEventListener("click", () => fileInput.click());
-    dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.classList.add("border-emerald-500"); });
-    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("border-emerald-500"));
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.classList.add("border-blue-500");
+    });
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.classList.remove("border-blue-500");
+    });
     dropZone.addEventListener("drop", (e) => {
       e.preventDefault();
-      dropZone.classList.remove("border-emerald-500");
-      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+      dropZone.classList.remove("border-blue-500");
+      if (e.dataTransfer.files.length) {
+        handleFiles(e.dataTransfer.files);
+      }
     });
 
     fileInput.addEventListener("change", (e) => {
-      if (e.target.files.length) handleFile(e.target.files[0]);
+      if (e.target.files.length) {
+        handleFiles(e.target.files);
+      }
     });
 
-    function formatBytes(bytes) {
-      if (bytes === 0) return "0 Bytes";
-      const k = 1024;
-      const sizes = ["Bytes", "KB", "MB"];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
-    }
-
-    function handleFile(file) {
-      // 30MB 상한선 가드 (메모리 OOM 방어)
-      if (file.size > 30 * 1024 * 1024) {
-        alert("브라우저 메모리 보호를 위해 30MB 이하의 이미지만 처리할 수 있습니다.");
-        return;
-      }
-      if (!file.type.startsWith("image/")) {
-        alert("이미지 파일만 선택해 주세요.");
-        return;
-      }
-
-      currentFile = file;
-      origSize.innerText = formatBytes(file.size);
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        origImg.src = e.target.result;
-        loadedImage = new Image();
-        loadedImage.onload = () => {
-          resultPanel.classList.remove("hidden");
-          compress();
-        };
-        loadedImage.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function compress() {
-      if (!loadedImage) return;
-
-      const quality = parseInt(qualityRange.value) / 100;
+    async function handleFiles(files) {
+      const quality = parseFloat(qualityRange.value) / 100;
       const format = formatSelect.value;
-      qualityVal.innerText = `${qualityRange.value}%`;
+      const resVal = resSelect.value;
+      const maxDim = resVal === "original" ? 10000 : parseInt(resVal, 10);
 
-      const canvas = document.createElement("canvas");
-      canvas.width = loadedImage.naturalWidth;
-      canvas.height = loadedImage.naturalHeight;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(loadedImage, 0, 0);
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!file.type.startsWith("image/")) continue;
 
-      canvas.toBlob((blob) => {
-        if (!blob) return;
-        compressedBlob = blob;
-        compImg.src = URL.createObjectURL(blob);
-        compSize.innerText = formatBytes(blob.size);
+        try {
+          const result = await ImageCompressor.compressFile(file, {
+            quality,
+            outputFormat: format,
+            maxWidth: maxDim,
+            maxHeight: maxDim
+          });
 
-        const diff = currentFile.size - blob.size;
-        const pct = Math.round((diff / currentFile.size) * 100);
-        if (pct >= 0) {
-          saveBadge.innerText = `-${pct}% 절약`;
-          saveBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-400";
-        } else {
-          saveBadge.innerText = `+${Math.abs(pct)}% 증가`;
-          saveBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400";
+          const itemData = {
+            id: "img_" + Date.now() + "_" + i,
+            name: file.name,
+            originalSize: result.originalSize,
+            compressedSize: result.compressedSize,
+            savedRatio: result.savedRatio,
+            blob: result.blob,
+            format: result.outputFormat
+          };
+
+          processedItems.push(itemData);
+          renderItemCard(itemData);
+        } catch (err) {
+          console.error("Compression error:", err);
         }
-      }, format, quality);
+      }
+
+      updateBatchSummary();
     }
 
-    // 200ms 디바운스
-    qualityRange.addEventListener("input", () => {
-      clearTimeout(compressTimer);
-      compressTimer = setTimeout(compress, 200);
-    });
-    formatSelect.addEventListener("change", compress);
+    function renderItemCard(item) {
+      const extension = item.format === "image/webp" ? ".webp" : item.format === "image/png" ? ".png" : ".jpg";
+      const downloadName = item.name.substring(0, item.name.lastIndexOf(".")) + "_compressed" + extension;
+      const downloadUrl = URL.createObjectURL(item.blob);
 
-    downloadBtn.addEventListener("click", () => {
-      if (!compressedBlob) return;
-      const ext = formatSelect.value.split("/")[1];
-      const name = currentFile.name.replace(/\.[^/.]+$/, "") + `_optimized.${ext}`;
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(compressedBlob);
-      link.download = name;
-      link.click();
+      const card = document.createElement("div");
+      card.className = "p-3.5 bg-slate-950/80 border border-slate-800 rounded-xl flex items-center justify-between gap-3 text-xs";
+      card.innerHTML = `
+        <div class="flex items-center gap-3 overflow-hidden">
+          <img src="${downloadUrl}" class="w-12 h-12 object-cover rounded-lg border border-slate-800 flex-shrink-0" />
+          <div class="overflow-hidden">
+            <span class="font-bold text-slate-200 block truncate">${item.name}</span>
+            <div class="flex items-center gap-2 mt-0.5 text-[11px] font-mono">
+              <span class="text-slate-500 line-through">${ImageCompressor.formatBytes(item.originalSize)}</span>
+              <span class="text-blue-400 font-bold">${ImageCompressor.formatBytes(item.compressedSize)}</span>
+              <span class="text-emerald-400 font-bold">(-${item.savedRatio}%)</span>
+            </div>
+          </div>
+        </div>
+        <a href="${downloadUrl}" download="${downloadName}" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold flex-shrink-0 transition-colors">
+          Download
+        </a>
+      `;
+      resultsList.prepend(card);
+    }
+
+    function updateBatchSummary() {
+      if (!processedItems.length) return;
+      batchSummary.classList.remove("hidden");
+
+      const totalOrig = processedItems.reduce((acc, cur) => acc + cur.originalSize, 0);
+      const totalComp = processedItems.reduce((acc, cur) => acc + cur.compressedSize, 0);
+      const totalSaved = Math.max(0, totalOrig - totalComp);
+      const ratio = totalOrig > 0 ? ((totalSaved / totalOrig) * 100).toFixed(1) : 0;
+
+      batchCount.textContent = `${processedItems.length} file${processedItems.length > 1 ? "s" : ""} processed`;
+      batchSavings.textContent = `Total saved: ${ImageCompressor.formatBytes(totalSaved)} (-${ratio}%)`;
+    }
+
+    downloadAllBtn.addEventListener("click", () => {
+      processedItems.forEach((item, index) => {
+        setTimeout(() => {
+          const extension = item.format === "image/webp" ? ".webp" : item.format === "image/png" ? ".png" : ".jpg";
+          const downloadName = item.name.substring(0, item.name.lastIndexOf(".")) + "_compressed" + extension;
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(item.blob);
+          a.download = downloadName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }, index * 200);
+      });
     });
   </script>
+  <script src="../js/related-tools.js"></script>
 </body>
 </html>

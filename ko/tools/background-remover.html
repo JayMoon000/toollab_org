@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI 이미지 배경 제거기 (누끼 따기) | 100% On-Device Cutout - ToolLab</title>
-  <meta name="description" content="Free on-device AI background remover. Cut out backgrounds from PNG, JPG, and WebP images directly in your browser. 100% private, zero server uploads, unlimited free use." />
+  <title>AI 이미지 배경 제거기 (누끼 따기·투명 PNG) | ToolLab</title>
+  <meta name="description" content="서버 전송 없이 브라우저 온디바이스 AI 모델로 인물 및 상품 사진의 배경을 1초 만에 투명하게 제거합니다." />
   <meta name="keywords" content="background remover, remove bg online, transparent png, ai cutout tool, client-side background remover, free remove bg, ToolLab" />
   
       <!-- Tailwind CDN & Config -->
@@ -18,15 +18,15 @@
   <!-- Open Graph & Rich Snippets -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="ToolLab" />
-  <meta property="og:title" content="AI 이미지 배경 제거기 (누끼 따기) | ToolLab" />
-  <meta property="og:description" content="서버 전송 없이 브라우저 WebAssembly AI 엔진으로 배경을 1초 만에 투명하게 제거합니다. using in-browser WebAssembly neural inference." />
+  <meta property="og:title" content="AI Background Remover | ToolLab" />
+  <meta property="og:description" content="100% on-device AI background cutout using in-browser WebAssembly neural inference." />
   <meta property="og:url" content="https://toollab.org/tools/background-remover.html" />
   <meta property="og:image" content="https://toollab.org/og-image.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="AI 이미지 배경 제거기 (누끼 따기) | ToolLab" />
-  <meta name="twitter:description" content="서버 전송 없이 브라우저 WebAssembly AI 엔진으로 배경을 1초 만에 투명하게 제거합니다. using in-browser WebAssembly neural inference." />
+  <meta name="twitter:title" content="AI Background Remover | ToolLab" />
+  <meta name="twitter:description" content="100% on-device AI background cutout using in-browser WebAssembly neural inference." />
   <meta name="twitter:image" content="https://toollab.org/og-image.png" />
   <link rel="canonical" href="https://toollab.org/tools/background-remover.html" />
 
@@ -51,7 +51,7 @@
           </a>
           <div>
             <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
-            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">AI 이미지 배경 제거기 (누끼 따기)</h1>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">AI Background Remover</h1>
           </div>
         </div>
         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950/80 text-emerald-400 border border-emerald-800">
@@ -99,7 +99,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
             </svg>
-            투명 PNG 다운로드
+            Download Transparent PNG
           </button>
           <button type="button" id="resetBtn" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition-all">
             Upload Another
@@ -227,7 +227,64 @@
     </article>
 
     <!-- Standard Minimal Footer -->
-    <footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
+    
+    <!-- 한국어 SEO 가이드 & FAQ 복합 섹션 -->
+    <section class="max-w-4xl mx-auto px-4 py-8 space-y-6 border-t border-slate-800/80 mt-12">
+      <div class="space-y-3">
+        <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+          <span class="text-emerald-400">📖</span>
+          <span>온디바이스(On-Device) AI 누끼 따기의 장점</span>
+        </h2>
+        <p class="text-xs text-slate-400 leading-relaxed">기존 웹 기반 배경 제거 서비스는 사용자의 사진을 외부 클라우드 서버로 업로드하여 처리하므로 개인정보 유출 위험과 긴 대기 시간이 발생했습니다.</p>
+        <p class="text-xs text-slate-400 leading-relaxed">ToolLab AI 배경 제거기는 최신 WebAssembly 및 브라우저 온디바이스 머신러닝 엔진을 탑재하여, 내 컴퓨터나 스마트폰 기기 내부에서 100% 로컬 연산으로 실행됩니다.</p>
+      </div>
+
+      <!-- 애드센스 인피드 슬롯 -->
+      <div class="my-6 p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
+        <div class="text-[11px] text-slate-600 font-mono tracking-wider mb-2">SPONSORED</div>
+        <div class="min-h-[100px] flex items-center justify-center text-xs text-slate-600">
+          <!-- 애드센스 반응형 광고 태그 자리 -->
+          <span>반응형 광고 영역 (Google AdSense)</span>
+        </div>
+      </div>
+
+      <div class="space-y-3 pt-4"><h3 class="text-sm font-bold text-slate-200">자주 묻는 질문 (FAQ)</h3>
+        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
+          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
+            <span>Q. 완전히 투명한 배경(Alpha PNG)으로 저장되나요?</span>
+            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">네, 인물이나 피사체만 정밀하게 분리되어 투명 배경의 PNG 파일로 내려받으실 수 있습니다.</p>
+        </details>
+        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
+          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
+            <span>Q. 이용 요금이나 횟수 제한이 있나요?</span>
+            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">서버 비용이 발생하지 않는 클라이언트 단독 연산 구조이므로 영구 무료로 무제한 사용하실 수 있습니다.</p>
+        </details></div>
+
+      <!-- 한국어 관련 툴 내부 링크 추천 바 -->
+      <div class="pt-8 border-t border-slate-800/60">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">함께 쓰면 유용한 추천 도구</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <a href="/ko/tools/unit-converter.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>📐</span> <span>단위 변환기</span>
+          </a>
+          <a href="/ko/tools/percentage-calc.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>🏷️</span> <span>퍼센트 계산기</span>
+          </a>
+          <a href="/ko/tools/image-compressor.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>📷</span> <span>이미지 압축기</span>
+          </a>
+          <a href="/ko" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>⚡</span> <span>전체 도구 보기</span>
+          </a>
+        </div>
+      </div>
+    </section>
+    
+<footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
       <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
         <div class="space-y-0.5">
           <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>

@@ -3,120 +3,408 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JSON 포맷터 &amp; 문법 검증기 (Beautify·Minify) | ToolLab</title>
-  <meta name="description" content="서버 전송 없이 브라우저 메모리 안에서 JSON 데이터를 정렬(Beautify)하고 압축(Minify)하며 문법 오류를 검출합니다." />
-  <meta name="keywords" content="json포맷터, json정렬, json검증, json문법검사, json압축, beautify, minify" />
-  <link rel="canonical" href="https://toollab.org/ko/tools/json-formatter.html" />
-  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <title>JSON 포맷터 & 문법 검증기 (Beautify·Minify) | ToolLab</title>
+  <meta name="description" content="서버 전송 없이 브라우저 메모리 안에서 JSON 데이터를 정렬하고 압축하며 문법 오류를 검출합니다." />
+  <meta name="keywords" content="json formatter, json beautifier, json validator, json minifier, format json online, json lint, ToolLab" />
+  
+      <!-- Tailwind CDN & Config -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="../../js/analytics.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+
+  <!-- Open Graph & Rich Snippets -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ToolLab" />
+  <meta property="og:title" content="JSON Formatter & Validator | ToolLab" />
+  <meta property="og:description" content="Validate, beautify, inspect keys, and minify JSON payloads with instant client-side syntax error detection." />
+  <meta property="og:url" content="https://toollab.org/tools/json-formatter.html" />
+  <meta property="og:image" content="https://toollab.org/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="JSON Formatter & Validator | ToolLab" />
+  <meta name="twitter:description" content="Validate, beautify, inspect keys, and minify JSON payloads with instant client-side syntax error detection." />
+  <meta name="twitter:image" content="https://toollab.org/og-image.png" />
+  <link rel="canonical" href="https://toollab.org/tools/json-formatter.html" />
+
+  <!-- ToolLab Analytics Tracker -->
+  <script src="/js/analytics.js"></script>
+  <!-- Google AdSense Official Loader -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1512367949140208" crossorigin="anonymous"></script>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
-  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
-        <span class="text-slate-700">|</span>
-        <h1 class="text-base font-bold text-slate-100">JSON 포맷터 &amp; 유효성 검사기</h1>
-      </div>
-      <div class="flex items-center gap-2">
-        <button id="beautifyBtn" class="px-3 py-1.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition cursor-pointer">
-          정렬 (Beautify)
-        </button>
-        <button id="minifyBtn" class="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition cursor-pointer">
-          압축 (Minify)
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full space-y-4">
-    <!-- 상태 알림 바 -->
-    <div id="statusAlert" class="hidden px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between">
-      <span id="statusText"></span>
-      <span id="charMetrics" class="text-[11px] opacity-80 font-mono"></span>
-    </div>
-
-    <!-- 에디터 분할 뷰 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="space-y-2">
-        <div class="flex items-center justify-between text-xs text-slate-400">
-          <span>입력 JSON</span>
-          <button id="sampleBtn" class="text-emerald-400 hover:underline cursor-pointer">샘플 불러오기</button>
+<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Main Card -->
+    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 md:p-7">
+      
+      <!-- Top Bar -->
+      <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="/ko" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </a>
+          <div>
+            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">JSON Formatter & Validator</h1>
+          </div>
         </div>
-        <textarea id="jsonInput" placeholder="여기에 JSON 문자열을 붙여넣으세요..."
-          class="w-full h-[520px] p-4 bg-slate-900 border border-slate-800 rounded-2xl font-mono text-xs text-slate-200 outline-none focus:border-emerald-500 transition leading-relaxed resize-none"></textarea>
-      </div>
-
-      <div class="space-y-2">
-        <div class="flex items-center justify-between text-xs text-slate-400">
-          <span>결과 출력</span>
-          <button id="copyBtn" class="text-emerald-400 hover:underline cursor-pointer">결과 복사</button>
+        <div class="flex items-center gap-2">
+          <button id="loadSampleBtn" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">Sample</button>
+          <button id="clearBtn" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition-colors">Clear</button>
         </div>
-        <textarea id="jsonOutput" readonly placeholder="정렬 또는 압축된 결과가 여기에 표시됩니다."
-          class="w-full h-[520px] p-4 bg-slate-900/60 border border-slate-800 rounded-2xl font-mono text-xs text-emerald-400 outline-none leading-relaxed resize-none"></textarea>
       </div>
+
+      <!-- Action & Configuration Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="beautifyBtn" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm">Beautify</button>
+          <button id="minifyBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all border border-slate-700">Minify</button>
+          <select id="indentSelect" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 font-bold outline-none">
+            <option value="2">2 Spaces</option>
+            <option value="4">4 Spaces</option>
+            <option value="tab">Tab</option>
+          </select>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="copyBtn" class="px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-800/60 text-xs font-bold transition-all">Copy JSON</button>
+        </div>
+      </div>
+
+      <!-- Status & Error Alert -->
+      <div id="statusAlert" class="mb-4 p-3 rounded-xl text-xs font-mono flex items-center justify-between bg-slate-950 border border-slate-800 text-slate-400">
+        <span id="statusMessage">Ready for JSON input</span>
+        <span id="statusDetails" class="font-bold"></span>
+      </div>
+
+      <!-- Dual / Split Editor Layout -->
+      <div class="space-y-2">
+        <div class="relative">
+          <textarea id="jsonInput" rows="14" spellcheck="false"
+            placeholder="Paste your raw or minified JSON payload here..." 
+            class="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 font-mono text-xs md:text-sm leading-relaxed resize-y"></textarea>
+        </div>
+      </div>
+
+      <!-- Structural Analytics Matrix -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4 text-xs">
+        <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-center">
+          <span class="text-slate-400 block mb-0.5 text-[11px] uppercase tracking-wider">Payload Size</span>
+          <span id="statSize" class="font-black text-slate-100 text-sm md:text-base">0 B</span>
+        </div>
+        <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-center">
+          <span class="text-slate-400 block mb-0.5 text-[11px] uppercase tracking-wider">Total Keys</span>
+          <span id="statKeys" class="font-black text-blue-400 text-sm md:text-base">0</span>
+        </div>
+        <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-center">
+          <span class="text-slate-400 block mb-0.5 text-[11px] uppercase tracking-wider">Max Depth</span>
+          <span id="statDepth" class="font-black text-indigo-400 text-sm md:text-base">0</span>
+        </div>
+        <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-center">
+          <span class="text-slate-400 block mb-0.5 text-[11px] uppercase tracking-wider">Root Structure</span>
+          <span id="statType" class="font-black text-emerald-400 text-sm md:text-base">-</span>
+        </div>
+      </div>
+
     </div>
-  </main>
 
-  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
-    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
-  </footer>
+    <!-- SEO & Technical Documentation -->
+    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
+      
+      <!-- Comparison Reference Table -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          Data Interchange Format Comparison Matrix
+        </h2>
+        <p class="text-xs text-slate-400 mb-4">Structural attributes across standard API transmission formats.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
+                <th class="p-2.5">Format</th>
+                <th class="p-2.5">Data Overhead</th>
+                <th class="p-2.5">Native Browser Support</th>
+                <th class="p-2.5">Primary Application</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300">
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">JSON</td>
+                <td class="p-2.5 text-blue-400 font-medium">Low to Moderate</td>
+                <td class="p-2.5 text-emerald-400 font-bold">Native (JSON.parse)</td>
+                <td class="p-2.5 text-slate-400">REST APIs, Web Services, Configs</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">XML</td>
+                <td class="p-2.5 text-rose-400 font-medium">High (Verbose tags)</td>
+                <td class="p-2.5 text-slate-300">DOMParser</td>
+                <td class="p-2.5 text-slate-400">Enterprise SOAP, Document Markup</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">YAML</td>
+                <td class="p-2.5 text-blue-400 font-medium">Low (Minimalist)</td>
+                <td class="p-2.5 text-slate-400">Requires Parser</td>
+                <td class="p-2.5 text-slate-400">CI/CD Pipelines, Kubernetes, Docker</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
+      <!-- Practical Syntax Standards -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
+        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          Common JSON Formatting Violations
+        </h2>
+        
+        <div class="space-y-2.5 text-xs leading-relaxed">
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">1. Single Quotes vs. Double Quotes</h3>
+            <p>JSON standard strictly requires double quotation marks (<code>"key": "value"</code>). Single quotes (<code>'key': 'value'</code>) produce immediate parse errors.</p>
+          </div>
+
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">2. Unquoted Object Keys</h3>
+            <p>Unlike standard JavaScript object literals, every key in a JSON object must be enclosed within double quotes.</p>
+          </div>
+        </div>
+      </section>
+
+      
+      <!-- ToolLab Clean Ad Unit -->
+      <div class="my-8 flex flex-col items-center justify-center">
+        <span class="text-[10px] font-mono tracking-widest text-slate-600 uppercase mb-1.5">ADVERTISEMENT</span>
+        <div class="w-full max-w-3xl min-h-[100px] sm:min-h-[250px] bg-slate-900/40 border border-slate-800/80 rounded-2xl flex items-center justify-center overflow-hidden">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-1512367949140208"
+               data-ad-slot="5185318921"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>
+               (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+          Frequently Asked Questions
+        </h2>
+
+        <div class="space-y-3.5 text-xs">
+          <div>
+            <h3 class="font-bold text-slate-200 mb-1">Q. Does this tool support large JSON payloads?</h3>
+            <p class="text-slate-400">Yes. It operates with high memory performance up to several tens of megabytes directly in the browser runtime without encountering remote HTTP transfer limits.</p>
+          </div>
+          <div class="border-t border-slate-800 pt-3">
+            <h3 class="font-bold text-slate-200 mb-1">Q. Are API secrets or tokens safe when pasted here?</h3>
+            <p class="text-slate-400">Entirely safe. No telemetry or payload logging exists. All logic runs strictly in your local browser sandbox.</p>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- Standard Minimal Footer -->
+    
+    <!-- 한국어 SEO 가이드 & FAQ 복합 섹션 -->
+    <section class="max-w-4xl mx-auto px-4 py-8 space-y-6 border-t border-slate-800/80 mt-12">
+      <div class="space-y-3">
+        <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+          <span class="text-emerald-400">📖</span>
+          <span>클린 코드와 API 디버깅을 위한 JSON 다루기</span>
+        </h2>
+        <p class="text-xs text-slate-400 leading-relaxed">웹 개발과 데이터 통신에서 가장 널리 쓰이는 표준 포맷인 JSON(JavaScript Object Notation)은 사람이 읽기 쉬운 텍스트 구조를 지닙니다.</p>
+        <p class="text-xs text-slate-400 leading-relaxed">네트워크 전송 비용을 줄일 때는 공백과 줄바꿈을 모두 제거하는 Minify가 유용하며, 디버깅이나 코드 리뷰 시에는 계층 구조를 명확히 보여주는 2스페이스 Beautify 정렬이 필수적입니다.</p>
+      </div>
+
+      <!-- 애드센스 인피드 슬롯 -->
+      <div class="my-6 p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
+        <div class="text-[11px] text-slate-600 font-mono tracking-wider mb-2">SPONSORED</div>
+        <div class="min-h-[100px] flex items-center justify-center text-xs text-slate-600">
+          <!-- 애드센스 반응형 광고 태그 자리 -->
+          <span>반응형 광고 영역 (Google AdSense)</span>
+        </div>
+      </div>
+
+      <div class="space-y-3 pt-4"><h3 class="text-sm font-bold text-slate-200">자주 묻는 질문 (FAQ)</h3>
+        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
+          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
+            <span>Q. 민감한 API 키나 개인정보가 포함된 JSON도 안전한가요?</span>
+            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">네, ToolLab JSON 포맷터는 클라이언트 단독 연산(Client-Side)으로 작동하므로 외부 백엔드 서버로 데이터가 일체 유출되지 않습니다.</p>
+        </details>
+        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
+          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
+            <span>Q. 문법 에러(Syntax Error)는 어떻게 표시되나요?</span>
+            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">따옴표 누락, 마지막 쉼표(Trailing Comma) 등 잘못된 문법이 감지되면 즉시 붉은색 경고 메시지와 오류 내용이 출력됩니다.</p>
+        </details></div>
+
+      <!-- 한국어 관련 툴 내부 링크 추천 바 -->
+      <div class="pt-8 border-t border-slate-800/60">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">함께 쓰면 유용한 추천 도구</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <a href="/ko/tools/unit-converter.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>📐</span> <span>단위 변환기</span>
+          </a>
+          <a href="/ko/tools/percentage-calc.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>🏷️</span> <span>퍼센트 계산기</span>
+          </a>
+          <a href="/ko/tools/image-compressor.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>📷</span> <span>이미지 압축기</span>
+          </a>
+          <a href="/ko" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>⚡</span> <span>전체 도구 보기</span>
+          </a>
+        </div>
+      </div>
+    </section>
+    
+<footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+        <div class="space-y-0.5">
+          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
+        </div>
+        <div class="flex items-center gap-3 font-semibold text-slate-400">
+          <a href="../about.html" class="hover:text-emerald-400 transition-colors">About</a>
+        <span>·</span>
+        <a href="../contact.html" class="hover:text-emerald-400 transition-colors">Contact</a>
+        <span>·</span>
+        <a href="../privacy.html" class="hover:text-emerald-400 transition-colors">Privacy</a>
+        <span>·</span>
+        <a href="../terms.html" class="hover:text-emerald-400 transition-colors">Terms</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../js/utils/jsonFormatter.js"></script>
   <script>
     const input = document.getElementById("jsonInput");
-    const output = document.getElementById("jsonOutput");
     const statusAlert = document.getElementById("statusAlert");
-    const statusText = document.getElementById("statusText");
-    const charMetrics = document.getElementById("charMetrics");
+    const statusMessage = document.getElementById("statusMessage");
+    const statusDetails = document.getElementById("statusDetails");
+
+    const statSize = document.getElementById("statSize");
+    const statKeys = document.getElementById("statKeys");
+    const statDepth = document.getElementById("statDepth");
+    const statType = document.getElementById("statType");
+
+    const indentSelect = document.getElementById("indentSelect");
     const beautifyBtn = document.getElementById("beautifyBtn");
     const minifyBtn = document.getElementById("minifyBtn");
     const copyBtn = document.getElementById("copyBtn");
-    const sampleBtn = document.getElementById("sampleBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const loadSampleBtn = document.getElementById("loadSampleBtn");
 
-    function parseSafe(action = "beautify") {
-      const raw = input.value.trim();
-      if (!raw) {
-        output.value = "";
-        statusAlert.className = "hidden";
+    function formatBytes(bytes) {
+      if (bytes < 1024) return bytes + " B";
+      else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+      return (bytes / 1048576).toFixed(2) + " MB";
+    }
+
+    function checkAndAnalyze() {
+      const val = input.value.trim();
+      if (!val) {
+        statusAlert.className = "mb-4 p-3 rounded-xl text-xs font-mono flex items-center justify-between bg-slate-950 border border-slate-800 text-slate-400";
+        statusMessage.textContent = "Ready for JSON input";
+        statusDetails.textContent = "";
+        statSize.textContent = "0 B";
+        statKeys.textContent = "0";
+        statDepth.textContent = "0";
+        statType.textContent = "-";
         return;
       }
 
-      try {
-        const obj = JSON.parse(raw);
-        const res = action === "beautify" ? JSON.stringify(obj, null, 2) : JSON.stringify(obj);
-        output.value = res;
+      const stats = JsonFormatter.getStats(val);
+      statSize.textContent = formatBytes(stats.byteSize);
 
-        statusAlert.className = "px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between bg-emerald-950/70 border border-emerald-800/80 text-emerald-400";
-        statusText.innerText = "✓ 올바른 JSON 형식입니다.";
-        charMetrics.innerText = `입력: ${raw.length.toLocaleString()}자 → 출력: ${res.length.toLocaleString()}자`;
-      } catch (err) {
-        output.value = "";
-        statusAlert.className = "px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between bg-rose-950/70 border border-rose-800/80 text-rose-400";
-        statusText.innerText = `✕ JSON 문법 오류: ${err.message}`;
-        charMetrics.innerText = "";
+      if (stats.isValid) {
+        statusAlert.className = "mb-4 p-3 rounded-xl text-xs font-mono flex items-center justify-between bg-emerald-950/40 border border-emerald-800 text-emerald-400";
+        statusMessage.textContent = "✔ Valid JSON Syntax";
+        statusDetails.textContent = `${stats.type} Payload`;
+        statKeys.textContent = stats.keyCount.toLocaleString();
+        statDepth.textContent = stats.depth;
+        statType.textContent = stats.type;
+      } else {
+        const valRes = JsonFormatter.validate(val);
+        statusAlert.className = "mb-4 p-3 rounded-xl text-xs font-mono flex items-center justify-between bg-rose-950/40 border border-rose-800 text-rose-400";
+        statusMessage.textContent = `✖ Syntax Error: ${valRes.error}`;
+        statusDetails.textContent = valRes.line ? `Line ${valRes.line}, Col ${valRes.column}` : "Parse Failed";
+        statKeys.textContent = "-";
+        statDepth.textContent = "-";
+        statType.textContent = "Invalid";
       }
     }
 
-    beautifyBtn.addEventListener("click", () => parseSafe("beautify"));
-    minifyBtn.addEventListener("click", () => parseSafe("minify"));
+    beautifyBtn.addEventListener("click", () => {
+      const val = input.value.trim();
+      if (!val) return;
+      const res = JsonFormatter.beautify(val, indentSelect.value);
+      if (res.success) {
+        input.value = res.result;
+      }
+      checkAndAnalyze();
+    });
 
-    sampleBtn.addEventListener("click", () => {
-      input.value = JSON.stringify({
-        project: "ToolLab",
-        version: "2026.1",
-        features: ["zero-server-cost", "100%-client-side", "privacy-first"],
-        author: { name: "Jay", city: "Ilsan" }
-      });
-      parseSafe("beautify");
+    minifyBtn.addEventListener("click", () => {
+      const val = input.value.trim();
+      if (!val) return;
+      const res = JsonFormatter.minify(val);
+      if (res.success) {
+        input.value = res.result;
+      }
+      checkAndAnalyze();
     });
 
     copyBtn.addEventListener("click", () => {
-      if (!output.value) return;
-      navigator.clipboard.writeText(output.value).then(() => {
-        alert("결과가 클립보드에 복사되었습니다.");
+      if (!input.value) return;
+      navigator.clipboard.writeText(input.value).then(() => {
+        const orig = copyBtn.textContent;
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => (copyBtn.textContent = orig), 1500);
       });
     });
+
+    clearBtn.addEventListener("click", () => {
+      input.value = "";
+      checkAndAnalyze();
+      input.focus();
+    });
+
+    loadSampleBtn.addEventListener("click", () => {
+      const sample = {
+        name: "ToolLab Platform",
+        version: "1.0.0",
+        openSource: true,
+        features: ["zero-server-cost", "client-side", "ultra-fast"],
+        metrics: {
+          uptime: 100,
+          targetExitTraffic: 500000
+        }
+      };
+      input.value = JSON.stringify(sample, null, 2);
+      checkAndAnalyze();
+    });
+
+    input.addEventListener("input", checkAndAnalyze);
   </script>
+  <script src="../js/related-tools.js"></script>
 </body>
 </html>

@@ -3,189 +3,484 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>더미 텍스트(Lorem Ipsum) 생성기 (한글·영문 시안용) | ToolLab</title>
-  <meta name="description" content="웹 디자인, UI/UX 레이아웃 시안 및 출판 조판 테스트를 위한 한글·영문 가상 더미 텍스트를 문단, 문장, 단어 단위로 즉시 생성합니다." />
-  <meta name="keywords" content="로렘입숨, 더미텍스트, 한글로렘입숨, 가상문구생성기, 레이아웃테스트, 디자인시안텍스트" />
-  <link rel="canonical" href="https://toollab.org/ko/tools/lorem-generator.html" />
-  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  
+  <!-- SEO: 타깃 키워드 전진 배치 및 CTR 극대화 -->
+  <title>한글·영문 더미 텍스트(Lorem Ipsum) 생성기 | ToolLab</title>
+  <meta name="description" content="디자인 시안, UI/UX 레이아웃, 조판 가독성 테스트를 위한 한글/영문 가상 텍스트를 문단별로 즉시 생성합니다." />
+  <meta name="keywords" content="lorem ipsum generator, generate lorem, lorem generator, generator lorem, dummy text, placeholder text, generate lorem ipsum, lorem ipsum html, dummy paragraph, ToolLab" />
+  
+  <!-- Tailwind CDN & Config -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="../../js/analytics.js"></script>
-</head>
-<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
-  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <a href="/ko" class="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors">← 도구 목록</a>
-        <span class="text-slate-700">|</span>
-        <h1 class="text-base font-bold text-slate-100">한글·영문 더미 텍스트 생성기</h1>
-      </div>
-      <span class="text-xs text-emerald-400 font-mono">UI/UX 조판 유틸리티</span>
-    </div>
-  </header>
-
-  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
-    <!-- 컨트롤 패널 -->
-    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-5">
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="space-y-1.5">
-          <label class="text-xs font-semibold text-slate-400">언어 선택</label>
-          <select id="langSelect" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 outline-none focus:border-emerald-500 cursor-pointer">
-            <option value="ko" selected>한국어 (디자인 시안용 문구)</option>
-            <option value="en">영문 (표준 라틴 스타일 단어)</option>
-          </select>
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="text-xs font-semibold text-slate-400">생성 단위</label>
-          <select id="unitSelect" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 outline-none focus:border-emerald-500 cursor-pointer">
-            <option value="paragraphs" selected>문단 (Paragraphs)</option>
-            <option value="sentences">문장 (Sentences)</option>
-            <option value="words">단어 (Words)</option>
-          </select>
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="text-xs font-semibold text-slate-400">수량 (1 ~ 50)</label>
-          <input type="number" id="countInput" value="4" min="1" max="50"
-            class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-xs text-slate-100 outline-none focus:border-emerald-500" />
-        </div>
-      </div>
-
-      <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
-        <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
-          <input type="checkbox" id="wrapP" class="w-4 h-4 accent-emerald-500 rounded cursor-pointer" />
-          <span>HTML <code>&lt;p&gt;</code> 태그로 감싸기</span>
-        </label>
-
-        <div class="flex items-center gap-2">
-          <button id="genBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition cursor-pointer">
-            새로 생성하기
-          </button>
-          <button id="copyBtn" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition cursor-pointer">
-            전체 복사
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 출력 영역 -->
-    <div class="space-y-2">
-      <div class="flex justify-between text-xs text-slate-400 px-1">
-        <span>생성된 더미 텍스트</span>
-        <span id="lengthInfo" class="font-mono text-emerald-400">0자</span>
-      </div>
-      <textarea id="outputArea" readonly
-        class="w-full h-96 p-5 bg-slate-900/60 border border-slate-800 rounded-3xl text-sm text-slate-200 leading-relaxed outline-none resize-y font-sans"></textarea>
-    </div>
-  </main>
-
-  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-xs text-slate-500 text-center">
-    <p>© 2026 ToolLab.org · 100% 브라우저 메모리 연산</p>
-  </footer>
-
   <script>
-    const KO_SENTENCES = [
-      "디자인 시안과 타이포그래피의 시각적 균형을 점검하기 위한 가상 문장입니다.",
-      "클라이언트 브라우저 메모리에서 즉시 동작하는 초경량 웹 유틸리티 환경을 지향합니다.",
-      "여백과 행간, 글꼴의 가독성이 실제 화면에서 어떻게 표현되는지 한눈에 확인할 수 있습니다.",
-      "불필요한 서버 통신 없이 사용자의 기기 안에서 모든 데이터 처리가 안전하게 완료됩니다.",
-      "간결하고 명확한 인터페이스는 복잡한 작업의 피로도를 줄이고 업무 효율을 높여줍니다.",
-      "다양한 화면 해상도와 모바일 기기에서도 일관된 레이아웃 비율을 유지하는 것이 중요합니다.",
-      "빛과 그림자의 대비, 여백의 미학이 어우러질 때 비로소 편안한 사용자 경험이 완성됩니다.",
-      "빠른 응답 속도와 직관적인 구조는 현대 웹 애플리케이션이 갖춰야 할 핵심 가치입니다."
-    ];
-
-    const EN_WORDS = [
-      "alpha", "beta", "gamma", "delta", "vector", "matrix", "pixel", "canvas",
-      "layout", "system", "module", "render", "client", "engine", "memory", "buffer",
-      "syntax", "format", "filter", "modern", "design", "visual", "aspect", "grid",
-      "border", "shadow", "radius", "margin", "padding", "flex", "column", "inline"
-    ];
-
-    const langSelect = document.getElementById("langSelect");
-    const unitSelect = document.getElementById("unitSelect");
-    const countInput = document.getElementById("countInput");
-    const wrapP = document.getElementById("wrapP");
-    const genBtn = document.getElementById("genBtn");
-    const copyBtn = document.getElementById("copyBtn");
-    const outputArea = document.getElementById("outputArea");
-    const lengthInfo = document.getElementById("lengthInfo");
-
-    function randomItem(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
+    tailwind.config = {
+      darkMode: 'class'
     }
+  </script>
 
-    function makeEnSentence() {
-      const len = Math.floor(Math.random() * 8) + 8;
-      const words = [];
-      for (let i = 0; i < len; i++) {
-        words.push(randomItem(EN_WORDS));
-      }
-      const first = words[0];
-      words[0] = first.charAt(0).toUpperCase() + first.slice(1);
-      return words.join(" ") + ".";
-    }
+  <!-- Open Graph & Rich Snippets -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ToolLab" />
+  <meta property="og:title" content="Lorem Ipsum Generator - Fast Placeholder Text & Dummy Copy" />
+  <meta property="og:description" content="Quickly generate standard Lorem Ipsum dummy text for mockups, designs, and layouts. 100% free and client-side fast." />
+  <meta property="og:url" content="https://toollab.org/tools/lorem-generator.html" />
+  <meta property="og:image" content="https://toollab.org/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Lorem Ipsum Generator - Fast Placeholder Text & Dummy Copy" />
+  <meta name="twitter:description" content="Quickly generate standard Lorem Ipsum dummy text for mockups, designs, and layouts. 100% free and client-side fast." />
+  <meta name="twitter:image" content="https://toollab.org/og-image.png" />
+  <link rel="canonical" href="https://toollab.org/tools/lorem-generator.html" />
 
-    function generate() {
-      let count = parseInt(countInput.value) || 4;
-      if (count < 1) count = 1;
-      if (count > 50) count = 50;
-      countInput.value = count;
-
-      const lang = langSelect.value;
-      const unit = unitSelect.value;
-      const useTag = wrapP.checked;
-
-      let result = [];
-
-      if (unit === "words") {
-        const pool = lang === "ko" ? KO_SENTENCES.join(" ").split(" ") : EN_WORDS;
-        const wList = [];
-        for (let i = 0; i < count; i++) {
-          wList.push(randomItem(pool));
-        }
-        const line = wList.join(" ");
-        result.push(useTag ? `<p>${line}</p>` : line);
-      } else if (unit === "sentences") {
-        const sList = [];
-        for (let i = 0; i < count; i++) {
-          sList.push(lang === "ko" ? randomItem(KO_SENTENCES) : makeEnSentence());
-        }
-        const block = sList.join(" ");
-        result.push(useTag ? `<p>${block}</p>` : block);
-      } else {
-        for (let p = 0; p < count; p++) {
-          const sCount = Math.floor(Math.random() * 3) + 4;
-          const pSentences = [];
-          for (let s = 0; s < sCount; s++) {
-            pSentences.push(lang === "ko" ? randomItem(KO_SENTENCES) : makeEnSentence());
+  <!-- Schema.org WebApplication & FAQ JSON-LD (검색 리치 스니펫) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "ToolLab Lorem Ipsum Generator",
+        "url": "https://toollab.org/tools/lorem-generator.html",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "All",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "description": "Fast and customizable Lorem Ipsum dummy text generator for designers and web developers."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Lorem Ipsum dummy text used for?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Lorem Ipsum is standard placeholder text used in typography, web design, and publishing. It simulates natural English letter distribution so viewers can evaluate visual layouts and fonts without being distracted by readable content."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I generate Lorem Ipsum by specific word, sentence, or paragraph counts?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. ToolLab Lorem Ipsum Generator allows you to customize the output length precisely by paragraphs, sentences, or individual word counts with optional HTML <p> tags."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does Lorem Ipsum have a literal English translation?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Because words were intentionally truncated and scrambled by 16th-century printers, it cannot be translated coherently. It loosely translates to 'pain itself' from Cicero's original phrase 'dolorem ipsum'."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are my generated texts stored on an external server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Never. All generation runs locally in browser runtime memory via JavaScript. Zero telemetry or server-side logging occurs."
+            }
           }
-          const para = pSentences.join(" ");
-          result.push(useTag ? `<p>${para}</p>` : para);
-        }
+        ]
       }
+    ]
+  }
+  </script>
 
-      const finalStr = result.join("\n\n");
-      outputArea.value = finalStr;
-      lengthInfo.innerText = `${finalStr.length.toLocaleString()}자`;
+  <!-- ToolLab Analytics Tracker -->
+  <script src="/js/analytics.js"></script>
+  <!-- Google AdSense Official Loader -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1512367949140208" crossorigin="anonymous"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen py-6 px-4 font-sans antialiased">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Main Card -->
+    <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-5 md:p-7">
+      
+      <!-- Header -->
+      <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="/ko" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="ToolLab Home">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </a>
+          <div>
+            <span class="text-[10px] font-bold tracking-wider text-blue-400 uppercase block">ToolLab.org</span>
+            <h1 class="text-lg md:text-xl font-extrabold text-slate-100">Lorem Ipsum Generator</h1>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="copyBtn" class="px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-800/60 text-xs font-bold transition-colors">Copy Text</button>
+        </div>
+      </div>
+
+      <!-- Generator Configuration Bar -->
+      <div class="p-4 bg-slate-950/70 border border-slate-800 rounded-xl space-y-4 mb-5">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          
+          <!-- Generation Unit -->
+          <div class="space-y-1">
+            <label class="block text-xs font-semibold text-slate-400">Generate By</label>
+            <select id="typeSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs font-bold text-slate-200 outline-none focus:border-blue-500">
+              <option value="paragraphs">Paragraphs</option>
+              <option value="sentences">Sentences</option>
+              <option value="words">Words</option>
+            </select>
+          </div>
+
+          <!-- Quantity -->
+          <div class="space-y-1">
+            <label class="block text-xs font-semibold text-slate-400">Quantity</label>
+            <input type="number" id="quantityInput" value="3" min="1" max="100" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs font-bold text-slate-100 outline-none focus:border-blue-500" />
+          </div>
+
+          <!-- Action Button -->
+          <div class="flex items-end">
+            <button id="generateBtn" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-colors shadow-sm">
+              Generate Text
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Checkbox Options -->
+        <div class="flex flex-wrap items-center gap-4 pt-3 border-t border-slate-800/80 text-xs">
+          <label class="cursor-pointer flex items-center gap-1.5 text-slate-300 hover:text-white select-none">
+            <input type="checkbox" id="startLoremCheck" checked class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0">
+            Start with "Lorem ipsum..."
+          </label>
+          <label class="cursor-pointer flex items-center gap-1.5 text-slate-300 hover:text-white select-none" id="wrapHtmlLabel">
+            <input type="checkbox" id="wrapHtmlCheck" class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0">
+            Wrap with &lt;p&gt; tags
+          </label>
+        </div>
+      </div>
+
+      <!-- Output Display -->
+      <div class="space-y-1.5">
+        <div class="flex justify-between items-center text-xs font-semibold text-slate-400 px-1">
+          <span>Generated Output</span>
+          <span id="statSummary" class="font-mono text-[11px] text-slate-500">0 Words</span>
+        </div>
+        <textarea id="resultOutput" rows="12" spellcheck="false"
+          class="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-blue-500 font-sans text-xs md:text-sm leading-relaxed resize-y"></textarea>
+      </div>
+
+      <!-- Real-Time Metrics Strip -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-5 text-xs font-mono">
+        <div class="p-2.5 bg-slate-950/60 border border-slate-800 rounded-lg text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px] font-sans">Words</span>
+          <span id="statWords" class="font-bold text-blue-400">0</span>
+        </div>
+        <div class="p-2.5 bg-slate-950/60 border border-slate-800 rounded-lg text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px] font-sans">Characters</span>
+          <span id="statChars" class="font-bold text-slate-200">0</span>
+        </div>
+        <div class="p-2.5 bg-slate-950/60 border border-slate-800 rounded-lg text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px] font-sans">Paragraphs</span>
+          <span id="statParagraphs" class="font-bold text-slate-200">0</span>
+        </div>
+        <div class="p-2.5 bg-slate-950/60 border border-slate-800 rounded-lg text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px] font-sans">Byte Size</span>
+          <span id="statBytes" class="font-bold text-emerald-400">0 B</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SEO Reference Guide -->
+    <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
+      
+      <!-- 0. SEO Overview Card -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
+        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+          Quick & Flexible Lorem Ipsum Placeholder Text Generator
+        </h2>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Looking for realistic dummy text for your wireframe mockups, typography tests, or client presentations? The ToolLab Lorem Ipsum Generator allows UI/UX designers, developers, and publishers to generate customized Latin dummy copy by paragraph count, sentence length, or word volume in real time.
+        </p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 text-[11px] text-slate-400">
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Units:</strong> Paragraphs, Sentences, Words</div>
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>HTML Support:</strong> Optional &lt;p&gt; tags</div>
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Execution:</strong> 100% Client-side JS</div>
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Metrics:</strong> Words, Chars & Bytes</div>
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Latin Source:</strong> Cicero 45 BC</div>
+          <div class="bg-slate-950/50 p-2 rounded border border-slate-800/60">• <strong>Privacy:</strong> Zero Server Telemetry</div>
+        </div>
+      </section>
+
+      <!-- 1. Reference Table -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          Dummy Copy Design Benchmarks
+        </h2>
+        <p class="text-xs text-slate-400 mb-4">Standard placeholder volumes across modern responsive layout components.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold">
+                <th class="p-2.5">Component Type</th>
+                <th class="p-2.5">Typical Volume</th>
+                <th class="p-2.5">Estimated Word Count</th>
+                <th class="p-2.5">Recommended Unit</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300">
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">Hero Section Subtitle</td>
+                <td class="p-2.5 text-blue-400 font-medium">1 Sentence</td>
+                <td class="p-2.5 text-slate-400">12 – 18 words</td>
+                <td class="p-2.5 text-slate-400">Sentences</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">Card / Teaser Description</td>
+                <td class="p-2.5 text-blue-400 font-medium">2 – 3 Sentences</td>
+                <td class="p-2.5 text-slate-400">25 – 40 words</td>
+                <td class="p-2.5 text-slate-400">Sentences</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">Blog Article Mockup</td>
+                <td class="p-2.5 text-blue-400 font-medium">4 – 6 Paragraphs</td>
+                <td class="p-2.5 text-slate-400">400 – 600 words</td>
+                <td class="p-2.5 text-slate-400">Paragraphs</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-100">Form Placeholder Input</td>
+                <td class="p-2.5 text-blue-400 font-medium">3 – 5 Words</td>
+                <td class="p-2.5 text-slate-400">3 – 5 words</td>
+                <td class="p-2.5 text-slate-400">Words</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 2. Practical Usage Tips -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md space-y-3">
+        <h2 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          Why Typesetters Use Lorem Ipsum
+        </h2>
+        
+        <div class="space-y-2.5 text-xs leading-relaxed">
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">1. Neutral Visual Weight Distribution</h3>
+            <p>Using readable English copy during UI design reviews distracts stakeholders into reading the copy rather than assessing font pairings, kerning, line heights, and visual hierarchy. Lorem Ipsum provides a natural, semi-realistic character distribution without readable distraction.</p>
+          </div>
+
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+            <h3 class="font-bold text-slate-200 mb-1">2. Varied Word Lengths</h3>
+            <p>Unlike repeated words (e.g. "Content here, content here"), Latin dummy text contains a diverse spread of letter lengths, simulating realistic typographic rhythm across desktop and mobile screens.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ToolLab Clean Ad Unit -->
+      <div class="my-8 flex flex-col items-center justify-center">
+        <span class="text-[10px] font-mono tracking-widest text-slate-600 uppercase mb-1.5">ADVERTISEMENT</span>
+        <div class="w-full max-w-3xl min-h-[100px] sm:min-h-[250px] bg-slate-900/40 border border-slate-800/80 rounded-2xl flex items-center justify-center overflow-hidden">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-1512367949140208"
+               data-ad-slot="5185318921"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>
+               (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+      </div>
+
+      <!-- 3. FAQ -->
+      <section class="bg-slate-900 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-md">
+        <h2 class="text-base font-extrabold text-slate-100 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+          Frequently Asked Questions
+        </h2>
+
+        <div class="space-y-3.5 text-xs">
+          <div>
+            <h3 class="font-bold text-slate-200 mb-1">Q. Does Lorem Ipsum have a literal English translation?</h3>
+            <p class="text-slate-400">Because words were intentionally truncated and scrambled by 16th-century printers, it cannot be translated coherently. It loosely translates to "pain itself" from Cicero's original phrase "dolorem ipsum".</p>
+          </div>
+          <div class="border-t border-slate-800 pt-3">
+            <h3 class="font-bold text-slate-200 mb-1">Q. Are my generated texts stored on an external server?</h3>
+            <p class="text-slate-400">Never. All generation runs locally in browser runtime memory via JavaScript. Zero telemetry or server-side logging occurs.</p>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- Standard Minimal Footer -->
+    
+    <!-- 한국어 SEO 가이드 & FAQ 복합 섹션 -->
+    <section class="max-w-4xl mx-auto px-4 py-8 space-y-6 border-t border-slate-800/80 mt-12">
+      <div class="space-y-3">
+        <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+          <span class="text-emerald-400">📖</span>
+          <span>디자인 시안에서 로렘 입숨(더미 텍스트)이 중요한 이유</span>
+        </h2>
+        <p class="text-xs text-slate-400 leading-relaxed">웹페이지나 인쇄물 디자인 초기 단계에서 실제 원고가 확정되지 않았을 때, 서체와 레이아웃, 여백의 시각적 밸런스를 평가하기 위해 가상 텍스트를 채워 넣는 표준 기법입니다.</p>
+        <p class="text-xs text-slate-400 leading-relaxed">영문 알파벳과 한글 자모는 글자 간격(자간)과 행간의 시각적 밀도가 크게 다르므로, 국내 웹 서비스를 디자인할 때는 반드시 한글 더미 텍스트를 함께 배치해 보아야 어색함 없는 조판을 완성할 수 있습니다.</p>
+      </div>
+
+      <!-- 애드센스 인피드 슬롯 -->
+      <div class="my-6 p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
+        <div class="text-[11px] text-slate-600 font-mono tracking-wider mb-2">SPONSORED</div>
+        <div class="min-h-[100px] flex items-center justify-center text-xs text-slate-600">
+          <!-- 애드센스 반응형 광고 태그 자리 -->
+          <span>반응형 광고 영역 (Google AdSense)</span>
+        </div>
+      </div>
+
+      <div class="space-y-3 pt-4"><h3 class="text-sm font-bold text-slate-200">자주 묻는 질문 (FAQ)</h3>
+        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
+          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
+            <span>Q. 한글 더미 텍스트는 어떤 내용인가요?</span>
+            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">디자인 및 조판 검토에 방해가 되지 않도록 중립적인 어휘와 자연스러운 문장 구조로 구성된 가상 안내 문구입니다.</p>
+        </details>
+        <details class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl group cursor-pointer">
+          <summary class="text-xs font-bold text-slate-300 list-none flex justify-between items-center group-open:text-emerald-400">
+            <span>Q. 문단(p) 태그를 함께 생성할 수 있나요?</span>
+            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-2.5 leading-relaxed pl-2 border-l-2 border-emerald-500/40">네, 'HTML <p> 태그로 감싸기' 옵션을 체크하시면 웹 퍼블리싱 시 바로 복사해 붙여넣을 수 있도록 태그가 함께 출력됩니다.</p>
+        </details></div>
+
+      <!-- 한국어 관련 툴 내부 링크 추천 바 -->
+      <div class="pt-8 border-t border-slate-800/60">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">함께 쓰면 유용한 추천 도구</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <a href="/ko/tools/unit-converter.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>📐</span> <span>단위 변환기</span>
+          </a>
+          <a href="/ko/tools/percentage-calc.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>🏷️</span> <span>퍼센트 계산기</span>
+          </a>
+          <a href="/ko/tools/image-compressor.html" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>📷</span> <span>이미지 압축기</span>
+          </a>
+          <a href="/ko" class="p-3 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-slate-300 hover:text-emerald-400 transition flex items-center gap-2">
+            <span>⚡</span> <span>전체 도구 보기</span>
+          </a>
+        </div>
+      </div>
+    </section>
+    
+<footer class="mt-12 pt-6 pb-8 border-t border-slate-800 text-xs text-slate-500">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+        <div class="space-y-0.5">
+          <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+          <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
+        </div>
+        <div class="flex items-center gap-3 font-semibold text-slate-400">
+          <a href="../about.html" class="hover:text-emerald-400 transition-colors">About</a>
+        <span>·</span>
+        <a href="../contact.html" class="hover:text-emerald-400 transition-colors">Contact</a>
+        <span>·</span>
+        <a href="../privacy.html" class="hover:text-emerald-400 transition-colors">Privacy</a>
+        <span>·</span>
+        <a href="../terms.html" class="hover:text-emerald-400 transition-colors">Terms</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../js/utils/loremGenerator.js"></script>
+  <script>
+    const typeSelect = document.getElementById("typeSelect");
+    const quantityInput = document.getElementById("quantityInput");
+    const startLoremCheck = document.getElementById("startLoremCheck");
+    const wrapHtmlCheck = document.getElementById("wrapHtmlCheck");
+    const wrapHtmlLabel = document.getElementById("wrapHtmlLabel");
+    const generateBtn = document.getElementById("generateBtn");
+    const resultOutput = document.getElementById("resultOutput");
+    const copyBtn = document.getElementById("copyBtn");
+
+    const statSummary = document.getElementById("statSummary");
+    const statWords = document.getElementById("statWords");
+    const statChars = document.getElementById("statChars");
+    const statParagraphs = document.getElementById("statParagraphs");
+    const statBytes = document.getElementById("statBytes");
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return bytes + " B";
+      else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+      return (bytes / 1048576).toFixed(2) + " MB";
     }
 
-    genBtn.addEventListener("click", generate);
-    langSelect.addEventListener("change", generate);
-    unitSelect.addEventListener("change", generate);
-    countInput.addEventListener("input", generate);
-    wrapP.addEventListener("change", generate);
+    function runGeneration() {
+      const type = typeSelect.value;
+      const count = Math.max(1, parseInt(quantityInput.value, 10) || 1);
+      const startWithLorem = startLoremCheck.checked;
+      const wrapTags = wrapHtmlCheck.checked;
+
+      let result = "";
+
+      if (type === "paragraphs") {
+        result = LoremGenerator.generateParagraphs(count, 5, startWithLorem, wrapTags);
+      } else if (type === "sentences") {
+        result = LoremGenerator.generateSentences(count, startWithLorem);
+      } else {
+        result = LoremGenerator.generateWords(count, startWithLorem);
+      }
+
+      resultOutput.value = result;
+      updateMetrics();
+    }
+
+    function updateMetrics() {
+      const text = resultOutput.value;
+      const m = LoremGenerator.getMetrics(text);
+
+      statWords.textContent = m.words.toLocaleString();
+      statChars.textContent = m.chars.toLocaleString();
+      statParagraphs.textContent = m.paragraphs.toLocaleString();
+      statBytes.textContent = formatBytes(m.bytes);
+      statSummary.textContent = `${m.words.toLocaleString()} Words`;
+    }
+
+    typeSelect.addEventListener("change", () => {
+      if (typeSelect.value === "paragraphs") {
+        wrapHtmlLabel.classList.remove("hidden");
+      } else {
+        wrapHtmlLabel.classList.add("hidden");
+        wrapHtmlCheck.checked = false;
+      }
+      runGeneration();
+    });
+
+    generateBtn.addEventListener("click", runGeneration);
+    quantityInput.addEventListener("input", runGeneration);
+    startLoremCheck.addEventListener("change", runGeneration);
+    wrapHtmlCheck.addEventListener("change", runGeneration);
+    resultOutput.addEventListener("input", updateMetrics);
 
     copyBtn.addEventListener("click", () => {
-      if (!outputArea.value) return;
-      navigator.clipboard.writeText(outputArea.value).then(() => {
-        const orig = copyBtn.innerText;
-        copyBtn.innerText = "✓ 복사 완료";
-        setTimeout(() => copyBtn.innerText = orig, 1500);
+      if (!resultOutput.value) return;
+      navigator.clipboard.writeText(resultOutput.value).then(() => {
+        const orig = copyBtn.textContent;
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => (copyBtn.textContent = orig), 1500);
       });
     });
 
-    generate();
+    // Initial Execution
+    runGeneration();
   </script>
+  <script src="../js/related-tools.js"></script>
 </body>
 </html>
