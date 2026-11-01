@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ETF & 절세계좌 요율 관리기 - ToolLab</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen p-6 md:p-10 font-sans antialiased">
+  <div class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl space-y-6">
+    
+    <!-- 상단 헤더 -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-slate-800 gap-4">
+      <div>
+        <div class="flex items-center gap-2.5">
+          <span class="text-2xl">📊</span>
+          <h1 class="text-lg md:text-xl font-bold text-slate-100">ETF &amp; 절세계좌 핵심 세제 요율 관리기</h1>
+        </div>
+        <p class="text-xs text-slate-500 mt-1">ToolLab ETF 피커 및 복리 시뮬레이터에 적용되는 법정 기준값 관리</p>
+      </div>
+      <button id="save-btn" class="w-full sm:w-auto px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
+        <span>💾</span> 최종 저장 (etf_rates.json)
+      </button>
+    </div>
+
+    <!-- 상태 알림 바 -->
+    <div id="status-bar" class="hidden p-3.5 rounded-xl text-xs font-mono"></div>
+
+    <div class="space-y-5">
+      
+      <!-- 1. 기본 메타 & 일반 배당소득세 -->
+      <div class="p-5 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-3">
+        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span> 기준 연도 &amp; 배당소득세
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">기준 연도 (baseYear)</label>
+            <input type="number" id="baseYear" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-emerald-500 font-mono" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">일반 배당소득세율 (지방소득세 포함, 기본 0.154)</label>
+            <input type="number" step="0.001" id="dividendGeneralRate" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm font-bold text-emerald-400 outline-none focus:border-emerald-500 font-mono" />
+          </div>
+          <div class="sm:col-span-2">
+            <label class="text-xs text-slate-400 block mb-1">금융소득종합과세 기준금액 (원/년, 기본 20,000,000원)</label>
+            <input type="number" step="1000000" id="incomeThreshold" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-emerald-500 font-mono" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. ISA (개인종합자산관리계좌) -->
+      <div class="p-5 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-3">
+        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-sky-500"></span> ISA (개인종합자산관리계좌) 세제 혜택
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">연간 납입한도 (원/년, 기본 2천만 원)</label>
+            <input type="number" step="1000000" id="isaAnnualLimit" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-emerald-500 font-mono" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">총 납입한도 (원, 기본 1억 원)</label>
+            <input type="number" step="1000000" id="isaTotalLimit" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-emerald-500 font-mono" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">일반형 비과세 한도 (원, 기본 200만 원)</label>
+            <input type="number" step="100000" id="isaTaxFreeGeneral" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm font-bold text-sky-400 outline-none focus:border-emerald-500 font-mono" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">서민형 비과세 한도 (원, 기본 400만 원)</label>
+            <input type="number" step="100000" id="isaTaxFreeRural" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm font-bold text-sky-400 outline-none focus:border-emerald-500 font-mono" />
+          </div>
+          <div class="sm:col-span-2">
+            <label class="text-xs text-slate-400 block mb-1">비과세 초과분 분리과세율 (지방세 포함, 기본 0.099)</label>
+            <input type="number" step="0.001" id="isaOverTaxRate" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-emerald-500 font-mono" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 연금저축 & IRP -->
+      <div class="p-5 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-3">
+        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-amber-500"></span> 연금저축 &amp; IRP 세액공제
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">연간 세액공제 합산한도 (연금+IRP, 기본 900만 원)</label>
+            <input type="number" step="500000" id="pensionAnnualLimit" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-emerald-500 font-mono" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">연금저축 단독 한도 (기본 600만 원)</label>
+            <input type="number" step="500000" id="pensionSavingsSubLimit" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-emerald-500 font-mono" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">총급여 5,500만 이하 세액공제율 (기본 0.165 = 16.5%)</label>
+            <input type="number" step="0.001" id="deductionRateLowIncome" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm font-bold text-amber-400 outline-none focus:border-emerald-500 font-mono" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">총급여 5,500만 초과 세액공제율 (기본 0.132 = 13.2%)</label>
+            <input type="number" step="0.001" id="deductionRateHighIncome" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-emerald-500 font-mono" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. 해외 직투 ETF 양도소득세 -->
+      <div class="p-5 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-3">
+        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-purple-500"></span> 해외 직투 ETF 양도소득세
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">기본 양도소득 공제액 (원/년, 기본 2,500,000원)</label>
+            <input type="number" step="100000" id="capitalGainsDeduction" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-emerald-500 font-mono" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">양도소득세율 (지방세 포함, 기본 0.22 = 22%)</label>
+            <input type="number" step="0.001" id="capitalGainsTaxRate" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm font-bold text-purple-400 outline-none focus:border-emerald-500 font-mono" />
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let fullConfig = {};
+
+    async function initForm() {
+      try {
+        const res = await fetch('/api/rates');
+        fullConfig = await res.json();
+
+        // 1. 기본 & 배당세
+        document.getElementById('baseYear').value = fullConfig.baseYear || 2026;
+        document.getElementById('dividendGeneralRate').value = fullConfig.dividendTax?.generalRate || 0.154;
+        document.getElementById('incomeThreshold').value = fullConfig.dividendTax?.incomeThreshold || 20000000;
+
+        // 2. ISA
+        document.getElementById('isaAnnualLimit').value = fullConfig.isa?.annualLimit || 20000000;
+        document.getElementById('isaTotalLimit').value = fullConfig.isa?.totalLimit || 100000000;
+        document.getElementById('isaTaxFreeGeneral').value = fullConfig.isa?.taxFreeGeneral || 2000000;
+        document.getElementById('isaTaxFreeRural').value = fullConfig.isa?.taxFreeRural || 4000000;
+        document.getElementById('isaOverTaxRate').value = fullConfig.isa?.overTaxRate || 0.099;
+
+        // 3. 연금
+        document.getElementById('pensionAnnualLimit').value = fullConfig.pension?.annualLimit || 9000000;
+        document.getElementById('pensionSavingsSubLimit').value = fullConfig.pension?.pensionSavingsSubLimit || 6000000;
+        document.getElementById('deductionRateLowIncome').value = fullConfig.pension?.deductionRateLowIncome || 0.165;
+        document.getElementById('deductionRateHighIncome').value = fullConfig.pension?.deductionRateHighIncome || 0.132;
+
+        // 4. 해외 ETF
+        document.getElementById('capitalGainsDeduction').value = fullConfig.overseasEtf?.capitalGainsDeduction || 2500000;
+        document.getElementById('capitalGainsTaxRate').value = fullConfig.overseasEtf?.capitalGainsTaxRate || 0.22;
+
+      } catch (err) {
+        showStatus('데이터를 불러오지 못했습니다.', 'error');
+      }
+    }
+
+    document.getElementById('save-btn').addEventListener('click', async () => {
+      fullConfig.baseYear = Number(document.getElementById('baseYear').value);
+      fullConfig.lastUpdated = new Date().toISOString().slice(0, 10);
+
+      if (!fullConfig.dividendTax) fullConfig.dividendTax = {};
+      fullConfig.dividendTax.generalRate = Number(document.getElementById('dividendGeneralRate').value);
+      fullConfig.dividendTax.incomeThreshold = Number(document.getElementById('incomeThreshold').value);
+
+      if (!fullConfig.isa) fullConfig.isa = {};
+      fullConfig.isa.annualLimit = Number(document.getElementById('isaAnnualLimit').value);
+      fullConfig.isa.totalLimit = Number(document.getElementById('isaTotalLimit').value);
+      fullConfig.isa.taxFreeGeneral = Number(document.getElementById('isaTaxFreeGeneral').value);
+      fullConfig.isa.taxFreeRural = Number(document.getElementById('isaTaxFreeRural').value);
+      fullConfig.isa.overTaxRate = Number(document.getElementById('isaOverTaxRate').value);
+
+      if (!fullConfig.pension) fullConfig.pension = {};
+      fullConfig.pension.annualLimit = Number(document.getElementById('pensionAnnualLimit').value);
+      fullConfig.pension.pensionSavingsSubLimit = Number(document.getElementById('pensionSavingsSubLimit').value);
+      fullConfig.pension.deductionRateLowIncome = Number(document.getElementById('deductionRateLowIncome').value);
+      fullConfig.pension.deductionRateHighIncome = Number(document.getElementById('deductionRateHighIncome').value);
+
+      if (!fullConfig.overseasEtf) fullConfig.overseasEtf = {};
+      fullConfig.overseasEtf.capitalGainsDeduction = Number(document.getElementById('capitalGainsDeduction').value);
+      fullConfig.overseasEtf.capitalGainsTaxRate = Number(document.getElementById('capitalGainsTaxRate').value);
+
+      try {
+        const res = await fetch('/api/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(fullConfig)
+        });
+        const result = await res.json();
+        if (result.status === 'success') {
+          showStatus('✅ 변경 사항이 etf_rates.json에 즉시 반영되었습니다.', 'success');
+        } else {
+          showStatus('❌ 저장 실패: ' + result.message, 'error');
+        }
+      } catch (err) {
+        showStatus('❌ 서버 통신 오류', 'error');
+      }
+    });
+
+    function showStatus(msg, type) {
+      const bar = document.getElementById('status-bar');
+      bar.innerText = msg;
+      bar.className = 'p-3.5 rounded-xl text-xs font-semibold block ';
+      if (type === 'success') {
+        bar.className += 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/60';
+      } else {
+        bar.className += 'bg-rose-950/60 text-rose-400 border border-rose-800/60';
+      }
+    }
+
+    window.onload = initForm;
+  </script>
+</body>
+</html>
