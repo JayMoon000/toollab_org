@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D-Day & 영업일 카운트다운 계산기 | ToolLab</title>
+  <meta name="description" content="목표일까지 남은 날짜(D-Day)와 주말을 제외한 순수 영업일수(근무일), 날짜 더하기·빼기를 100% 브라우저 로컬 메모리에서 실시간 계산합니다." />
+  <meta name="keywords" content="디데이계산기, DDay계산기, 영업일계산기, 근무일계산, 날짜계산기, 100일계산, 수능디데이, 시험디데이" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/dday-calculator.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+  <script src="../../js/analytics.js"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1512367949140208" crossorigin="anonymous"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <!-- 메인 계산기 카드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl shadow-xl space-y-5">
+      
+      <!-- 상단 헤더 -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="/ko" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-emerald-400 transition" title="도구 목록으로 돌아가기">
+            🏠
+          </a>
+          <div>
+            <span class="text-[10px] text-slate-500 font-bold tracking-wider block">TOOLLAB.ORG</span>
+            <h1 class="text-base sm:text-lg font-bold text-slate-100">D-Day &amp; 영업일 계산기</h1>
+          </div>
+        </div>
+        <span class="text-[11px] font-mono px-2.5 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 font-semibold">
+          실시간 로컬 연산
+        </span>
+      </div>
+
+      <!-- 모드 선택 탭 -->
+      <div class="grid grid-cols-2 gap-1.5 bg-slate-950/80 p-1.5 rounded-2xl text-xs font-bold border border-slate-800">
+        <button id="modeDday" class="py-2.5 rounded-xl transition-all bg-emerald-600 text-white shadow-sm cursor-pointer">
+          목표일 카운트다운 (D-Day)
+        </button>
+        <button id="modeAdd" class="py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer">
+          날짜 더하기 / 빼기
+        </button>
+      </div>
+
+      <!-- 1. D-Day 카운트다운 모드 -->
+      <div id="sectionDday" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+            <label class="block text-[11px] font-semibold text-slate-400">목표 날짜 선택</label>
+            <input type="date" id="targetDate" class="w-full bg-transparent text-slate-100 font-bold text-base outline-none focus:text-emerald-400 cursor-pointer" />
+          </div>
+          <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+            <label class="block text-[11px] font-semibold text-slate-400">일정명 (선택 사항)</label>
+            <input type="text" id="eventTitle" placeholder="예: 프로젝트 오픈, 자격증 시험, 기념일" class="w-full bg-transparent text-slate-100 font-medium text-sm outline-none focus:text-emerald-400 placeholder-slate-600" />
+          </div>
+        </div>
+
+        <!-- 핵심 D-Day 결과 배지 -->
+        <div class="p-6 bg-slate-950 rounded-2xl border border-slate-800/90 text-center space-y-2">
+          <span id="displayEventTitle" class="text-xs font-bold text-slate-400 tracking-wider uppercase block">목표 일정</span>
+          <div id="ddayBadge" class="text-4xl sm:text-5xl font-black text-emerald-400 tracking-tight font-mono">D-0</div>
+          <p id="ddaySubtitle" class="text-xs text-slate-400">상단에서 목표 날짜를 선택하세요</p>
+        </div>
+
+        <!-- 상세 분해 통계 그리드 -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+          <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl text-center">
+            <span class="text-slate-500 block mb-0.5 text-[11px]">주 단위 분해</span>
+            <span id="statWeeks" class="font-bold text-slate-200 text-sm font-mono">0주 0일</span>
+          </div>
+          <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl text-center">
+            <span class="text-slate-500 block mb-0.5 text-[11px]">순수 영업일 (주말 제외)</span>
+            <span id="statBusiness" class="font-bold text-emerald-400 text-sm font-mono">0일</span>
+          </div>
+          <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl text-center">
+            <span class="text-slate-500 block mb-0.5 text-[11px]">총 잔여 시간</span>
+            <span id="statHours" class="font-bold text-sky-400 text-sm font-mono">0시간</span>
+          </div>
+          <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl text-center">
+            <span class="text-slate-500 block mb-0.5 text-[11px]">총 역일수 (Calendar)</span>
+            <span id="statTotalDays" class="font-bold text-slate-100 text-sm font-mono">0일</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 날짜 더하기 / 빼기 모드 -->
+      <div id="sectionAdd" class="space-y-4 hidden">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+            <label class="block text-[11px] font-semibold text-slate-400">기준 시작일</label>
+            <input type="date" id="startDate" class="w-full bg-transparent text-slate-100 font-bold text-base outline-none focus:text-emerald-400 cursor-pointer" />
+          </div>
+          <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+            <label class="block text-[11px] font-semibold text-slate-400">더하거나 뺄 일수 (음수 가능)</label>
+            <input type="number" id="daysOffset" value="100" class="w-full bg-transparent text-slate-100 font-black text-xl outline-none focus:text-emerald-400 font-mono" />
+          </div>
+        </div>
+
+        <div class="p-6 bg-slate-950 rounded-2xl border border-slate-800/90 text-center space-y-1.5">
+          <span class="text-xs font-semibold text-emerald-400 tracking-wider block">계산된 목표일 결과</span>
+          <div id="targetResultDate" class="text-2xl sm:text-3xl font-black text-slate-100 font-mono">-</div>
+          <p id="targetResultDetail" class="text-xs text-slate-400 font-medium"></p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 1. 주요 프로젝트 및 라이프 마일스톤 기준표 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <div class="space-y-1">
+        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>주요 프로젝트 스프린트 및 라이프 주기 벤치마크</span>
+        </h2>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          업무 스프린트 납기, 계약 기간, 개인 목표 달성 시 자주 활용되는 표준 기간 기준입니다.
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-xl border border-slate-800">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-950 text-slate-400 font-semibold border-b border-slate-800">
+            <tr>
+              <th class="p-3">목표 유형</th>
+              <th class="p-3">표준 기간</th>
+              <th class="p-3">순수 영업일 (~5/7)</th>
+              <th class="p-3">주요 적용 분야</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-300">
+            <tr>
+              <td class="p-3 font-bold text-slate-200">애자일 2주 스프린트</td>
+              <td class="p-3 font-mono text-emerald-400 font-bold">14일 (2주)</td>
+              <td class="p-3 text-slate-400">10 근무일</td>
+              <td class="p-3 text-slate-400">소프트웨어 개발 주기 및 이슈 스프린트</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200">분기별 분기 마감 (OKR)</td>
+              <td class="p-3 font-mono text-slate-200">90 ~ 92일</td>
+              <td class="p-3 text-slate-400">약 65 근무일</td>
+              <td class="p-3 text-slate-400">기업 전략 목표 및 분기별 실적 평가</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200">100일 챌린지</td>
+              <td class="p-3 font-mono text-sky-400 font-bold">100일</td>
+              <td class="p-3 text-slate-400">약 71 근무일</td>
+              <td class="p-3 text-slate-400">습관 형성, 자격증 단기 집중, 피트니스 변화</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200">수습 기간 / 계약 갱신</td>
+              <td class="p-3 font-mono text-amber-400 font-bold">90 ~ 180일</td>
+              <td class="p-3 text-slate-400">약 65 ~ 130 근무일</td>
+              <td class="p-3 text-slate-400">근로 계약 수습 평가 및 외주 용역 납기</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2. 일정 산출 가이드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-3 text-xs leading-relaxed">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>캘린더 역일수와 영업일수(근무일) 계산 원리</span>
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-400 pt-1">
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">1. 총 역일(Calendar Days) vs 영업일(Business Days)</strong>
+          <p>총 역일은 주말을 포함하여 연속으로 흐르는 24시간 일수이며, 영업일은 토요일과 일요일을 제외한 순수 평일 근무 일수를 의미합니다.</p>
+        </div>
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">2. 표준 D-Day 표기 규격</strong>
+          <p>당일은 <strong>D-Day (D-0)</strong>, 목표일까지 남은 날은 <strong>D-숫자</strong>, 기준일이 지난 과거 날짜는 <strong>D+숫자</strong>로 직관적으로 산출됩니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 자주 묻는 질문 (FAQ) -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-3">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>자주 묻는 질문 (FAQ)</span>
+      </h2>
+      <div class="space-y-4 text-xs">
+        <div>
+          <h3 class="font-bold text-slate-200 mb-1">Q. 입력한 기념일이나 개인 일정이 서버에 저장되나요?</h3>
+          <p class="text-slate-400 leading-relaxed">아닙니다. ToolLab의 모든 일정 및 시간 계산은 사용자의 브라우저 클라이언트 메모리에서만 100% 로컬 연산되며, 외부 서버로 일정 데이터가 전혀 전송되지 않습니다.</p>
+        </div>
+        <div class="border-t border-slate-800 pt-3">
+          <h3 class="font-bold text-slate-200 mb-1">Q. 순수 영업일 계산에 법정 공휴일이나 대체휴일도 자동 반영되나요?</h3>
+          <p class="text-slate-400 leading-relaxed">본 계산기는 표준 주말(토요일, 일요일)을 제외하여 일수를 산출합니다. 국가 및 기업별로 상이한 임시공휴일, 명절 연휴, 대체공휴일은 해당 일수만큼 수동으로 보정해 주시면 정확합니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 광고 슬롯 -->
+    <div class="p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
+      <div class="text-[10px] text-slate-600 font-mono tracking-wider mb-2">ADVERTISEMENT</div>
+      <div class="min-h-[80px] flex items-center justify-center text-xs text-slate-600">
+        <span>반응형 광고 영역 (Google AdSense)</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- 가로형 한국어 표준 푸터 -->
+  <footer class="w-full max-w-4xl mx-auto px-4 py-8 mt-12 border-t border-slate-800/80 text-xs text-slate-500">
+    <div class="space-y-4 text-center">
+      <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-medium text-slate-400">
+        <a href="/ko/about.html" class="hover:text-emerald-400 transition">소개</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/contact.html" class="hover:text-emerald-400 transition">문의</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/privacy.html" class="hover:text-emerald-400 transition">개인정보처리방침</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/terms.html" class="hover:text-emerald-400 transition">이용약관</a>
+      </nav>
+      <div class="space-y-1">
+        <p class="font-semibold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+        <p class="text-[11px] text-slate-600">100% 브라우저 메모리 연산 · 서버 전송 0바이트 Zero Server Latency</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 로직 스크립트: D-Day 엔진 + 한글 추천 도구 모듈 -->
+  <script src="../../js/utils/ddayCounter.js"></script>
+  <script>
+    let activeMode = "dday";
+
+    const modeDdayBtn = document.getElementById("modeDday");
+    const modeAddBtn = document.getElementById("modeAdd");
+    const sectionDday = document.getElementById("sectionDday");
+    const sectionAdd = document.getElementById("sectionAdd");
+
+    const targetDateInput = document.getElementById("targetDate");
+    const eventTitleInput = document.getElementById("eventTitle");
+    const startDateInput = document.getElementById("startDate");
+    const daysOffsetInput = document.getElementById("daysOffset");
+
+    // 기본값 세팅 (오늘 기준 +30일)
+    const today = new Date();
+    const defaultFuture = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 30);
+    
+    // 로컬 YYYY-MM-DD 포맷 헬퍼
+    const toLocalDateStr = (d) => {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    targetDateInput.value = toLocalDateStr(defaultFuture);
+    startDateInput.value = toLocalDateStr(today);
+
+    modeDdayBtn.addEventListener("click", () => {
+      activeMode = "dday";
+      modeDdayBtn.className = "py-2.5 rounded-xl transition-all bg-emerald-600 text-white shadow-sm cursor-pointer";
+      modeAddBtn.className = "py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer";
+      sectionDday.classList.remove("hidden");
+      sectionAdd.classList.add("hidden");
+      updateDDay();
+    });
+
+    modeAddBtn.addEventListener("click", () => {
+      activeMode = "add";
+      modeAddBtn.className = "py-2.5 rounded-xl transition-all bg-emerald-600 text-white shadow-sm cursor-pointer";
+      modeDdayBtn.className = "py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer";
+      sectionAdd.classList.remove("hidden");
+      sectionDday.classList.add("hidden");
+      updateAddDays();
+    });
+
+    function updateDDay() {
+      const val = targetDateInput.value;
+      const title = eventTitleInput.value.trim() || "목표 일정";
+      document.getElementById("displayEventTitle").textContent = title;
+
+      if (!val) {
+        document.getElementById("ddayBadge").textContent = "D-?";
+        document.getElementById("ddaySubtitle").textContent = "목표 날짜를 선택해 주세요";
+        return;
+      }
+
+      const res = DDayCounter.calculateDDay(val);
+      if (!res) return;
+
+      const badge = document.getElementById("ddayBadge");
+      const sub = document.getElementById("ddaySubtitle");
+
+      if (res.isToday) {
+        badge.textContent = "D-Day";
+        badge.className = "text-4xl sm:text-5xl font-black text-emerald-400 tracking-tight font-mono";
+        sub.textContent = "오늘이 바로 그날입니다!";
+      } else if (res.isFuture) {
+        badge.textContent = `D-${res.days}`;
+        badge.className = "text-4xl sm:text-5xl font-black text-emerald-400 tracking-tight font-mono";
+        sub.textContent = `${res.days}일 남았습니다`;
+      } else {
+        badge.textContent = `D+${res.absDays}`;
+        badge.className = "text-4xl sm:text-5xl font-black text-amber-400 tracking-tight font-mono";
+        sub.textContent = `${res.absDays}일 지났습니다`;
+      }
+
+      document.getElementById("statWeeks").textContent = `${res.weeks}주 ${res.remainingDaysAfterWeeks}일`;
+      document.getElementById("statTotalDays").textContent = `${res.absDays.toLocaleString()}일`;
+      document.getElementById("statHours").textContent = `${res.totalHours.toLocaleString()}시간`;
+
+      // 순수 영업일수 계산
+      const todayStr = toLocalDateStr(new Date());
+      const bizDays = DDayCounter.calculateBusinessDays(todayStr, val);
+      document.getElementById("statBusiness").textContent = `${bizDays.toLocaleString()}일`;
+    }
+
+    function updateAddDays() {
+      const startVal = startDateInput.value;
+      const offset = parseInt(daysOffsetInput.value, 10);
+
+      const resultEl = document.getElementById("targetResultDate");
+      const detailEl = document.getElementById("targetResultDetail");
+
+      if (!startVal || isNaN(offset)) {
+        resultEl.textContent = "-";
+        detailEl.textContent = "";
+        return;
+      }
+
+      const res = DDayCounter.addDays(startVal, offset);
+      if (!res) return;
+
+      // 한국어 요일 및 날짜 포맷팅 (예: 2026년 11월 30일 (월))
+      const targetDateObj = new Date(res.dateString + "T00:00:00");
+      const formattedKo = targetDateObj.toLocaleDateString("ko-KR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        weekday: "short"
+      });
+
+      resultEl.textContent = formattedKo;
+      detailEl.textContent = `${startVal} 기준 ${offset >= 0 ? "+" : ""}${offset}일 계산 결과`;
+    }
+
+    targetDateInput.addEventListener("input", updateDDay);
+    eventTitleInput.addEventListener("input", updateDDay);
+    startDateInput.addEventListener("input", updateAddDays);
+    daysOffsetInput.addEventListener("input", updateAddDays);
+
+    updateDDay();
+  </script>
+  <script src="../../js/related-tools-ko.js"></script>
+</body>
+</html>

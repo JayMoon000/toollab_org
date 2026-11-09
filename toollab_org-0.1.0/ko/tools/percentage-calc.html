@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>퍼센트 & 마진 계산기 (원가대비 마진율·할인율·증감률) | ToolLab</title>
+  <meta name="description" content="스마트스토어/이커머스 원가 대비 유통 마진율, 백분율 지분, 세일 할인율, 전후 증감률을 서버 전송 없이 100% 브라우저에서 실시간 계산합니다." />
+  <meta name="keywords" content="퍼센트계산기, 마진계산기, 마진율계산, 마크업계산, 할인율계산, 증감률계산, 백분율계산기, 스마트스토어마진" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/percentage-calc.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+  <script src="../../js/analytics.js"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1512367949140208" crossorigin="anonymous"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+
+  <main class="max-w-2xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <!-- 메인 계산기 카드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl shadow-xl space-y-5">
+      
+      <!-- 상단 헤더 -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="/ko" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-emerald-400 transition" title="도구 목록으로 돌아가기">
+            🏠
+          </a>
+          <div>
+            <span class="text-[10px] text-slate-500 font-bold tracking-wider block">TOOLLAB.ORG</span>
+            <h1 class="text-base sm:text-lg font-bold text-slate-100">퍼센트 &amp; 마진 계산기</h1>
+          </div>
+        </div>
+        <span class="text-[11px] font-mono px-2.5 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 font-semibold">
+          실시간 연산 엔진
+        </span>
+      </div>
+
+      <!-- 모드 전환 탭 4종 -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 bg-slate-950/80 p-1.5 rounded-2xl text-xs font-bold border border-slate-800">
+        <button class="mode-btn py-2.5 rounded-xl transition-all bg-emerald-600 text-white shadow-sm cursor-pointer" data-mode="basic">비율 값</button>
+        <button class="mode-btn py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer" data-mode="share">일부 지분율</button>
+        <button class="mode-btn py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer" data-mode="change">전후 증감률</button>
+        <button class="mode-btn py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer" data-mode="margin">마진 &amp; 마크업</button>
+      </div>
+
+      <!-- 동적 입력 필드 컨테이너 -->
+      <div id="calculatorInputs" class="space-y-3">
+        <!-- 자바스크립트로 렌더링 -->
+      </div>
+
+      <!-- 핵심 결과 카드 -->
+      <div class="p-5 bg-slate-950 rounded-2xl border border-slate-800/90 space-y-2">
+        <span class="text-xs font-semibold text-slate-400 block" id="resultLabel">계산 결과</span>
+        <div id="primaryResult" class="text-3xl sm:text-4xl font-black text-emerald-400 font-mono truncate">0</div>
+        <div id="secondaryResult" class="text-xs text-slate-400 pt-2 border-t border-slate-800/80 hidden font-mono"></div>
+      </div>
+
+    </div>
+
+    <!-- 1. 원가 대비 마크업 vs 판매가 대비 마진율 매트릭스 표 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <div class="space-y-1">
+        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>원가 대비 마크업(Markup) vs 판매가 대비 마진율(Margin) 환산표</span>
+        </h2>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          유통 및 온라인 쇼핑몰(스마트스토어, 쿠팡) 가격 책정 시 마크업과 최종 마진율의 상관관계 기준입니다.
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-xl border border-slate-800">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-950 text-slate-400 font-semibold border-b border-slate-800">
+            <tr>
+              <th class="p-3">원가 기준 마크업</th>
+              <th class="p-3">판매가 기준 마진율</th>
+              <th class="p-3">원가 (10만 원 기준)</th>
+              <th class="p-3">최종 판매가</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-300 font-mono">
+            <tr>
+              <td class="p-3 font-bold text-slate-200">15.0%</td>
+              <td class="p-3 text-emerald-400 font-bold">13.0%</td>
+              <td class="p-3 text-slate-400">100,000 원</td>
+              <td class="p-3 text-slate-100">115,000 원</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200">25.0%</td>
+              <td class="p-3 text-emerald-400 font-bold">20.0%</td>
+              <td class="p-3 text-slate-400">100,000 원</td>
+              <td class="p-3 text-slate-100">125,000 원</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200">50.0%</td>
+              <td class="p-3 text-sky-400 font-bold">33.3%</td>
+              <td class="p-3 text-slate-400">100,000 원</td>
+              <td class="p-3 text-slate-100">150,000 원</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200">100.0% (2배 배수)</td>
+              <td class="p-3 text-amber-400 font-bold">50.0%</td>
+              <td class="p-3 text-slate-400">100,000 원</td>
+              <td class="p-3 text-slate-100">200,000 원</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2. 핵심 금융 공식 가이드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-3 text-xs leading-relaxed">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>상거래 및 비즈니스 필수 퍼센트 계산 공식</span>
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-400 pt-1">
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">1. 영업 마진율 (Gross Margin)</strong>
+          <p>공식: <strong>[(판매가 - 원가) ÷ 판매가] × 100</strong>. 매출액 중에서 원가를 빼고 남은 순수 매출총이익의 비율로, 100%를 초과할 수 없습니다.</p>
+        </div>
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">2. 원가 마크업 (Retail Markup)</strong>
+          <p>공식: <strong>[(판매가 - 원가) ÷ 원가] × 100</strong>. 제품 원가에 얼마의 이윤을 붙여 가격을 책정했는지를 나타내며, 100% 이상으로 커질 수 있습니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 오픈형 FAQ (단일 일관 구조) -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>자주 묻는 질문 (FAQ)</span>
+      </h2>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <h3 class="font-bold text-slate-200 mb-1">Q. 마진율이 100%를 넘을 수 없는 이유는 무엇인가요?</h3>
+          <p class="text-slate-400 leading-relaxed">마진율은 분모가 '판매가(매출)'이기 때문입니다. 제품 원가가 0원이라 이익이 판매가와 동일해지더라도 마진율은 최대 100%입니다. 반면 원가 기준인 마크업은 150%, 200% 등 제한 없이 커질 수 있습니다.</p>
+        </div>
+        <div class="border-t border-slate-800 pt-3">
+          <h3 class="font-bold text-slate-200 mb-1">Q. 입력한 판매가나 원가 데이터가 서버에 저장되거나 추적되나요?</h3>
+          <p class="text-slate-400 leading-relaxed">절대 저장되지 않습니다. 모든 수식은 사용자의 웹 브라우저 로컬 메모리 안에서만 100% 실행되므로, 민감한 비즈니스 원가와 판매 마진 기밀이 안전하게 보호됩니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 광고 슬롯 -->
+    <div class="p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
+      <div class="text-[10px] text-slate-600 font-mono tracking-wider mb-2">ADVERTISEMENT</div>
+      <div class="min-h-[80px] flex items-center justify-center text-xs text-slate-600">
+        <span>반응형 광고 영역 (Google AdSense)</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- 가로형 한국어 표준 푸터 -->
+  <footer class="w-full max-w-4xl mx-auto px-4 py-8 mt-12 border-t border-slate-800/80 text-xs text-slate-500">
+    <div class="space-y-4 text-center">
+      <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-medium text-slate-400">
+        <a href="/ko/about.html" class="hover:text-emerald-400 transition">소개</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/contact.html" class="hover:text-emerald-400 transition">문의</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/privacy.html" class="hover:text-emerald-400 transition">개인정보처리방침</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/terms.html" class="hover:text-emerald-400 transition">이용약관</a>
+      </nav>
+      <div class="space-y-1">
+        <p class="font-semibold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+        <p class="text-[11px] text-slate-600">100% 브라우저 메모리 연산 · 서버 전송 0바이트 Zero Server Latency</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 로직 스크립트: 퍼센트 엔진 + 한글 추천 도구 모듈 -->
+  <script src="../../js/utils/percentageCalc.js"></script>
+  <script>
+    let activeMode = "basic";
+
+    const UI_CONFIG = {
+      basic: {
+        inputs: [
+          { id: "val1", label: "계산할 비율 (%)", default: 15, placeholder: "15" },
+          { id: "val2", label: "전체 기준값", default: 200, placeholder: "200" }
+        ],
+        resultLabel: "해당 비율의 값 (결과)",
+        calc: (v1, v2) => ({
+          primary: PercentageCalc.percentOf(v1, v2).toLocaleString(undefined, { maximumFractionDigits: 4 }),
+          secondary: `${v2}의 ${v1}%는 ${PercentageCalc.percentOf(v1, v2)} 입니다.`
+        })
+      },
+      share: {
+        inputs: [
+          { id: "val1", label: "일부 값 (Part)", default: 25, placeholder: "25" },
+          { id: "val2", label: "전체 값 (Total)", default: 100, placeholder: "100" }
+        ],
+        resultLabel: "전체 대비 차지하는 비율 (%)",
+        calc: (v1, v2) => {
+          const res = PercentageCalc.percentageShare(v1, v2);
+          return {
+            primary: `${res.toLocaleString(undefined, { maximumFractionDigits: 4 })}%`,
+            secondary: `${v1}은(는) 전체 ${v2}의 ${res.toFixed(2)}% 입니다.`
+          };
+        }
+      },
+      change: {
+        inputs: [
+          { id: "val1", label: "이전 값 (기준값)", default: 80, placeholder: "80" },
+          { id: "val2", label: "이후 값 (변동값)", default: 120, placeholder: "120" }
+        ],
+        resultLabel: "전후 변동률 (%)",
+        calc: (v1, v2) => {
+          const change = PercentageCalc.percentageChange(v1, v2);
+          const direction = change >= 0 ? "+" : "";
+          return {
+            primary: `${direction}${change.toLocaleString(undefined, { maximumFractionDigits: 4 })}%`,
+            secondary: `차이: ${v2 - v1 >= 0 ? "+" : ""}${(v2 - v1).toFixed(2)} (${change >= 0 ? "증가" : "감소"})`
+          };
+        }
+      },
+      margin: {
+        inputs: [
+          { id: "val1", label: "단위 원가 (매입가 / 제조원가)", default: 60000, placeholder: "60000" },
+          { id: "val2", label: "판매 가격 (소비자가 / 매출액)", default: 100000, placeholder: "100000" }
+        ],
+        resultLabel: "매출총이익 마진율 (%)",
+        calc: (v1, v2) => {
+          const { profit, margin, markup } = PercentageCalc.marginAndMarkup(v1, v2);
+          return {
+            primary: `${margin.toLocaleString(undefined, { maximumFractionDigits: 2 })}%`,
+            secondary: `마진 이익: ${profit.toLocaleString()}원 | 원가 대비 마크업: ${markup.toFixed(2)}%`
+          };
+        }
+      }
+    };
+
+    function renderInputs() {
+      const container = document.getElementById("calculatorInputs");
+      const config = UI_CONFIG[activeMode];
+      
+      container.innerHTML = config.inputs.map(input => `
+        <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+          <label class="block text-[11px] font-semibold text-slate-400">${input.label}</label>
+          <input type="number" id="${input.id}" value="${input.default}" placeholder="${input.placeholder}"
+            class="w-full text-lg sm:text-xl font-bold bg-transparent text-slate-100 outline-none focus:text-emerald-400 font-mono" />
+        </div>
+      `).join("");
+
+      document.getElementById("resultLabel").textContent = config.resultLabel;
+
+      config.inputs.forEach(input => {
+        document.getElementById(input.id).addEventListener("input", executeCalculation);
+      });
+
+      executeCalculation();
+    }
+
+    function executeCalculation() {
+      const config = UI_CONFIG[activeMode];
+      const v1 = parseFloat(document.getElementById("val1")?.value);
+      const v2 = parseFloat(document.getElementById("val2")?.value);
+
+      const primaryEl = document.getElementById("primaryResult");
+      const secondaryEl = document.getElementById("secondaryResult");
+
+      if (isNaN(v1) || isNaN(v2)) {
+        primaryEl.textContent = "0";
+        secondaryEl.classList.add("hidden");
+        return;
+      }
+
+      const { primary, secondary } = config.calc(v1, v2);
+      primaryEl.textContent = primary;
+      
+      if (secondary) {
+        secondaryEl.textContent = secondary;
+        secondaryEl.classList.remove("hidden");
+      } else {
+        secondaryEl.classList.add("hidden");
+      }
+    }
+
+    document.querySelectorAll(".mode-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".mode-btn").forEach(b => {
+          b.className = "mode-btn py-2.5 rounded-xl transition-all text-slate-400 hover:text-slate-200 cursor-pointer";
+        });
+        btn.className = "mode-btn py-2.5 rounded-xl transition-all bg-emerald-600 text-white shadow-sm cursor-pointer";
+        activeMode = btn.dataset.mode;
+        renderInputs();
+      });
+    });
+
+    renderInputs();
+  </script>
+  <script src="../../js/related-tools-ko.js"></script>
+</body>
+</html>

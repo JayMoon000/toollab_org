@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JSON 포맷터 & 문법 검증기 (정렬·압축·에러 검출) | ToolLab</title>
+  <meta name="description" content="서버 전송 없이 100% 브라우저 메모리에서 JSON을 예쁘게 정렬(Beautify)하거나 압축(Minify)하고, 문법 오류의 줄/열 위치를 실시간 검출합니다." />
+  <meta name="keywords" content="JSON포맷터, JSON정렬, JSON문법검사, JSON압축, JSON뷰어, JSON유효성검사, JSON에러검출" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/json-formatter.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+  <script src="../../js/analytics.js"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1512367949140208" crossorigin="anonymous"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <!-- 메인 조작 카드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl shadow-xl space-y-5">
+      
+      <!-- 상단 헤더 바 -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="/ko" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-emerald-400 transition" title="도구 목록으로 돌아가기">
+            🏠
+          </a>
+          <div>
+            <span class="text-[10px] text-slate-500 font-bold tracking-wider block">TOOLLAB.ORG</span>
+            <h1 class="text-base sm:text-lg font-bold text-slate-100">JSON 포맷터 &amp; 문법 검증기</h1>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="loadSampleBtn" class="text-xs px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-emerald-400 transition cursor-pointer font-medium">샘플 JSON</button>
+          <button id="clearBtn" class="text-xs px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition cursor-pointer font-medium">비우기</button>
+        </div>
+      </div>
+
+      <!-- 액션 및 제어 바 -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-950/60 p-3 rounded-2xl border border-slate-800">
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="beautifyBtn" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-sm cursor-pointer">정렬 (Beautify)</button>
+          <button id="minifyBtn" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition border border-slate-700 cursor-pointer">한줄 압축 (Minify)</button>
+          <select id="indentSelect" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200 font-bold outline-none cursor-pointer focus:border-emerald-500">
+            <option value="2">2칸 들여쓰기</option>
+            <option value="4">4칸 들여쓰기</option>
+            <option value="tab">탭 (Tab)</option>
+          </select>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="copyBtn" class="px-3.5 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-800/60 text-xs font-bold transition cursor-pointer">JSON 복사</button>
+        </div>
+      </div>
+
+      <!-- 상태 및 문법 검증 알림 바 -->
+      <div id="statusAlert" class="p-3 rounded-2xl text-xs font-mono flex items-center justify-between bg-slate-950 border border-slate-800 text-slate-400 transition-colors">
+        <span id="statusMessage">JSON 데이터를 입력하거나 붙여넣으세요</span>
+        <span id="statusDetails" class="font-bold"></span>
+      </div>
+
+      <!-- 에디터 입력 영역 -->
+      <div class="relative">
+        <textarea id="jsonInput" rows="14" spellcheck="false"
+          placeholder="여기에 원본 JSON 문자열을 붙여넣으세요..." 
+          class="w-full p-4 bg-slate-950 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono text-xs sm:text-sm leading-relaxed resize-y transition"></textarea>
+      </div>
+
+      <!-- 페이로드 구조 분석 통계 매트릭스 -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+        <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px]">데이터 용량</span>
+          <span id="statSize" class="font-bold text-slate-100 text-sm md:text-base font-mono">0 B</span>
+        </div>
+        <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px]">총 키(Key) 개수</span>
+          <span id="statKeys" class="font-bold text-emerald-400 text-sm md:text-base font-mono">0</span>
+        </div>
+        <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px]">최대 중첩 깊이</span>
+          <span id="statDepth" class="font-bold text-sky-400 text-sm md:text-base font-mono">0</span>
+        </div>
+        <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px]">최상위 구조 타입</span>
+          <span id="statType" class="font-bold text-slate-300 text-sm md:text-base font-mono">-</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 1. 데이터 교환 포맷 비교 표 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <div class="space-y-1">
+        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>주요 데이터 교환 포맷(JSON·XML·YAML) 특성 비교</span>
+        </h2>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          웹 API 통신, 시스템 설정, 클라우드 파이프라인에서 사용되는 표준 포맷 간의 구조적 차이점입니다.
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-xl border border-slate-800">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-950 text-slate-400 font-semibold border-b border-slate-800">
+            <tr>
+              <th class="p-3">포맷</th>
+              <th class="p-3">데이터 오버헤드</th>
+              <th class="p-3">브라우저 네이티브 지원</th>
+              <th class="p-3">주요 적용 분야</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-300">
+            <tr>
+              <td class="p-3 font-bold text-emerald-400 font-mono">JSON</td>
+              <td class="p-3 text-slate-300">낮음 ~ 보통</td>
+              <td class="p-3 text-emerald-400 font-bold">기본 내장 (JSON.parse)</td>
+              <td class="p-3 text-slate-400">REST API, 웹 서비스 데이터 통신, 프론트엔드 상태값</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200 font-mono">XML</td>
+              <td class="p-3 text-rose-400">높음 (닫는 태그 오버헤드)</td>
+              <td class="p-3 text-slate-300">DOMParser 지원</td>
+              <td class="p-3 text-slate-400">엔터프라이즈 SOAP API, 공공기관 데이터, 문서 마크업</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200 font-mono">YAML</td>
+              <td class="p-3 text-slate-300">매우 낮음 (미니멀 구조)</td>
+              <td class="p-3 text-slate-400">별도 파서 필요</td>
+              <td class="p-3 text-slate-400">CI/CD 빌드 파이프라인, 쿠버네티스, 도커 컴포즈 설정</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2. 문법 오류 가이드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-3 text-xs leading-relaxed">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>자주 발생하는 JSON 문법 오류 유형</span>
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-400 pt-1">
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">1. 작은따옴표(') 사용 오류</strong>
+          <p>표준 JSON 규격은 반드시 큰따옴표(<code>"key": "value"</code>)만 허용합니다. 자바스크립트 객체처럼 작은따옴표를 사용하면 파싱 에러가 발생합니다.</p>
+        </div>
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">2. 마지막 쉼표(Trailing Comma) 오류</strong>
+          <p>객체나 배열의 마지막 항목 뒤에 쉼표(<code>,</code>)를 남겨두면 문법 오류가 발생합니다. 정렬 버튼을 클릭하면 불필요한 공백과 문법이 자동 보정됩니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 오픈형 FAQ (단일 일관 구조) -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>자주 묻는 질문 (FAQ)</span>
+      </h2>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <h3 class="font-bold text-slate-200 mb-1">Q. 대용량 JSON 데이터도 문제없이 검증할 수 있나요?</h3>
+          <p class="text-slate-400 leading-relaxed">네, 가능합니다. 원격 서버로 데이터를 전송하지 않고 사용자 PC 브라우저의 자바스크립트 엔진 메모리에서 직접 파싱하므로 수십 메가바이트(MB)에 달하는 대용량 페이로드도 전송 지연 없이 고속 처리됩니다.</p>
+        </div>
+        <div class="border-t border-slate-800 pt-3">
+          <h3 class="font-bold text-slate-200 mb-1">Q. 중요한 API 시크릿 키나 개인정보가 포함된 JSON도 안전한가요?</h3>
+          <p class="text-slate-400 leading-relaxed">완벽하게 안전합니다. ToolLab의 모든 포맷팅 및 문법 검사는 사용자의 로컬 샌드박스 안에서만 단독 실행되며, 어떠한 텔레메트리나 데이터도 외부 서버로 전송 또는 저장되지 않습니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 광고 슬롯 -->
+    <div class="p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
+      <div class="text-[10px] text-slate-600 font-mono tracking-wider mb-2">ADVERTISEMENT</div>
+      <div class="min-h-[80px] flex items-center justify-center text-xs text-slate-600">
+        <span>반응형 광고 영역 (Google AdSense)</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- 가로형 한국어 표준 푸터 -->
+  <footer class="w-full max-w-4xl mx-auto px-4 py-8 mt-12 border-t border-slate-800/80 text-xs text-slate-500">
+    <div class="space-y-4 text-center">
+      <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-medium text-slate-400">
+        <a href="/ko/about.html" class="hover:text-emerald-400 transition">소개</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/contact.html" class="hover:text-emerald-400 transition">문의</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/privacy.html" class="hover:text-emerald-400 transition">개인정보처리방침</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/terms.html" class="hover:text-emerald-400 transition">이용약관</a>
+      </nav>
+      <div class="space-y-1">
+        <p class="font-semibold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+        <p class="text-[11px] text-slate-600">100% 브라우저 메모리 연산 · 서버 전송 0바이트 Zero Server Latency</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 로직 스크립트: JSON 포맷터 엔진 + 한글 추천 도구 모듈 -->
+  <script src="../../js/utils/jsonFormatter.js"></script>
+  <script>
+    const input = document.getElementById("jsonInput");
+    const statusAlert = document.getElementById("statusAlert");
+    const statusMessage = document.getElementById("statusMessage");
+    const statusDetails = document.getElementById("statusDetails");
+
+    const statSize = document.getElementById("statSize");
+    const statKeys = document.getElementById("statKeys");
+    const statDepth = document.getElementById("statDepth");
+    const statType = document.getElementById("statType");
+
+    const indentSelect = document.getElementById("indentSelect");
+    const beautifyBtn = document.getElementById("beautifyBtn");
+    const minifyBtn = document.getElementById("minifyBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const loadSampleBtn = document.getElementById("loadSampleBtn");
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return bytes + " B";
+      else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+      return (bytes / 1048576).toFixed(2) + " MB";
+    }
+
+    function checkAndAnalyze() {
+      const val = input.value.trim();
+      if (!val) {
+        statusAlert.className = "p-3 rounded-2xl text-xs font-mono flex items-center justify-between bg-slate-950 border border-slate-800 text-slate-400 transition-colors";
+        statusMessage.textContent = "JSON 데이터를 입력하거나 붙여넣으세요";
+        statusDetails.textContent = "";
+        statSize.textContent = "0 B";
+        statKeys.textContent = "0";
+        statDepth.textContent = "0";
+        statType.textContent = "-";
+        return;
+      }
+
+      const stats = JsonFormatter.getStats(val);
+      statSize.textContent = formatBytes(stats.byteSize);
+
+      if (stats.isValid) {
+        statusAlert.className = "p-3 rounded-2xl text-xs font-mono flex items-center justify-between bg-emerald-950/40 border border-emerald-800 text-emerald-400 transition-colors";
+        statusMessage.textContent = "✔ 올바른 JSON 문법입니다";
+        const typeKo = stats.type === "Array" ? "배열 (Array)" : stats.type === "Object" ? "객체 (Object)" : "기본형 (Primitive)";
+        statusDetails.textContent = `${typeKo} 페이로드`;
+        statKeys.textContent = stats.keyCount.toLocaleString();
+        statDepth.textContent = stats.depth;
+        statType.textContent = typeKo;
+      } else {
+        const valRes = JsonFormatter.validate(val);
+        statusAlert.className = "p-3 rounded-2xl text-xs font-mono flex items-center justify-between bg-rose-950/40 border border-rose-800 text-rose-400 transition-colors";
+        statusMessage.textContent = `✖ 문법 오류: ${valRes.error}`;
+        statusDetails.textContent = valRes.line ? `${valRes.line}번째 줄, ${valRes.column}번째 열` : "파싱 실패";
+        statKeys.textContent = "-";
+        statDepth.textContent = "-";
+        statType.textContent = "오류 (Invalid)";
+      }
+    }
+
+    beautifyBtn.addEventListener("click", () => {
+      const val = input.value.trim();
+      if (!val) return;
+      const res = JsonFormatter.beautify(val, indentSelect.value);
+      if (res.success) {
+        input.value = res.result;
+      }
+      checkAndAnalyze();
+    });
+
+    minifyBtn.addEventListener("click", () => {
+      const val = input.value.trim();
+      if (!val) return;
+      const res = JsonFormatter.minify(val);
+      if (res.success) {
+        input.value = res.result;
+      }
+      checkAndAnalyze();
+    });
+
+    copyBtn.addEventListener("click", () => {
+      if (!input.value) return;
+      navigator.clipboard.writeText(input.value).then(() => {
+        const orig = copyBtn.textContent;
+        copyBtn.textContent = "복사완료!";
+        setTimeout(() => (copyBtn.textContent = orig), 1500);
+      });
+    });
+
+    clearBtn.addEventListener("click", () => {
+      input.value = "";
+      checkAndAnalyze();
+      input.focus();
+    });
+
+    loadSampleBtn.addEventListener("click", () => {
+      const sample = {
+        platform: "ToolLab.org",
+        version: "1.0.0",
+        description: "클라이언트 사이드 초경량 유틸리티 툴킷",
+        features: ["서버 전송 0바이트", "온디바이스 로컬 연산", "영구 무료"],
+        metrics: {
+          executionLatencyMs: 0,
+          privacyLevel: "100% 로컬 샌드박스"
+        }
+      };
+      input.value = JSON.stringify(sample, null, 2);
+      checkAndAnalyze();
+    });
+
+    input.addEventListener("input", checkAndAnalyze);
+  </script>
+  <script src="../../js/related-tools-ko.js"></script>
+</body>
+</html>

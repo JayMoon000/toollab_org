@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Base64 인코더 & 디코더 (한글 UTF-8·Data URI) | ToolLab</title>
+  <meta name="description" content="한글 깨짐 없는 UTF-8 Base64 텍스트 인코딩/디코딩, URL-Safe 규격 변환 및 이미지 Data URI 추출을 100% 브라우저 메모리에서 안전하게 처리합니다." />
+  <meta name="keywords" content="Base64변환기, Base64인코딩, Base64디코딩, UTF-8한글인코딩, DataURI생성, URLSafeBase64, 이미지Base64" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/base64-tool.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+  <script src="../../js/analytics.js"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1512367949140208" crossorigin="anonymous"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <!-- 메인 조작 카드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl shadow-xl space-y-5">
+      
+      <!-- 상단 헤더 -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="/ko" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-emerald-400 transition" title="도구 목록으로 돌아가기">
+            🏠
+          </a>
+          <div>
+            <span class="text-[10px] text-slate-500 font-bold tracking-wider block">TOOLLAB.ORG</span>
+            <h1 class="text-base sm:text-lg font-bold text-slate-100">Base64 인코더 &amp; 디코더</h1>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="clearBtn" class="text-xs px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition cursor-pointer font-medium">비우기</button>
+        </div>
+      </div>
+
+      <!-- 모드 및 옵션 컨트롤 바 -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-950/60 p-3 rounded-2xl border border-slate-800">
+        <div class="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
+          <button id="modeEncode" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm cursor-pointer">인코딩 (Encode)</button>
+          <button id="modeDecode" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-slate-200 cursor-pointer">디코딩 (Decode)</button>
+        </div>
+        
+        <div class="flex items-center gap-3 text-xs">
+          <label class="cursor-pointer font-semibold flex items-center gap-1.5 text-slate-400 hover:text-slate-200">
+            <input type="checkbox" id="urlSafeCheck" class="rounded bg-slate-900 border-slate-700 text-emerald-500 focus:ring-0"> URL-Safe 규격
+          </label>
+          <label class="cursor-pointer font-semibold flex items-center gap-1.5 text-slate-400 hover:text-slate-200" id="dataUriWrap">
+            <input type="checkbox" id="dataUriCheck" class="rounded bg-slate-900 border-slate-700 text-emerald-500 focus:ring-0"> Data URI 접두사
+          </label>
+          <label class="cursor-pointer px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-emerald-400 transition flex items-center gap-1.5 border border-slate-700 font-medium">
+            <span>📎 파일 업로드</span>
+            <input type="file" id="fileUpload" class="hidden" />
+          </label>
+        </div>
+      </div>
+
+      <!-- 변환 작업 공간 -->
+      <div class="space-y-4">
+        <!-- 원본 입력 영역 -->
+        <div>
+          <div class="flex justify-between items-center text-xs font-semibold text-slate-400 mb-1.5 px-1">
+            <span id="inputLabel">일반 텍스트 (Plain Text)</span>
+            <span id="inputSize" class="font-mono text-slate-500">0 B</span>
+          </div>
+          <textarea id="sourceText" rows="6" spellcheck="false"
+            placeholder="인코딩 또는 디코딩할 텍스트를 입력하거나 파일을 업로드하세요..." 
+            class="w-full p-4 bg-slate-950/80 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono text-xs sm:text-sm leading-relaxed resize-y transition"></textarea>
+        </div>
+
+        <!-- 스왑(전환) 버튼 -->
+        <div class="flex justify-center -my-1">
+          <button id="swapBtn" class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 shadow hover:border-emerald-500 hover:text-emerald-400 flex items-center justify-center text-slate-400 transition active:scale-95 cursor-pointer" title="입력과 결과 교환">
+            ⇅
+          </button>
+        </div>
+
+        <!-- 변환 결과 출력 영역 -->
+        <div>
+          <div class="flex justify-between items-center text-xs font-semibold text-emerald-400 mb-1.5 px-1">
+            <span id="outputLabel">Base64 변환 결과</span>
+            <div class="flex items-center gap-3">
+              <span id="outputSize" class="text-slate-500 font-mono">0 B</span>
+              <button id="copyBtn" class="px-3 py-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-800/60 font-bold transition cursor-pointer">복사</button>
+            </div>
+          </div>
+          <textarea id="resultText" rows="6" readonly spellcheck="false"
+            placeholder="변환된 결과가 여기에 실시간으로 표시됩니다..." 
+            class="w-full p-4 bg-slate-950/60 border border-slate-800 rounded-2xl text-emerald-300 placeholder-slate-700 focus:outline-none font-mono text-xs sm:text-sm leading-relaxed resize-y"></textarea>
+        </div>
+      </div>
+
+      <!-- 실시간 통계 메트릭 -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-2 text-xs">
+        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px]">실행 환경</span>
+          <span class="font-bold text-emerald-400 font-mono">100% 브라우저 로컬</span>
+        </div>
+        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-center">
+          <span class="text-slate-500 block mb-0.5 text-[11px]">용량 증감률 (Overhead)</span>
+          <span id="statDelta" class="font-bold text-slate-200 font-mono">+0%</span>
+        </div>
+        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-center col-span-2 sm:col-span-1">
+          <span class="text-slate-500 block mb-0.5 text-[11px]">상태</span>
+          <span id="statStatus" class="font-bold text-slate-400 font-mono">대기 중</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. 표준 vs URL-Safe 매트릭스 비교 표 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <div class="space-y-1">
+        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>표준 Base64 vs URL-Safe 규격(RFC 4648) 비교</span>
+        </h2>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Base64는 64개의 안전한 ASCII 문자를 사용하지만, 웹 전송 환경에 따라 특수문자 충돌을 방지하는 대체 규격이 적용됩니다.
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-xl border border-slate-800">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-950 text-slate-400 font-semibold border-b border-slate-800">
+            <tr>
+              <th class="p-3">인코딩 표준</th>
+              <th class="p-3">62번째 문자</th>
+              <th class="p-3">63번째 문자</th>
+              <th class="p-3">패딩(Padding)</th>
+              <th class="p-3">주요 용도 및 활용처</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-300 font-mono">
+            <tr>
+              <td class="p-3 font-sans font-bold text-slate-200">RFC 4648 (표준 Base64)</td>
+              <td class="p-3 text-emerald-400 font-bold">+</td>
+              <td class="p-3 text-emerald-400 font-bold">/</td>
+              <td class="p-3 text-slate-400 font-bold">=</td>
+              <td class="p-3 font-sans text-slate-400">이메일 첨부(MIME), XML 데이터, CSS 인라인 Data URI</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-sans font-bold text-slate-200">RFC 4648 §5 (URL-Safe)</td>
+              <td class="p-3 text-sky-400 font-bold">-</td>
+              <td class="p-3 text-sky-400 font-bold">_</td>
+              <td class="p-3 text-slate-500">생략 또는 제거</td>
+              <td class="p-3 font-sans text-slate-400">JWT 인증 토큰, URL 쿼리스트링, 웹 슬러그 전송</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2. 기술 가이드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-3 text-xs leading-relaxed">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>웹 개발에서의 Base64 활용 원리</span>
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-400 pt-1">
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">1. HTTP 요청을 줄이는 Data URI</strong>
+          <p>작은 아이콘이나 파비콘을 CSS 파일이나 HTML 문서에 Base64 Data URI 형태로 직접 인라인 삽입하면 브라우저의 추가적인 네트워크 요청 횟수와 레이턴시를 크게 절감할 수 있습니다.</p>
+        </div>
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">2. 한글 UTF-8 멀티바이트 안전 보장</strong>
+          <p>브라우저 기본 <code>btoa()</code> 함수는 1바이트 라틴 문자만 지원하므로 한글 변환 시 예외가 발생합니다. 본 도구는 <code>TextEncoder</code>와 바이트 정규화 처리를 통해 한글 음절을 글자 깨짐 없이 완벽히 변환합니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 자주 묻는 질문 (FAQ) -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-3">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>자주 묻는 질문 (FAQ)</span>
+      </h2>
+      <div class="space-y-4 text-xs">
+        <div>
+          <h3 class="font-bold text-slate-200 mb-1">Q. Base64로 변환하면 암호화(보안)가 되는 것인가요?</h3>
+          <p class="text-slate-400 leading-relaxed">아닙니다. Base64는 이진 데이터를 텍스트 전송 환경에서 안전하게 전달하기 위한 '인코딩(규격 변환)' 포맷일 뿐이며, 누구나 원문으로 복원할 수 있으므로 비밀번호나 중요 데이터를 숨기는 암호화 용도로 사용해서는 안 됩니다.</p>
+        </div>
+        <div class="border-t border-slate-800 pt-3">
+          <h3 class="font-bold text-slate-200 mb-1">Q. 인코딩 후 파일 용량이 약 33% 늘어나는 이유는 무엇인가요?</h3>
+          <p class="text-slate-400 leading-relaxed">Base64는 원본 데이터의 3바이트(24비트)를 6비트씩 4개로 쪼개어 표현하기 때문에, 필연적으로 데이터의 물리적 크기가 약 33% 증가(4/3 배율)하게 됩니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 광고 슬롯 -->
+    <div class="p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
+      <div class="text-[10px] text-slate-600 font-mono tracking-wider mb-2">ADVERTISEMENT</div>
+      <div class="min-h-[80px] flex items-center justify-center text-xs text-slate-600">
+        <span>반응형 광고 영역 (Google AdSense)</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- 가로형 한국어 표준 푸터 -->
+  <footer class="w-full max-w-4xl mx-auto px-4 py-8 mt-12 border-t border-slate-800/80 text-xs text-slate-500">
+    <div class="space-y-4 text-center">
+      <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-medium text-slate-400">
+        <a href="/ko/about.html" class="hover:text-emerald-400 transition">소개</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/contact.html" class="hover:text-emerald-400 transition">문의</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/privacy.html" class="hover:text-emerald-400 transition">개인정보처리방침</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/terms.html" class="hover:text-emerald-400 transition">이용약관</a>
+      </nav>
+      <div class="space-y-1">
+        <p class="font-semibold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+        <p class="text-[11px] text-slate-600">100% 브라우저 메모리 연산 · 서버 전송 0바이트 Zero Server Latency</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 로직 스크립트: Base64 엔진 + 한글 추천 도구 모듈 -->
+  <script src="../../js/utils/base64Tool.js"></script>
+  <script>
+    let mode = "encode"; // "encode" | "decode"
+
+    const sourceText = document.getElementById("sourceText");
+    const resultText = document.getElementById("resultText");
+    const modeEncodeBtn = document.getElementById("modeEncode");
+    const modeDecodeBtn = document.getElementById("modeDecode");
+    const urlSafeCheck = document.getElementById("urlSafeCheck");
+    const dataUriCheck = document.getElementById("dataUriCheck");
+    const dataUriWrap = document.getElementById("dataUriWrap");
+    const fileUpload = document.getElementById("fileUpload");
+    const swapBtn = document.getElementById("swapBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    const inputLabel = document.getElementById("inputLabel");
+    const outputLabel = document.getElementById("outputLabel");
+    const inputSize = document.getElementById("inputSize");
+    const outputSize = document.getElementById("outputSize");
+    const statDelta = document.getElementById("statDelta");
+    const statStatus = document.getElementById("statStatus");
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return bytes + " B";
+      else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+      return (bytes / 1048576).toFixed(2) + " MB";
+    }
+
+    function processConversion() {
+      const inputVal = sourceText.value;
+      const isUrlSafe = urlSafeCheck.checked;
+      const isDataUri = dataUriCheck.checked;
+
+      if (!inputVal) {
+        resultText.value = "";
+        inputSize.textContent = "0 B";
+        outputSize.textContent = "0 B";
+        statDelta.textContent = "+0%";
+        statStatus.textContent = "대기 중";
+        statStatus.className = "font-bold text-slate-400 font-mono";
+        return;
+      }
+
+      inputSize.textContent = formatBytes(new Blob([inputVal]).size);
+
+      try {
+        if (mode === "encode") {
+          let encoded = Base64Tool.encodeText(inputVal, isUrlSafe);
+          if (isDataUri) {
+            encoded = Base64Tool.toDataUri(encoded, "text/plain");
+          }
+          resultText.value = encoded;
+        } else {
+          let cleanVal = inputVal;
+          if (cleanVal.startsWith("data:")) {
+            cleanVal = cleanVal.substring(cleanVal.indexOf(",") + 1);
+          }
+          resultText.value = Base64Tool.decodeText(cleanVal);
+        }
+
+        const metrics = Base64Tool.getMetrics(
+          mode === "encode" ? inputVal : resultText.value,
+          mode === "encode" ? resultText.value : inputVal
+        );
+
+        outputSize.textContent = formatBytes(new Blob([resultText.value]).size);
+        statDelta.textContent = `${metrics.overheadRatio >= 0 ? "+" : ""}${metrics.overheadRatio}%`;
+        statStatus.textContent = "변환 완료";
+        statStatus.className = "font-bold text-emerald-400 font-mono";
+      } catch (err) {
+        resultText.value = "";
+        outputSize.textContent = "0 B";
+        statStatus.textContent = "오류: 잘못된 Base64 형식";
+        statStatus.className = "font-bold text-rose-400 font-mono";
+      }
+    }
+
+    function setMode(newMode) {
+      mode = newMode;
+      if (mode === "encode") {
+        modeEncodeBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm cursor-pointer";
+        modeDecodeBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-slate-200 cursor-pointer";
+        inputLabel.textContent = "일반 텍스트 (Plain Text)";
+        outputLabel.textContent = "Base64 변환 결과";
+        dataUriWrap.classList.remove("hidden");
+      } else {
+        modeDecodeBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm cursor-pointer";
+        modeEncodeBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-slate-200 cursor-pointer";
+        inputLabel.textContent = "Base64 인코딩 문자열";
+        outputLabel.textContent = "디코딩된 일반 텍스트";
+        dataUriWrap.classList.add("hidden");
+      }
+      processConversion();
+    }
+
+    modeEncodeBtn.addEventListener("click", () => setMode("encode"));
+    modeDecodeBtn.addEventListener("click", () => setMode("decode"));
+
+    sourceText.addEventListener("input", processConversion);
+    urlSafeCheck.addEventListener("change", processConversion);
+    dataUriCheck.addEventListener("change", processConversion);
+
+    swapBtn.addEventListener("click", () => {
+      const temp = sourceText.value;
+      sourceText.value = resultText.value;
+      setMode(mode === "encode" ? "decode" : "encode");
+    });
+
+    fileUpload.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const dataUrl = event.target.result;
+        setMode("encode");
+        if (dataUriCheck.checked) {
+          resultText.value = dataUrl;
+        } else {
+          resultText.value = dataUrl.substring(dataUrl.indexOf(",") + 1);
+        }
+        sourceText.value = `[파일: ${file.name} (${formatBytes(file.size)})]`;
+        outputSize.textContent = formatBytes(new Blob([resultText.value]).size);
+        statStatus.textContent = "파일 인코딩 완료";
+        statStatus.className = "font-bold text-emerald-400 font-mono";
+      };
+      reader.readAsDataURL(file);
+    });
+
+    copyBtn.addEventListener("click", () => {
+      if (!resultText.value) return;
+      navigator.clipboard.writeText(resultText.value).then(() => {
+        const orig = copyBtn.textContent;
+        copyBtn.textContent = "복사완료!";
+        setTimeout(() => (copyBtn.textContent = orig), 1500);
+      });
+    });
+
+    clearBtn.addEventListener("click", () => {
+      sourceText.value = "";
+      resultText.value = "";
+      processConversion();
+      sourceText.focus();
+    });
+
+    // 한국어 기본 초기 샘플 문구 로드
+    sourceText.value = "ToolLab.org - 서버 전송 없는 100% 브라우저 메모리 연산 초경량 툴킷";
+    processConversion();
+  </script>
+  <script src="../../js/related-tools-ko.js"></script>
+</body>
+</html>

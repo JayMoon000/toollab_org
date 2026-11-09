@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ToolLab.org | Free Ultra-Fast Client-Side Micro Utilities</title>
+  <meta name="description" content="A curated suite of instant, privacy-first web utilities. Unit conversion, financial calculators, developer text formatters, browser-side media tools, and games with zero server latency." />
+  <meta name="keywords" content="micro tools, client side utilities, unit converter, percentage calculator, word counter, json formatter, regex tester, image compressor, 2048 game, ToolLab" />
+  <link rel="canonical" href="https://toollab.org/" />
+  
+  <!-- 다국어 SEO Hreflang 태그 -->
+  <link rel="alternate" hreflang="en" href="https://toollab.org/" />
+  <link rel="alternate" hreflang="ko" href="https://toollab.org/ko" />
+  <link rel="alternate" hreflang="x-default" href="https://toollab.org/" />
+
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <meta name="google-adsense-account" content="ca-pub-1512367949140208">
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ToolLab" />
+  <meta property="og:title" content="ToolLab.org | Free Online Micro Utilities" />
+  <meta property="og:description" content="Instant, client-side web tools and games. Zero server uploads, zero logins, and 100% data privacy." />
+  <meta property="og:url" content="https://toollab.org/" />
+  <meta property="og:image" content="https://toollab.org/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="ToolLab.org - In-Browser Client-Side Engine" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ToolLab.org | Free Online Micro Utilities" />
+  <meta name="twitter:description" content="Instant, client-side web tools and games. Zero server uploads, zero logins, and 100% data privacy." />
+  <meta name="twitter:image" content="https://toollab.org/og-image.png" />
+
+  <!-- Schema.org WebSite & ItemList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "name": "ToolLab",
+        "url": "https://toollab.org/",
+        "description": "Zero-server-cost micro utility platform executing 100% in browser memory.",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://toollab.org/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "WebApplication",
+        "name": "ToolLab.org",
+        "url": "https://toollab.org/",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "All",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },	  
+      {
+        "@type": "ItemList",
+        "name": "ToolLab Online Utilities",
+        "itemListElement": [
+          { "@type": "SiteNavigationElement", "position": 1, "name": "Universal Unit Converter", "url": "https://toollab.org/tools/unit-converter.html" },
+          { "@type": "SiteNavigationElement", "position": 2, "name": "Percentage & Margin Calculator", "url": "https://toollab.org/tools/percentage-calc.html" },
+          { "@type": "SiteNavigationElement", "position": 3, "name": "Loan & Compound Engine", "url": "https://toollab.org/tools/loan-compound-calc.html" },
+          { "@type": "SiteNavigationElement", "position": 4, "name": "D-Day & Countdown Tracker", "url": "https://toollab.org/tools/dday-calculator.html" },
+          { "@type": "SiteNavigationElement", "position": 5, "name": "Word & Character Counter", "url": "https://toollab.org/tools/word-counter.html" },
+          { "@type": "SiteNavigationElement", "position": 6, "name": "JSON Formatter & Validator", "url": "https://toollab.org/tools/json-formatter.html" },
+          { "@type": "SiteNavigationElement", "position": 7, "name": "Regex Tester & Debugger", "url": "https://toollab.org/tools/regex-tester.html" },
+          { "@type": "SiteNavigationElement", "position": 8, "name": "Text Formatter & Slugifier", "url": "https://toollab.org/tools/text-formatter.html" },
+          { "@type": "SiteNavigationElement", "position": 9, "name": "Base64 Tool", "url": "https://toollab.org/tools/base64-tool.html" },
+          { "@type": "SiteNavigationElement", "position": 10, "name": "URL Parser & Query Inspector", "url": "https://toollab.org/tools/url-parser.html" },
+          { "@type": "SiteNavigationElement", "position": 11, "name": "Markdown Previewer", "url": "https://toollab.org/tools/markdown-previewer.html" },
+          { "@type": "SiteNavigationElement", "position": 12, "name": "Lorem Ipsum Generator", "url": "https://toollab.org/tools/lorem-generator.html" },
+          { "@type": "SiteNavigationElement", "position": 13, "name": "Image Compressor", "url": "https://toollab.org/tools/image-compressor.html" },
+          { "@type": "SiteNavigationElement", "position": 14, "name": "Bulk Image Resizer", "url": "https://toollab.org/tools/image-resizer.html" },
+          { "@type": "SiteNavigationElement", "position": 15, "name": "Vector QR Code Generator", "url": "https://toollab.org/tools/qr-generator.html" },
+          { "@type": "SiteNavigationElement", "position": 16, "name": "Favicon Package Generator", "url": "https://toollab.org/tools/favicon-generator.html" },
+          { "@type": "SiteNavigationElement", "position": 17, "name": "AI Background Remover", "url": "https://toollab.org/tools/background-remover.html" },
+          { "@type": "SiteNavigationElement", "position": 18, "name": "2048 Classic Web Puzzle", "url": "https://toollab.org/games/2048.html" }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="./js/analytics.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-blue-600 selection:text-white">
+
+  <!-- Top Global Header -->
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3 select-none group">
+        <svg class="w-9 h-9 transform group-hover:scale-105 transition-transform duration-200" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="tlGreenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#34D399" />
+              <stop offset="100%" stop-color="#10B981" />
+            </linearGradient>
+            <linearGradient id="tlFluidGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#6EE7B7" />
+              <stop offset="100%" stop-color="#2DD4BF" />
+            </linearGradient>
+            <filter id="tlGreenGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#10B981" flood-opacity="0.35" />
+            </filter>
+          </defs>
+          <rect width="36" height="36" rx="9" fill="#0F172A" stroke="#1E293B" stroke-width="1.5" />
+          <g filter="url(#tlGreenGlow)">
+            <path d="M15 9H21M16.5 9V14.5L11 23.5C9.8 25.5 11.2 27.5 13.5 27.5H22.5C24.8 27.5 26.2 25.5 25 23.5L19.5 14.5V9" 
+                  stroke="url(#tlGreenGrad)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M13.5 23.5C15 22 17 22 18.5 23.5C20 25 22 23.5 23 23" 
+                  stroke="url(#tlFluidGrad)" stroke-width="1.8" stroke-linecap="round" />
+            <circle cx="18" cy="18" r="1.3" fill="#A7F3D0" />
+            <circle cx="15.5" cy="20.5" r="0.8" fill="#6EE7B7" opacity="0.8" />
+          </g>
+        </svg>
+
+        <div class="flex flex-col justify-center">
+          <div class="flex items-center text-lg font-black tracking-tight leading-none">
+            <span class="text-slate-100 font-mono">Tool</span>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300 font-sans">Lab</span>
+            <span class="text-xs text-emerald-400 font-mono ml-0.5 font-bold">.org</span>
+          </div>
+          <span class="text-[9px] font-mono tracking-widest text-emerald-500/80 uppercase mt-1">Client-Side Engine</span>
+        </div>
+      </a>
+
+      <div class="flex items-center gap-2 sm:gap-2.5">
+        <!-- Korean GNB 버튼 -->
+        <a href="/ko" 
+           class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-slate-300 bg-slate-800/80 border border-slate-700 rounded-full hover:bg-slate-700 hover:text-white transition-all shadow-xs">
+          <span>🌐</span>
+          <span>Korean</span>
+        </a>
+
+        <!-- 2048 게임 바로가기 버튼 -->
+        <a href="./games/2048.html" 
+           class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold text-amber-300 bg-amber-950/40 border border-amber-800/80 rounded-full hover:bg-amber-900/40 hover:border-amber-600 transition-all shadow-xs">
+          <span>🎮</span>
+          <span>Play 2048</span>
+        </a>
+
+        <span class="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950/80 text-emerald-400 border border-emerald-800">
+          ● Zero-Server-Cost
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero & Instant Search Bar -->
+  <section class="max-w-6xl mx-auto px-4 pt-12 pb-8 text-center w-full">
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-100 tracking-tight max-w-2xl mx-auto leading-tight">
+      Fast, Private, In-Browser <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Micro Utilities</span>
+    </h1>
+    <p class="text-sm md:text-base text-slate-400 mt-3 max-w-xl mx-auto">
+      Zero logins, zero server uploads, zero latency. 100% client-side computational tools built for everyday productivity.
+    </p>
+
+    <!-- Search Input -->
+    <div class="mt-8 max-w-xl mx-auto relative">
+      <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+      <input type="text" id="toolSearch" placeholder="Search by name, keyword, or format (e.g. json, qr, resize, 2048)..." 
+        class="w-full pl-11 pr-4 py-3.5 bg-slate-900 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-500 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all shadow-lg shadow-slate-950/50" />
+    </div>
+
+    <!-- Category Pill Filters -->
+    <div class="flex flex-wrap items-center justify-center gap-2 mt-5 text-xs font-bold text-slate-400">
+      <button class="cat-filter px-3 py-1.5 rounded-lg bg-blue-600 text-white transition-colors cursor-pointer" data-category="all">All (18)</button>
+      <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors cursor-pointer" data-category="finance">Financial &amp; Math</button>
+      <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors cursor-pointer" data-category="developer">Developer &amp; Text</button>
+      <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors cursor-pointer" data-category="media">Image &amp; Media</button>
+      <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors cursor-pointer" data-category="games">Casual Brain</button>
+    </div>
+  </section>
+
+  <!-- Tools Grid -->
+  <main class="max-w-6xl mx-auto px-4 pb-16 flex-1 w-full">
+    <div id="toolsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    <div id="noResults" class="hidden text-center py-16 text-slate-500 text-sm">
+      No matching tools found. Try searching for a different keyword.
+    </div>
+  </main>
+
+  <!-- Architectural Authority & SEO Content Block -->
+  <article class="border-t border-slate-800 bg-slate-900/40 py-12">
+    <div class="max-w-5xl mx-auto px-4 space-y-8 text-xs md:text-sm text-slate-400 leading-relaxed">
+      <section>
+        <h2 class="text-lg font-extrabold text-slate-100 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          Why ToolLab Architecture Prioritizes Client-Side Execution
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 bg-slate-950/60 border border-slate-800 rounded-xl space-y-1.5">
+            <h3 class="font-bold text-slate-200 text-sm">100% Private Sandbox</h3>
+            <p>Your inputs, confidential code snippets, financial metrics, and private photos never leave your device. All calculations run strictly in your browser's local sandbox memory.</p>
+          </div>
+          <div class="p-4 bg-slate-950/60 border border-slate-800 rounded-xl space-y-1.5">
+            <h3 class="font-bold text-slate-200 text-sm">Zero Server Latency</h3>
+            <p>By removing network upload delays and remote server queue times, every computation executes at local hardware speed, delivering immediate results even on weak connections.</p>
+          </div>
+          <div class="p-4 bg-slate-950/60 border border-slate-800 rounded-xl space-y-1.5">
+            <h3 class="font-bold text-slate-200 text-sm">Zero Subscriptions or Quotas</h3>
+            <p>No paywalls, account registrations, or daily conversion caps. Unlimited utility access powered entirely by modern HTML5, Canvas, and WebAssembly standards.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-slate-950/80 border border-slate-800 rounded-2xl p-6">
+        <h2 class="text-base font-extrabold text-slate-100 mb-4">Frequently Asked Questions</h2>
+        <div class="space-y-4">
+          <div>
+            <h3 class="font-bold text-slate-200 mb-1">Q. Are my uploaded files or text saved to any database?</h3>
+            <p class="text-slate-400">Never. ToolLab has no backend database for user content. Once you close or reload the browser tab, all processed data is discarded from temporary memory.</p>
+          </div>
+          <div class="border-t border-slate-800 pt-3">
+            <h3 class="font-bold text-slate-200 mb-1">Q. Does ToolLab work offline?</h3>
+            <p class="text-slate-400">Yes. Once a tool's static assets are cached in your browser, all core calculation and client-side conversion logic run without an active internet connection.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </article>
+
+  <!-- Global Footer -->
+  <footer class="border-t border-slate-800 bg-slate-950 py-8 text-xs text-slate-500">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+      <div class="space-y-1">
+        <p class="font-bold text-slate-400">ToolLab.org · Instant Micro Utility Suite</p>
+        <p class="text-[11px]">Zero server latency · Client-side computational execution</p>
+      </div>
+	  
+      <div class="flex flex-wrap items-center justify-center md:justify-end gap-3 font-medium text-slate-400">
+        <a href="./about.html" class="hover:text-emerald-400 transition-colors">About</a>
+        <span>·</span>
+        <a href="./contact.html" class="hover:text-emerald-400 transition-colors">Contact</a>
+        <span>·</span>
+        <a href="./privacy.html" class="hover:text-emerald-400 transition-colors">Privacy</a>
+        <span>·</span>
+        <a href="./terms.html" class="hover:text-emerald-400 transition-colors">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const TOOLS = [
+      {
+        id: "unit-converter",
+        title: "Universal Unit Converter",
+        desc: "Convert area, length, mass, volume, and temperature between Metric and Imperial units.",
+        category: "finance",
+        path: "tools/unit-converter.html",
+        badge: "NIST / SI",
+        keywords: "area length weight volume temp metric imperial sqft sqm lbs kg"
+      },
+      {
+        id: "percentage-calc",
+        title: "Percentage & Margin Calculator",
+        desc: "Calculate percentages, proportion share, percentage changes, and retail gross margins.",
+        category: "finance",
+        path: "tools/percentage-calc.html",
+        badge: "Financial",
+        keywords: "percent margin markup change proportion math discount profit"
+      },
+      {
+        id: "loan-compound-calc",
+        title: "Loan & Compound Engine",
+        desc: "Simulate fixed monthly mortgage schedules and multi-year compound interest growth.",
+        category: "finance",
+        path: "tools/loan-compound-calc.html",
+        badge: "Amortization",
+        keywords: "loan mortgage interest compound investment future value savings"
+      },
+      {
+        id: "dday-calculator",
+        title: "D-Day & Countdown Tracker",
+        desc: "Track remaining calendar days, working business days, and time intervals to milestones.",
+        category: "finance",
+        path: "tools/dday-calculator.html",
+        badge: "Duration",
+        keywords: "d-day countdown event date duration business days days between"
+      },
+      {
+        id: "word-counter",
+        title: "Word & Character Counter",
+        desc: "Real-time character, word, byte, and reading duration counter with social media limits.",
+        category: "developer",
+        path: "tools/word-counter.html",
+        badge: "Real-Time",
+        keywords: "word character byte twitter linkedin reading time length count"
+      },
+      {
+        id: "json-formatter",
+        title: "JSON Formatter & Validator",
+        desc: "Validate, beautify, inspect keys, and minify JSON payloads with syntax error detection.",
+        category: "developer",
+        path: "tools/json-formatter.html",
+        badge: "Validator",
+        keywords: "json beautify minify validate format parse lint developer"
+      },
+      {
+        id: "regex-tester",
+        title: "Regex Tester & Debugger",
+        desc: "Interactive regular expression matcher with real-time highlights and capture groups.",
+        category: "developer",
+        path: "tools/regex-tester.html",
+        badge: "RegExp",
+        keywords: "regex pattern match replace capture groups test debugger"
+      },
+      {
+        id: "text-formatter",
+        title: "Text Formatter & Slugifier",
+        desc: "Transform text casing, generate clean URL slugs, remove duplicates, and sort lines.",
+        category: "developer",
+        path: "tools/text-formatter.html",
+        badge: "Utility",
+        keywords: "slug camelcase uppercase lowercase dedupe sort lines clean text"
+      },
+      {
+        id: "base64-tool",
+        title: "Base64 Tool & Data URI",
+        desc: "UTF-8 safe Base64 encoder and decoder with URL-safe standard and file Data URI support.",
+        category: "developer",
+        path: "tools/base64-tool.html",
+        badge: "RFC 4648",
+        keywords: "base64 encode decode data uri binary text url safe"
+      },
+      {
+        id: "url-parser",
+        title: "URL Parser & Query Inspector",
+        desc: "Deconstruct URLs into protocol, host, and path, and interactively manage query params.",
+        category: "developer",
+        path: "tools/url-parser.html",
+        badge: "RFC 3986",
+        keywords: "url query parameters utm parse decode link search host"
+      },
+      {
+        id: "markdown-previewer",
+        title: "Markdown Previewer",
+        desc: "Live side-by-side CommonMark markdown editor with direct HTML export.",
+        category: "developer",
+        path: "tools/markdown-previewer.html",
+        badge: "CommonMark",
+        keywords: "markdown preview html editor writer document live preview"
+      },
+      {
+        id: "lorem-generator",
+        title: "Lorem Ipsum Generator",
+        desc: "Generate customizable placeholder dummy text by words, sentences, or paragraphs.",
+        category: "developer",
+        path: "tools/lorem-generator.html",
+        badge: "Typesetter",
+        keywords: "lorem ipsum dummy text placeholder generator paragraphs"
+      },
+      {
+        id: "image-compressor",
+        title: "Image Compressor & WebP",
+        desc: "Compress JPG, PNG, and WebP images locally via HTML5 Canvas with zero server transfer.",
+        category: "media",
+        path: "tools/image-compressor.html",
+        badge: "Canvas Engine",
+        keywords: "compress image webp optimize jpg png reduce file size"
+      },
+      {
+        id: "image-resizer",
+        title: "Bulk Image Resizer",
+        desc: "Batch resize photos by exact pixel bounds or scale factor with aspect ratio locking.",
+        category: "media",
+        path: "tools/image-resizer.html",
+        badge: "Batch Scale",
+        keywords: "resize dimensions scale photo resolution bulk crop width height"
+      },
+      {
+        id: "qr-generator",
+        title: "Vector QR Code Generator",
+        desc: "Generate permanent static QR codes for links, Wi-Fi, and contacts with SVG and HD PNG download.",
+        category: "media",
+        path: "tools/qr-generator.html",
+        badge: "SVG & HD",
+        keywords: "qr code wifi vcard vector svg png generator static"
+      },
+      {
+        id: "favicon-generator",
+        title: "Favicon Package Generator",
+        desc: "Generate complete multi-size icon bundles (16x16, 32x32, 180x180, PWA) inside a single ZIP.",
+        category: "media",
+        path: "tools/favicon-generator.html",
+        badge: "PWA & iOS",
+        keywords: "favicon apple touch icon pwa webmanifest zip package"
+      },
+      {
+        id: "background-remover",
+        title: "AI Background Remover",
+        desc: "100% on-device AI background cutout using in-browser WebAssembly neural inference.",
+        category: "media",
+        path: "tools/background-remover.html",
+        badge: "Wasm AI",
+        keywords: "remove background transparent cutout ai wasm webgpu nobg"
+      },
+      {
+        id: "game-2048",
+        title: "2048 Classic Web Puzzle",
+        desc: "Slide identical numbers, merge powers of two, and reach the 2048 milestone in high-speed dark mode.",
+        category: "games",
+        path: "games/2048.html",
+        badge: "Casual Brain",
+        keywords: "2048 puzzle game brain strategy tiles numbers casual unblocked"
+      }
+    ];
+
+    const searchInput = document.getElementById("toolSearch");
+    const grid = document.getElementById("toolsGrid");
+    const noResults = document.getElementById("noResults");
+    const catButtons = document.querySelectorAll(".cat-filter");
+
+    let currentCat = "all";
+    let searchQuery = "";
+    let debounceTimer = null;
+
+    function renderTools() {
+      try {
+        const filtered = TOOLS.filter(tool => {
+          const matchesCat = currentCat === "all" || tool.category === currentCat;
+          const q = searchQuery.toLowerCase().trim();
+          const matchesQuery = !q || 
+            tool.title.toLowerCase().includes(q) || 
+            tool.desc.toLowerCase().includes(q) || 
+            tool.keywords.toLowerCase().includes(q);
+          return matchesCat && matchesQuery;
+        });
+
+        grid.innerHTML = "";
+
+        if (filtered.length === 0) {
+          noResults.classList.remove("hidden");
+          return;
+        }
+        noResults.classList.add("hidden");
+
+        filtered.forEach(tool => {
+          const card = document.createElement("a");
+          card.href = tool.path;
+          card.className = "group p-5 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-2xl transition-all shadow-sm hover:shadow-lg hover:shadow-blue-950/30 flex flex-col justify-between";
+          card.innerHTML = `
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2.5">
+                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-400 group-hover:text-blue-400 transition-colors">
+                  ${tool.badge}
+                </span>
+                <svg class="w-4 h-4 text-slate-600 group-hover:text-blue-400 transition-colors transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </div>
+              <h3 class="text-base font-bold text-slate-100 group-hover:text-blue-400 transition-colors">
+                ${tool.title}
+              </h3>
+              <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                ${tool.desc}
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/60 flex items-center text-[11px] font-medium text-slate-500 group-hover:text-slate-300 transition-colors">
+              Launch Tool &rarr;
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Tool rendering error:", err);
+      }
+    }
+
+    searchInput.addEventListener("input", (e) => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        searchQuery = e.target.value;
+        renderTools();
+      }, 200);
+    });
+
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        if (e.isComposing) return;
+        clearTimeout(debounceTimer);
+        searchQuery = e.target.value;
+        renderTools();
+      }
+    });
+
+    catButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        catButtons.forEach(b => {
+          b.className = "cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors cursor-pointer";
+        });
+        btn.className = "cat-filter px-3 py-1.5 rounded-lg bg-blue-600 text-white transition-colors cursor-pointer";
+        currentCat = btn.dataset.category;
+        renderTools();
+      });
+    });
+
+    renderTools();
+  </script>
+</body>
+</html>

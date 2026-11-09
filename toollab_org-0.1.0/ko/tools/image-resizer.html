@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>이미지 일괄 리사이저 (사진 크기·해상도 조절) | ToolLab</title>
+  <meta name="description" content="서버 전송 없이 100% 브라우저 메모리 안에서 사진 크기를 원하는 가로/세로 픽셀(px)이나 배율(%)로 일괄 조절합니다." />
+  <meta name="keywords" content="이미지리사이즈, 사진크기조절, 해상도변경, 픽셀조절, 사진용량축소, 이미지배율조절, 일괄리사이징" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/image-resizer.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+  <script src="../../js/analytics.js"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1512367949140208" crossorigin="anonymous"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <!-- 메인 조작 카드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl shadow-xl space-y-5">
+      
+      <!-- 상단 헤더 -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="/ko" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-emerald-400 transition" title="도구 목록으로 돌아가기">
+            🏠
+          </a>
+          <div>
+            <span class="text-[10px] text-slate-500 font-bold tracking-wider block">TOOLLAB.ORG</span>
+            <h1 class="text-base sm:text-lg font-bold text-slate-100">이미지 일괄 리사이저 (크기 조절)</h1>
+          </div>
+        </div>
+        <span class="text-[11px] font-mono px-2.5 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 font-semibold">
+          HTML5 Canvas 로컬 연산
+        </span>
+      </div>
+
+      <!-- 리사이즈 설정 패널 -->
+      <div class="p-4 bg-slate-950/70 border border-slate-800 rounded-2xl space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
+            <button id="modeDimBtn" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm cursor-pointer">지정 픽셀 (px)</button>
+            <button id="modePctBtn" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-slate-200 cursor-pointer">비율 축소 (%)</button>
+          </div>
+
+          <label class="cursor-pointer flex items-center gap-1.5 text-xs text-slate-300 select-none">
+            <input type="checkbox" id="aspectRatioCheck" checked class="rounded bg-slate-900 border-slate-700 text-emerald-500 focus:ring-0">
+            원본 종횡비 고정 (가로세로 비율 유지)
+          </label>
+        </div>
+
+        <!-- 1. 픽셀(px) 직접 입력 필드 -->
+        <div id="dimInputs" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="block text-xs font-semibold text-slate-400">목표 가로 너비 (Target Width, px)</label>
+            <input type="number" id="targetWidth" placeholder="예: 1200 (미입력 시 비율 자동)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs font-bold text-slate-100 outline-none focus:border-emerald-500 font-mono" />
+          </div>
+          <div class="space-y-1">
+            <label class="block text-xs font-semibold text-slate-400">목표 세로 높이 (Target Height, px)</label>
+            <input type="number" id="targetHeight" placeholder="예: 800 (미입력 시 비율 자동)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs font-bold text-slate-100 outline-none focus:border-emerald-500 font-mono" />
+          </div>
+        </div>
+
+        <!-- 2. 비율(%) 슬라이더 입력 필드 -->
+        <div id="pctInputs" class="space-y-2 hidden">
+          <div class="flex justify-between text-xs font-semibold">
+            <span class="text-slate-400">크기 축소/확대 비율</span>
+            <span id="scaleDisplay" class="text-emerald-400 font-mono font-bold">50%</span>
+          </div>
+          <input type="range" id="scaleRange" min="5" max="200" value="50" step="5"
+            class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500" />
+        </div>
+      </div>
+
+      <!-- 드래그 앤 드롭 업로드 영역 -->
+      <div id="dropZone" class="border-2 border-dashed border-slate-800 hover:border-emerald-500/60 bg-slate-950/40 hover:bg-slate-950/70 rounded-2xl p-8 sm:p-10 text-center transition cursor-pointer group">
+        <input type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/webp" class="hidden" />
+        <div class="flex flex-col items-center justify-center gap-2 pointer-events-none">
+          <div class="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 group-hover:text-emerald-400 group-hover:border-emerald-500/40 transition mb-1">
+            📐
+          </div>
+          <span class="text-xs sm:text-sm font-bold text-slate-200">
+            이미지를 여기에 끌어다 놓거나 <span class="text-emerald-400 underline">파일 선택</span>을 클릭하세요
+          </span>
+          <span class="text-[11px] text-slate-500">JPG, PNG, WebP 다중 선택 지원 · 100% 브라우저 메모리 실시간 일괄 변환</span>
+        </div>
+      </div>
+
+      <!-- 일괄 요약 및 전체 다운로드 바 -->
+      <div id="batchSummary" class="hidden items-center justify-between p-3.5 bg-slate-950 rounded-2xl border border-slate-800">
+        <span id="batchCount" class="text-xs font-bold text-slate-200">0개 이미지 리사이즈 완료</span>
+        <button id="downloadAllBtn" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-sm cursor-pointer">
+          전체 다운로드
+        </button>
+      </div>
+
+      <!-- 결과 목록 -->
+      <div id="resultsList" class="space-y-3"></div>
+
+    </div>
+
+    <!-- 1. 표준 웹 & SNS 권장 해상도 프리셋 표 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <div class="space-y-1">
+        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>주요 웹 &amp; SNS 플랫폼 표준 권장 해상도 프리셋</span>
+        </h2>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          웹페이지 최적화 및 주요 소셜 플랫폼 공유 시 왜곡 없이 선명하게 표시되는 표준 픽셀 규격입니다.
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-xl border border-slate-800">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-950 text-slate-400 font-semibold border-b border-slate-800">
+            <tr>
+              <th class="p-3">용도 및 포맷</th>
+              <th class="p-3 font-mono">권장 규격 (가로×세로 px)</th>
+              <th class="p-3">화면비 (Aspect Ratio)</th>
+              <th class="p-3">주요 적용 분야</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-300">
+            <tr>
+              <td class="p-3 font-bold text-slate-200">FHD 와이드 배너</td>
+              <td class="p-3 font-mono text-emerald-400 font-bold">1920 × 1080</td>
+              <td class="p-3 text-slate-400">16:9</td>
+              <td class="p-3 text-slate-400">웹사이트 히어로 배너, 데스크톱 배경화면</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200">블로그 &amp; SNS 썸네일</td>
+              <td class="p-3 font-mono text-emerald-400 font-bold">1200 × 630</td>
+              <td class="p-3 text-slate-400">1.91:1</td>
+              <td class="p-3 text-slate-400">오픈그래프(OG) 카드, 네이버/티스토리 본문 이미지</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200">정사각형 썸네일</td>
+              <td class="p-3 font-mono text-sky-400 font-bold">800 × 800</td>
+              <td class="p-3 text-slate-400">1:1</td>
+              <td class="p-3 text-slate-400">스마트스토어 상품 대표 이미지, 프로필 아바타</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-slate-200">모바일 세로형 숏폼</td>
+              <td class="p-3 font-mono text-amber-400 font-bold">1080 × 1920</td>
+              <td class="p-3 text-slate-400">9:16</td>
+              <td class="p-3 text-slate-400">인스타그램 릴스, 유튜브 쇼츠, 스마트폰 풀스크린</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2. 리사이징 기술 가이드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-3 text-xs leading-relaxed">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>웹 퍼포먼스를 극대화하는 리사이징 원리</span>
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-400 pt-1">
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">1. 실제 렌더링 컨테이너에 맞는 규격 축소</strong>
+          <p>화면에 400px 크기로 노출될 사진에 4,000px 원본을 그대로 연결하면 브라우저의 레이아웃 리플로우가 발생하고 모바일 데이터가 낭비됩니다. 컨테이너에 맞는 해상도로 축소해야 코어 웹 바이탈 점수가 향상됩니다.</p>
+        </div>
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">2. 바이큐빅(Bicubic) 고화질 스무딩 보간법</strong>
+          <p>브라우저 Canvas 엔진의 고급 보간 알고리즘(`imageSmoothingQuality = 'high'`)이 적용되어 텍스트나 얇은 선이 뭉개지지 않고 선명하게 보존됩니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 자주 묻는 질문 (FAQ) -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-3">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>자주 묻는 질문 (FAQ)</span>
+      </h2>
+      <div class="space-y-4 text-xs">
+        <div>
+          <h3 class="font-bold text-slate-200 mb-1">Q. 투명 배경(PNG, WebP)이 있는 이미지도 투명도가 유지되나요?</h3>
+          <p class="text-slate-400 leading-relaxed">네. 알파 채널이 있는 투명 PNG나 WebP 이미지를 리사이징할 때 투명 배경 속성이 훼손되지 않고 원본 그대로 유지됩니다.</p>
+        </div>
+        <div class="border-t border-slate-800 pt-3">
+          <h3 class="font-bold text-slate-200 mb-1">Q. 업로드한 사진이 서버에 저장되거나 전송되나요?</h3>
+          <p class="text-slate-400 leading-relaxed">절대 전송되지 않습니다. 모든 연산은 사용자의 브라우저 로컬 샌드박스 메모리 안에서만 100% 실행되므로 민감한 개인 사진이나 비즈니스 자료도 안심하고 크기를 변경할 수 있습니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 광고 슬롯 -->
+    <div class="p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
+      <div class="text-[10px] text-slate-600 font-mono tracking-wider mb-2">ADVERTISEMENT</div>
+      <div class="min-h-[80px] flex items-center justify-center text-xs text-slate-600">
+        <span>반응형 광고 영역 (Google AdSense)</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- 가로형 한국어 표준 푸터 -->
+  <footer class="w-full max-w-4xl mx-auto px-4 py-8 mt-12 border-t border-slate-800/80 text-xs text-slate-500">
+    <div class="space-y-4 text-center">
+      <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-medium text-slate-400">
+        <a href="/ko/about.html" class="hover:text-emerald-400 transition">소개</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/contact.html" class="hover:text-emerald-400 transition">문의</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/privacy.html" class="hover:text-emerald-400 transition">개인정보처리방침</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/terms.html" class="hover:text-emerald-400 transition">이용약관</a>
+      </nav>
+      <div class="space-y-1">
+        <p class="font-semibold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+        <p class="text-[11px] text-slate-600">100% 브라우저 메모리 연산 · 서버 전송 0바이트 Zero Server Latency</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 로직 스크립트: 리사이징 엔진 + 한글 추천 도구 모듈 -->
+  <script src="../../js/utils/imageResizer.js"></script>
+  <script>
+    let mode = "dimensions"; // "dimensions" | "percentage"
+
+    const modeDimBtn = document.getElementById("modeDimBtn");
+    const modePctBtn = document.getElementById("modePctBtn");
+    const dimInputs = document.getElementById("dimInputs");
+    const pctInputs = document.getElementById("pctInputs");
+    const targetWidthInput = document.getElementById("targetWidth");
+    const targetHeightInput = document.getElementById("targetHeight");
+    const aspectRatioCheck = document.getElementById("aspectRatioCheck");
+    const scaleRange = document.getElementById("scaleRange");
+    const scaleDisplay = document.getElementById("scaleDisplay");
+
+    const dropZone = document.getElementById("dropZone");
+    const fileInput = document.getElementById("fileInput");
+    const batchSummary = document.getElementById("batchSummary");
+    const batchCount = document.getElementById("batchCount");
+    const downloadAllBtn = document.getElementById("downloadAllBtn");
+    const resultsList = document.getElementById("resultsList");
+
+    let rawFiles = [];      // 원본 파일 보관용
+    let resizedItems = [];  // 현재 변환 결과 목록
+    let debounceTimer = null;
+
+    // 모드 전환
+    modeDimBtn.addEventListener("click", () => {
+      mode = "dimensions";
+      modeDimBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm cursor-pointer";
+      modePctBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-slate-200 cursor-pointer";
+      dimInputs.classList.remove("hidden");
+      pctInputs.classList.add("hidden");
+      triggerResize();
+    });
+
+    modePctBtn.addEventListener("click", () => {
+      mode = "percentage";
+      modePctBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm cursor-pointer";
+      modeDimBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-slate-200 cursor-pointer";
+      pctInputs.classList.remove("hidden");
+      dimInputs.classList.add("hidden");
+      triggerResize();
+    });
+
+    // 실시간 트리거 (디바운스 적용)
+    function triggerResize() {
+      if (!rawFiles.length) return;
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        reprocessAll();
+      }, 100);
+    }
+
+    scaleRange.addEventListener("input", (e) => {
+      scaleDisplay.textContent = `${e.target.value}%`;
+      triggerResize();
+    });
+
+    targetWidthInput.addEventListener("input", triggerResize);
+    targetHeightInput.addEventListener("input", triggerResize);
+    aspectRatioCheck.addEventListener("change", triggerResize);
+
+    // 드래그 앤 드롭 및 파일 선택
+    dropZone.addEventListener("click", () => fileInput.click());
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.classList.add("border-emerald-500");
+    });
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.classList.remove("border-emerald-500");
+    });
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.classList.remove("border-emerald-500");
+      if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener("change", (e) => {
+      if (e.target.files.length) handleFiles(e.target.files);
+    });
+
+    function handleFiles(files) {
+      const validImages = Array.from(files).filter(f => f.type.startsWith("image/"));
+      if (!validImages.length) return;
+      rawFiles = validImages;
+      reprocessAll();
+    }
+
+    // 전체 리사이징 재실행
+    async function reprocessAll() {
+      if (!rawFiles.length) return;
+
+      const options = {
+        mode,
+        targetWidth: targetWidthInput.value,
+        targetHeight: targetHeightInput.value,
+        percentage: parseInt(scaleRange.value, 10),
+        keepAspectRatio: aspectRatioCheck.checked
+      };
+
+      // 기존 Blob 메모리 정리
+      resizedItems.forEach(item => {
+        if (item.downloadUrl) URL.revokeObjectURL(item.downloadUrl);
+      });
+      resizedItems = [];
+      resultsList.innerHTML = "";
+
+      for (let i = 0; i < rawFiles.length; i++) {
+        const file = rawFiles[i];
+
+        try {
+          const res = await ImageResizer.resizeFile(file, options);
+          const ext = res.originalName.substring(res.originalName.lastIndexOf("."));
+          const downloadName = res.originalName.replace(ext, `_${res.targetWidth}x${res.targetHeight}${ext}`);
+          const downloadUrl = URL.createObjectURL(res.blob);
+
+          const itemData = {
+            ...res,
+            downloadName,
+            downloadUrl
+          };
+
+          resizedItems.push(itemData);
+          renderResultCard(itemData);
+        } catch (err) {
+          console.error("리사이징 처리 오류:", err);
+        }
+      }
+
+      if (resizedItems.length) {
+        batchSummary.classList.remove("hidden");
+        batchSummary.classList.add("flex");
+        batchCount.textContent = `${resizedItems.length}개 이미지 리사이즈 완료`;
+      } else {
+        batchSummary.classList.add("hidden");
+        batchSummary.classList.remove("flex");
+      }
+    }
+
+    function renderResultCard(item) {
+      const card = document.createElement("div");
+      card.className = "p-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl flex items-center justify-between gap-3 text-xs";
+      card.innerHTML = `
+        <div class="flex items-center gap-3 overflow-hidden">
+          <img src="${item.downloadUrl}" class="w-12 h-12 object-cover rounded-xl border border-slate-800 flex-shrink-0" />
+          <div class="overflow-hidden">
+            <span class="font-bold text-slate-200 block truncate">${item.originalName}</span>
+            <div class="flex items-center gap-2 mt-0.5 text-[11px] font-mono">
+              <span class="text-slate-500">${item.originalWidth}×${item.originalHeight}</span>
+              <span class="text-slate-600">→</span>
+              <span class="text-emerald-400 font-bold">${item.targetWidth}×${item.targetHeight}</span>
+              <span class="text-slate-400">(${ImageResizer.formatBytes(item.resizedSize)})</span>
+            </div>
+          </div>
+        </div>
+        <a href="${item.downloadUrl}" download="${item.downloadName}" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-emerald-400 font-bold flex-shrink-0 transition border border-slate-700 cursor-pointer">
+          다운로드
+        </a>
+      `;
+      resultsList.appendChild(card);
+    }
+
+    downloadAllBtn.addEventListener("click", () => {
+      resizedItems.forEach((item, index) => {
+        setTimeout(() => {
+          const a = document.createElement("a");
+          a.href = item.downloadUrl;
+          a.download = item.downloadName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }, index * 150);
+      });
+    });
+  </script>
+  <script src="../../js/related-tools-ko.js"></script>
+</body>
+</html>

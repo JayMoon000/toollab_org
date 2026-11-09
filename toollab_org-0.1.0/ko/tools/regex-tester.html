@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>정규표현식(Regex) 테스터 & 실시간 디버거 | ToolLab</title>
+  <meta name="description" content="서버 전송 없이 100% 브라우저 메모리 안에서 정규식 패턴을 실시간 검증하고 매칭 하이라이트, 캡처 그룹 분석, 문자열 치환을 즉시 수행합니다." />
+  <meta name="keywords" content="정규표현식테스터, 정규식검사, 정규식매칭, 정규식치환, regex tester, regex debugger, 자바스크립트정규식" />
+  <link rel="canonical" href="https://toollab.org/ko/tools/regex-tester.html" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+  <script src="../../js/analytics.js"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1512367949140208" crossorigin="anonymous"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <!-- 메인 조작 카드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl shadow-xl space-y-5">
+      
+      <!-- 상단 헤더 -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <a href="/ko" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-emerald-400 transition" title="도구 목록으로 돌아가기">
+            🏠
+          </a>
+          <div>
+            <span class="text-[10px] text-slate-500 font-bold tracking-wider block">TOOLLAB.ORG</span>
+            <h1 class="text-base sm:text-lg font-bold text-slate-100">정규표현식(Regex) 테스터 &amp; 디버거</h1>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="clearBtn" class="text-xs px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition cursor-pointer font-medium">비우기</button>
+        </div>
+      </div>
+
+      <!-- 정규식 입력 바 & 플래그 설정 -->
+      <div class="space-y-3">
+        <div class="p-3 bg-slate-950/80 border border-slate-800 rounded-2xl flex items-center gap-2">
+          <span class="text-slate-500 font-mono text-lg select-none">/</span>
+          <input type="text" id="regexInput" value="([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})" placeholder="정규표현식 패턴을 입력하세요..." 
+            class="w-full bg-transparent font-mono text-xs sm:text-sm text-slate-100 outline-none placeholder-slate-600 focus:text-emerald-400" />
+          <span class="text-slate-500 font-mono text-lg select-none">/</span>
+          <div class="flex items-center gap-2 pl-2 border-l border-slate-800">
+            <label class="cursor-pointer text-xs font-mono font-bold flex items-center gap-1 text-slate-400 hover:text-slate-200 select-none" title="전체 일치 검색 (Global)">
+              <input type="checkbox" id="flagG" checked class="rounded bg-slate-900 border-slate-700 text-emerald-500 focus:ring-0"> g
+            </label>
+            <label class="cursor-pointer text-xs font-mono font-bold flex items-center gap-1 text-slate-400 hover:text-slate-200 select-none" title="대소문자 구분 없음 (Ignore Case)">
+              <input type="checkbox" id="flagI" class="rounded bg-slate-900 border-slate-700 text-emerald-500 focus:ring-0"> i
+            </label>
+            <label class="cursor-pointer text-xs font-mono font-bold flex items-center gap-1 text-slate-400 hover:text-slate-200 select-none" title="다중 행 일치 (Multiline)">
+              <input type="checkbox" id="flagM" checked class="rounded bg-slate-900 border-slate-700 text-emerald-500 focus:ring-0"> m
+            </label>
+            <label class="cursor-pointer text-xs font-mono font-bold flex items-center gap-1 text-slate-400 hover:text-slate-200 select-none" title="도트(.)가 줄바꿈도 포함 (DotAll)">
+              <input type="checkbox" id="flagS" class="rounded bg-slate-900 border-slate-700 text-emerald-500 focus:ring-0"> s
+            </label>
+          </div>
+        </div>
+
+        <!-- 패턴 빠른 프리셋 버튼 -->
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px]">
+          <span class="text-slate-500 font-medium mr-1">자주 쓰는 패턴:</span>
+          <button class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer font-medium" data-pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}">이메일</button>
+          <button class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer font-medium" data-pattern="https?:\/\/[^\s/$.?#].[^\s]*">웹 URL</button>
+          <button class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer font-medium" data-pattern="\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b">IPv4 주소</button>
+          <button class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer font-medium" data-pattern="\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])">날짜 (YYYY-MM-DD)</button>
+          <button class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer font-medium" data-pattern="#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})">HEX 색상코드</button>
+        </div>
+      </div>
+
+      <!-- 실시간 매칭 상태 배너 -->
+      <div id="statusBanner" class="p-3 rounded-2xl text-xs font-mono flex items-center justify-between bg-emerald-950/40 border border-emerald-800 text-emerald-400 transition-colors">
+        <span id="statusText">✔ 올바른 정규식 패턴입니다</span>
+        <span id="matchBadge" class="font-bold">0개 일치</span>
+      </div>
+
+      <!-- 테스트 문자열 입력 및 하이라이트 뷰어 -->
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1.5 px-1">검사할 테스트 문자열 (Test String)</label>
+          <textarea id="testInput" rows="5" spellcheck="false"
+            placeholder="정규식을 검증할 대상 텍스트를 입력하거나 붙여넣으세요..." 
+            class="w-full p-4 bg-slate-950 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono text-xs sm:text-sm leading-relaxed resize-y transition">ToolLab.org에 오신 것을 환영합니다! 개발팀 문의는 team@toollab.org 또는 결제 문의는 billing@toollab.org 로 연락 바랍니다.</textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-emerald-400 mb-1.5 px-1">실시간 매칭 하이라이트</label>
+          <div id="highlightViewer" class="w-full min-h-[90px] p-4 bg-slate-950 border border-slate-800 rounded-2xl text-slate-100 font-mono text-xs sm:text-sm leading-relaxed whitespace-pre-wrap break-all overflow-y-auto"></div>
+        </div>
+
+        <!-- 문자열 치환(Replace) 섹션 -->
+        <div class="pt-3 border-t border-slate-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">문자열 치환 (Find &amp; Replace)</span>
+            <button id="replaceToggle" class="text-xs text-emerald-400 hover:text-emerald-300 font-medium cursor-pointer">치환 옵션 펼치기</button>
+          </div>
+          <div id="replaceSection" class="space-y-3 hidden">
+            <div class="flex gap-2">
+              <input type="text" id="replaceInput" placeholder="바꿀 문자열 입력 (예: [보호됨], $1)..." 
+                class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-xs font-mono outline-none focus:border-emerald-500" />
+              <button id="copyReplaceBtn" class="px-3.5 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-800/60 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer">치환 결과 복사</button>
+            </div>
+            <div id="replacedResult" class="p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl text-slate-300 font-mono text-xs whitespace-pre-wrap break-all"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 상세 캡처 그룹 및 매칭 토큰 분석 -->
+      <div class="pt-4 border-t border-slate-800">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">매칭 토큰 및 캡처 그룹 상세 내역</h3>
+        <div id="matchDetailsList" class="space-y-2 text-xs font-mono max-h-56 overflow-y-auto pr-1"></div>
+      </div>
+
+    </div>
+
+    <!-- 1. 정규표현식 표준 메타문자 참조표 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <div class="space-y-1">
+        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>자바스크립트(ECMAScript) 정규표현식 핵심 토큰 빠른 참조표</span>
+        </h2>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          자바스크립트, 파이썬, PHP 등 현대 프로그래밍 언어에서 가장 빈번히 사용되는 메타문자 규칙입니다.
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-xl border border-slate-800">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-950 text-slate-400 font-semibold border-b border-slate-800">
+            <tr>
+              <th class="p-3">토큰 (Token)</th>
+              <th class="p-3">분류</th>
+              <th class="p-3">문법 설명</th>
+              <th class="p-3 font-mono">예시 패턴</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-300">
+            <tr>
+              <td class="p-3 font-bold text-emerald-400 font-mono">\d / \D</td>
+              <td class="p-3 text-slate-400">문자 클래스</td>
+              <td class="p-3 text-slate-300">모든 아라비아 숫자 [0-9] 일치 / 숫자가 아닌 문자</td>
+              <td class="p-3 text-slate-400 font-mono">\d{3} ("123" 일치)</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-emerald-400 font-mono">\w / \W</td>
+              <td class="p-3 text-slate-400">문자 클래스</td>
+              <td class="p-3 text-slate-300">영문, 숫자, 언더바 [a-zA-Z0-9_] / 단어 문자가 아닌 것</td>
+              <td class="p-3 text-slate-400 font-mono">\w+ ("admin_01" 일치)</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-sky-400 font-mono">^ 및 $</td>
+              <td class="p-3 text-slate-400">앵커 (위치 지정)</td>
+              <td class="p-3 text-slate-300">문자열 또는 행의 시작(^)과 끝($)</td>
+              <td class="p-3 text-slate-400 font-mono">^start.*end$</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-amber-400 font-mono">(...) / (?:...)</td>
+              <td class="p-3 text-slate-400">그룹화</td>
+              <td class="p-3 text-slate-300">캡처 그룹(추출 대상) / 비캡처 그룹(단순 묶기)</td>
+              <td class="p-3 text-slate-400 font-mono">(abc)+</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2. 정규식 작성 모범 사례 가이드 -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-3 text-xs leading-relaxed">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>성능 저하를 막는 정규식 작성 모범 사례</span>
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-400 pt-1">
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">1. 탐욕적(Greedy) vs 게으른(Lazy) 수량자</strong>
+          <p><code>*</code>와 <code>+</code>는 기본적으로 가능한 많은 문자를 삼키는 탐욕적 방식으로 동작합니다. 뒤에 물음표를 붙인 <code>*?</code>나 <code>+?</code>를 사용하면 일치하는 최소 단위까지만 끊어서 매칭합니다.</p>
+        </div>
+        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5">
+          <strong class="text-slate-200 block font-semibold">2. 파국적 역추적(Catastrophic Backtracking) 방지</strong>
+          <p><code>(a+)+$</code>처럼 수량자가 중첩된 패턴은 긴 불일치 문자열을 검사할 때 브라우저 탭을 멈추게 만들 수 있습니다. 명확한 문자 클래스를 사용하고 반복 범위를 좁히는 것이 안전합니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 오픈형 FAQ (단일 일관 구조) -->
+    <div class="p-6 bg-slate-900/80 border border-slate-800 rounded-3xl space-y-4">
+      <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>자주 묻는 질문 (FAQ)</span>
+      </h2>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <h3 class="font-bold text-slate-200 mb-1">Q. 본 테스터는 어떤 정규식 엔진(Flavor)을 사용하나요?</h3>
+          <p class="text-slate-400 leading-relaxed">브라우저 내장 자바스크립트 표준(ECMAScript) 정규식 엔진을 직접 사용합니다. 룩어헤드(Lookahead), 룩비하인드(Lookbehind), 네임드 캡처 그룹(Named Groups) 등 최신 JS 정규식 문법을 완벽히 지원합니다.</p>
+        </div>
+        <div class="border-t border-slate-800 pt-3">
+          <h3 class="font-bold text-slate-200 mb-1">Q. 테스트 창에 입력한 비밀번호나 중요 로그 데이터가 서버로 전송되나요?</h3>
+          <p class="text-slate-400 leading-relaxed">절대 전송되지 않습니다. 모든 정규식 컴파일과 매칭 연산은 사용자 PC 브라우저의 샌드박스 메모리 안에서만 100% 실행되므로, 민감한 비즈니스 텍스트나 로그 파일도 안전하게 검증할 수 있습니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 광고 슬롯 -->
+    <div class="p-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl text-center">
+      <div class="text-[10px] text-slate-600 font-mono tracking-wider mb-2">ADVERTISEMENT</div>
+      <div class="min-h-[80px] flex items-center justify-center text-xs text-slate-600">
+        <span>반응형 광고 영역 (Google AdSense)</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- 가로형 한국어 표준 푸터 -->
+  <footer class="w-full max-w-4xl mx-auto px-4 py-8 mt-12 border-t border-slate-800/80 text-xs text-slate-500">
+    <div class="space-y-4 text-center">
+      <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-medium text-slate-400">
+        <a href="/ko/about.html" class="hover:text-emerald-400 transition">소개</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/contact.html" class="hover:text-emerald-400 transition">문의</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/privacy.html" class="hover:text-emerald-400 transition">개인정보처리방침</a>
+        <span class="text-slate-800">·</span>
+        <a href="/ko/terms.html" class="hover:text-emerald-400 transition">이용약관</a>
+      </nav>
+      <div class="space-y-1">
+        <p class="font-semibold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
+        <p class="text-[11px] text-slate-600">100% 브라우저 메모리 연산 · 서버 전송 0바이트 Zero Server Latency</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 로직 스크립트: 정규식 엔진 + 한글 추천 도구 모듈 -->
+  <script src="../../js/utils/regexTester.js"></script>
+  <script>
+    const regexInput = document.getElementById("regexInput");
+    const testInput = document.getElementById("testInput");
+    const highlightViewer = document.getElementById("highlightViewer");
+    const statusBanner = document.getElementById("statusBanner");
+    const statusText = document.getElementById("statusText");
+    const matchBadge = document.getElementById("matchBadge");
+    const matchDetailsList = document.getElementById("matchDetailsList");
+
+    const flagG = document.getElementById("flagG");
+    const flagI = document.getElementById("flagI");
+    const flagM = document.getElementById("flagM");
+    const flagS = document.getElementById("flagS");
+
+    const replaceToggle = document.getElementById("replaceToggle");
+    const replaceSection = document.getElementById("replaceSection");
+    const replaceInput = document.getElementById("replaceInput");
+    const replacedResult = document.getElementById("replacedResult");
+    const copyReplaceBtn = document.getElementById("copyReplaceBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    function getFlags() {
+      let f = "";
+      if (flagG.checked) f += "g";
+      if (flagI.checked) f += "i";
+      if (flagM.checked) f += "m";
+      if (flagS.checked) f += "s";
+      return f;
+    }
+
+    function evaluateRegex() {
+      const pattern = regexInput.value;
+      const flags = getFlags();
+      const text = testInput.value;
+
+      if (!pattern) {
+        statusBanner.className = "p-3 rounded-2xl text-xs font-mono flex items-center justify-between bg-slate-950 border border-slate-800 text-slate-400 transition-colors";
+        statusText.textContent = "테스트할 정규식 패턴을 입력하세요";
+        matchBadge.textContent = "0개 일치";
+        highlightViewer.innerHTML = RegexTester.escapeHtml(text);
+        matchDetailsList.innerHTML = '<span class="text-slate-500">입력된 패턴이 없습니다</span>';
+        updateReplace();
+        return;
+      }
+
+      const res = RegexTester.testMatches(pattern, flags, text);
+
+      if (!res.success) {
+        statusBanner.className = "p-3 rounded-2xl text-xs font-mono flex items-center justify-between bg-rose-950/40 border border-rose-800 text-rose-400 transition-colors";
+        statusText.textContent = `패턴 오류: ${res.error}`;
+        matchBadge.textContent = "문법 오류";
+        highlightViewer.innerHTML = RegexTester.escapeHtml(text);
+        matchDetailsList.innerHTML = '<span class="text-rose-400">정규식 컴파일에 실패했습니다</span>';
+        updateReplace();
+        return;
+      }
+
+      statusBanner.className = "p-3 rounded-2xl text-xs font-mono flex items-center justify-between bg-emerald-950/40 border border-emerald-800 text-emerald-400 transition-colors";
+      statusText.textContent = "✔ 올바른 정규식 패턴입니다";
+      matchBadge.textContent = `${res.count}개 일치`;
+
+      highlightViewer.innerHTML = RegexTester.generateHighlightHtml(pattern, flags, text);
+
+      // 매칭 상세 리스트 렌더링
+      matchDetailsList.innerHTML = "";
+      if (res.matches.length === 0) {
+        matchDetailsList.innerHTML = '<span class="text-slate-500">일치하는 문자열을 찾지 못했습니다</span>';
+      } else {
+        res.matches.forEach((m, idx) => {
+          const div = document.createElement("div");
+          div.className = "p-2.5 bg-slate-950/70 border border-slate-800/80 rounded-xl flex flex-col gap-1";
+          let groupDetails = "";
+          if (m.groups && m.groups.length > 0) {
+            groupDetails = `<div class="text-[11px] text-slate-400 pl-2 border-l border-slate-800 mt-1">` +
+              m.groups.map((g, gi) => `<span>그룹 ${gi + 1}: <code class="text-emerald-400">"${RegexTester.escapeHtml(g || "")}"</code></span>`).join(", ") +
+              `</div>`;
+          }
+          div.innerHTML = `
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-200">#${idx + 1}: <code class="text-emerald-300">"${RegexTester.escapeHtml(m.matchText)}"</code></span>
+              <span class="text-slate-500 text-[11px]">인덱스 구간: ${m.index} ~ ${m.index + m.length}</span>
+            </div>
+            ${groupDetails}
+          `;
+          matchDetailsList.appendChild(div);
+        });
+      }
+
+      updateReplace();
+    }
+
+    function updateReplace() {
+      if (replaceSection.classList.contains("hidden")) return;
+      const pattern = regexInput.value;
+      const flags = getFlags();
+      const text = testInput.value;
+      const repVal = replaceInput.value;
+
+      const repRes = RegexTester.replace(pattern, flags, text, repVal);
+      replacedResult.textContent = repRes.result;
+    }
+
+    // 이벤트 리스너 등록
+    [regexInput, testInput, flagG, flagI, flagM, flagS].forEach(el => {
+      el.addEventListener("input", evaluateRegex);
+      el.addEventListener("change", evaluateRegex);
+    });
+
+    replaceInput.addEventListener("input", updateReplace);
+
+    replaceToggle.addEventListener("click", () => {
+      const isHidden = replaceSection.classList.toggle("hidden");
+      replaceToggle.textContent = isHidden ? "치환 옵션 펼치기" : "치환 옵션 숨기기";
+      if (!isHidden) updateReplace();
+    });
+
+    copyReplaceBtn.addEventListener("click", () => {
+      const text = replacedResult.textContent;
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = copyReplaceBtn.textContent;
+        copyReplaceBtn.textContent = "복사완료!";
+        setTimeout(() => (copyReplaceBtn.textContent = orig), 1500);
+      });
+    });
+
+    clearBtn.addEventListener("click", () => {
+      regexInput.value = "";
+      testInput.value = "";
+      replaceInput.value = "";
+      evaluateRegex();
+      regexInput.focus();
+    });
+
+    document.querySelectorAll(".preset-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        regexInput.value = btn.dataset.pattern;
+        evaluateRegex();
+      });
+    });
+
+    evaluateRegex();
+  </script>
+  <script src="../../js/related-tools-ko.js"></script>
+</body>
+</html>
