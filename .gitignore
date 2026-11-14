@@ -31,3 +31,14 @@ admin/
 python scripts/
 run_etf_admin.bat
 setup_etf_admin.py
+
+# 로컬 작업 및 비배포 폴더 제외
+docs/
+images/
+scripts/
+
+# OS 및 에디터 임시 파일
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
