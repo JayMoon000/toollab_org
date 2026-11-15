@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>고속도로 휴게소 네트워크 뷰어 | 노선·방향별 실시간 시설·거리 조회</title>
+  <meta
+    name="description"
+    content="경부선, 영동선, 중부내륙선, 서해안선 고속도로 휴게소를 상·하행 방향과 화물차라운지, 수유실, 전기차·수소충전소, 반려견놀이터, 스타벅스 조건으로 빠르게 조회하고 카카오내비·네이버지도로 바로 길찾기하세요."
+  />
+  <link rel="canonical" href="https://toollab.org/rest-area" />
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ToolLab 고속도로 휴게소 뷰어" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:url" content="https://toollab.org/rest-area" />
+  <meta property="og:title" content="고속도로 휴게소 네트워크 뷰어 | 상·하행 시설 필터 &amp; 내 위치 거리순" />
+  <meta
+    property="og:description"
+    content="화물·장거리(24시 라운지), 가족·나들이(ex-food·수유실), 전기·수소차 충전소 원클릭 필터와 전방 휴게소 거리순 정렬을 무료로 이용하세요."
+  />
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="고속도로 휴게소 네트워크 뷰어 | toollab.org/rest-area" />
+  <meta
+    name="twitter:description"
+    content="경부·영동·중부내륙·서해안 고속도로 휴게소 시설 필터링 및 카카오내비·네이버지도 원클릭 길찾기"
+  />
+
+  <!-- JSON-LD Structured Data: WebApplication + FAQPage -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "name": "고속도로 휴게소 네트워크 뷰어",
+          "url": "https://toollab.org/rest-area",
+          "applicationCategory": "TravelApplication",
+          "operatingSystem": "All",
+          "browserRequirements": "Requires JavaScript",
+          "inLanguage": "ko",
+          "description": "경부선, 영동선, 중부내륙선, 서해안선 고속도로 휴게소의 상·하행 방향, 양방향 공용 거점 여부, 페르소나별 편의시설 및 전방 잔여 거리를 조회하는 클라이언트 기반 웹 앱입니다.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "KRW"
+          },
+          "featureList": [
+            "경부선·영동선·중부내륙선·서해안선 노선 및 상·하행 방향 전환",
+            "양방향 공용 거점 휴게소 동시 노출",
+            "화물·장거리 / 가족·나들이 / 전기·수소차 원클릭 페르소나 프리셋",
+            "알뜰주유소·셀프정비·반려견놀이터·쇼핑몰·스타벅스 다중 필터",
+            "GPS 기반 전방 휴게소 잔여 거리 계산",
+            "카카오내비·네이버지도 원클릭 길찾기"
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "양방향 공용 휴게소는 상행과 하행 중 어느 쪽에서 보이나요?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "덕평자연휴게소(영동선), 매송휴게소(서해안선), 행담도휴게소(서해안선)처럼 상·하행선 모두 진입 가능한 양방향 공용 거점 휴게소는 상행과 하행 어느 방향을 선택해도 목록에 함께 표시되며 '양방향' 배지로 구분됩니다."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "내 위치 거리순 기능은 개인 위치 정보를 서버에 저장하나요?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "아니요. 모든 거리 계산은 브라우저 내 자바스크립트(Haversine 공식 및 도로 굴곡 보정)로 100% 처리되며, 사용자의 GPS 좌표는 외부 서버로 전송되거나 저장되지 않습니다."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "위치 권한을 거부해도 휴게소 목록을 볼 수 있나요?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "네, 위치 권한을 허용하지 않아도 각 노선의 상·하행 주행 방향에 맞춘 고속도로 이정표(kmPost) 순서대로 휴게소 파이프라인과 다음 휴게소 간격을 확인할 수 있습니다."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "화물·장거리, 가족·나들이, 전기·수소차 프리셋의 필터 기준은 무엇인가요?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "화물·장거리 프리셋은 'ex-화물차라운지'와 '24시 운영'을 모두 충족하는 휴게소를, 가족·나들이 프리셋은 'ex-food'와 '수유실'을 보유한 휴게소를, 전기·수소차 프리셋은 '급속충전' 또는 '수소충전' 시설이 있는 휴게소를 필터링합니다."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg-base: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-surface-hover: #26354d;
+      --bg-elevated: rgba(15, 23, 42, 0.88);
+      --border-color: #334155;
+      --border-subtle: rgba(51, 65, 85, 0.65);
+      --accent-sky: #38bdf8;
+      --accent-sky-soft: rgba(56, 189, 248, 0.14);
+      --accent-amber: #f59e0b;
+      --accent-amber-soft: rgba(245, 158, 11, 0.15);
+      --accent-emerald: #34d399;
+      --accent-emerald-soft: rgba(52, 211, 153, 0.14);
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --kakao-bg: #fee500;
+      --kakao-text: #191919;
+      --naver-bg: #03c75a;
+      --naver-text: #ffffff;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard Variable", "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", Roboto, sans-serif;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    summary:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 2px solid var(--accent-sky);
+      outline-offset: 2px;
+    }
+
+    .app-shell {
+      max-width: 640px;
+      margin: 0 auto;
+      padding-bottom: 48px;
+    }
+
+    /* Brand Header */
+    .brand-bar {
+      padding: 14px 16px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-kicker {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent-sky);
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .brand-pill {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 999px;
+      padding: 4px 10px;
+      white-space: nowrap;
+    }
+
+    /* Sticky Control Panel */
+    .sticky-controls {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-color);
+      padding: 10px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Route Selector Row (Horizontal Scroll Chip Bar + 21-Route Dark Dropdown) */
+    .route-selector-row {
+      display: flex;
+      align-items: stretch;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    /* Route Tabs (Horizontal Scroll Chip Bar) */
+    .route-tabs {
+      flex: 1 1 auto;
+      min-width: 0;
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 6px;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x proximity;
+    }
+
+    .route-select-wrap {
+      position: relative;
+      flex: 0 0 auto;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .route-select {
+      color-scheme: dark;
+      appearance: none;
+      -webkit-appearance: none;
+      width: 132px;
+      height: 100%;
+      padding: 6px 26px 6px 10px;
+      border-radius: 10px;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.3;
+      cursor: pointer;
+      text-overflow: ellipsis;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .route-select:hover {
+      border-color: var(--accent-sky);
+      background-color: var(--bg-surface-hover);
+    }
+
+    .route-select option {
+      background-color: #0f172a;
+      color: #f8fafc;
+    }
+
+    .route-select-wrap::after {
+      content: "▾";
+      position: absolute;
+      right: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 11px;
+      color: var(--accent-sky);
+      pointer-events: none;
+    }
+
+    .route-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .route-tab {
+      flex: 0 0 auto;
+      min-width: 74px;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      padding: 7px 11px;
+      border-radius: 10px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .route-tab:hover {
+      background: var(--bg-surface-hover);
+    }
+
+    .route-tab.is-active {
+      background: var(--accent-sky-soft);
+      border-color: var(--accent-sky);
+      color: var(--text-primary);
+    }
+
+    .route-no {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .route-tab.is-active .route-no {
+      color: var(--accent-sky);
+    }
+
+    .route-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    /* Direction + GPS Row */
+    .action-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .direction-toggle-btn {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 700;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .direction-toggle-btn:hover {
+      border-color: var(--accent-sky);
+      background: var(--bg-surface-hover);
+    }
+
+    .direction-label-group {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .direction-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-sky);
+      box-shadow: 0 0 0 3px var(--accent-sky-soft);
+      flex-shrink: 0;
+    }
+
+    .direction-dot.is-up {
+      background: var(--accent-amber);
+      box-shadow: 0 0 0 3px var(--accent-amber-soft);
+    }
+
+    .direction-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .direction-swap-hint {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-sky);
+      background: var(--accent-sky-soft);
+      padding: 2px 7px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .gps-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 12.5px;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+
+    .gps-btn:hover {
+      border-color: var(--accent-amber);
+      color: var(--text-primary);
+    }
+
+    .gps-btn.is-active {
+      background: var(--accent-amber-soft);
+      border-color: var(--accent-amber);
+      color: #fde68a;
+    }
+
+    .gps-btn.is-loading {
+      opacity: 0.75;
+      cursor: wait;
+    }
+
+    /* Persona Presets (2-column mobile-friendly grid) */
+    .persona-strip {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
+
+    .persona-chip {
+      width: 100%;
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 12.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .persona-chip:hover {
+      border-color: var(--accent-sky);
+      color: var(--text-primary);
+    }
+
+    .persona-chip.is-active {
+      background: var(--accent-sky);
+      border-color: var(--accent-sky);
+      color: #082f49;
+      font-weight: 800;
+    }
+
+    /* Accordion Filter */
+    .facility-accordion {
+      border-radius: 10px;
+      background: rgba(30, 41, 59, 0.72);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+
+    .accordion-trigger {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .accordion-trigger:hover {
+      color: var(--text-primary);
+    }
+
+    .accordion-trigger-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-count-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 999px;
+      background: var(--accent-amber);
+      color: #0f172a;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .accordion-chevron {
+      display: inline-block;
+      transition: transform 0.2s ease;
+      color: var(--text-muted);
+    }
+
+    .facility-accordion.is-open .accordion-chevron {
+      transform: rotate(180deg);
+      color: var(--accent-sky);
+    }
+
+    .accordion-panel {
+      display: none;
+      padding: 4px 12px 11px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .facility-accordion.is-open .accordion-panel {
+      display: block;
+    }
+
+    .facility-checkbox-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      padding-top: 8px;
+    }
+
+    .facility-check-item {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+
+    .facility-check-item input {
+      accent-color: var(--accent-sky);
+      width: 14px;
+      height: 14px;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .facility-check-item:has(input:checked) {
+      background: var(--accent-sky-soft);
+      border-color: var(--accent-sky);
+      color: var(--text-primary);
+    }
+
+    /* Status Summary Bar */
+    .list-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 14px 16px 6px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+
+    .list-status-bar strong {
+      color: var(--accent-sky);
+      font-weight: 800;
+    }
+
+    .reset-filters-btn {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-amber);
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--accent-amber-soft);
+    }
+
+    .reset-filters-btn:hover {
+      filter: brightness(1.1);
+    }
+
+    /* Linear Pipeline Timeline List */
+    .pipeline-section {
+      padding: 6px 16px 20px;
+    }
+
+    .pipeline-list {
+      position: relative;
+      list-style: none;
+      margin: 0;
+      padding: 4px 0 0;
+    }
+
+    .pipeline-item {
+      position: relative;
+      padding-left: 28px;
+      padding-bottom: 18px;
+    }
+
+    .pipeline-item:last-child {
+      padding-bottom: 0;
+    }
+
+    /* Vertical Timeline Line */
+    .pipeline-item::before {
+      content: "";
+      position: absolute;
+      left: 9px;
+      top: 18px;
+      bottom: -14px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--accent-sky) 0%, var(--border-color) 100%);
+    }
+
+    .pipeline-item:last-child::before {
+      display: none;
+    }
+
+    /* Timeline Node Dot */
+    .pipeline-node {
+      position: absolute;
+      left: 2px;
+      top: 16px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--bg-base);
+      border: 3px solid var(--accent-sky);
+      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.14);
+      z-index: 2;
+    }
+
+    .pipeline-item.is-shared .pipeline-node {
+      border-color: var(--accent-amber);
+      box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.16);
+    }
+
+    .pipeline-item.is-behind .pipeline-node {
+      border-color: #64748b;
+      box-shadow: none;
+    }
+
+    .interval-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 8px;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px dashed rgba(56, 189, 248, 0.35);
+      color: var(--accent-sky);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* Rest Area Card */
+    .rest-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      box-shadow: 0 8px 24px rgba(2, 6, 23, 0.35);
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .rest-card:hover {
+      border-color: rgba(56, 189, 248, 0.55);
+    }
+
+    .pipeline-item.is-behind .rest-card {
+      opacity: 0.72;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .card-title-block {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .card-badges-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .badge-shared {
+      background: var(--accent-amber-soft);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      color: #fcd34d;
+    }
+
+    .badge-24h {
+      background: var(--accent-emerald-soft);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      color: #6ee7b7;
+    }
+
+    .badge-branch {
+      background: rgba(167, 139, 250, 0.14);
+      border: 1px solid rgba(167, 139, 250, 0.45);
+      color: #ddd6fe;
+    }
+
+    .badge-direction {
+      background: rgba(148, 163, 184, 0.12);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    .card-name {
+      margin: 0;
+      font-size: 16.5px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      word-break: keep-all;
+    }
+
+    .card-meta-sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .distance-badge {
+      flex-shrink: 0;
+      padding: 5px 9px;
+      border-radius: 8px;
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--accent-sky);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .distance-badge.is-ahead {
+      background: var(--accent-sky-soft);
+      border-color: rgba(56, 189, 248, 0.5);
+      color: #7dd3fc;
+    }
+
+    .distance-badge.is-behind {
+      background: rgba(100, 116, 139, 0.15);
+      border-color: var(--border-color);
+      color: var(--text-muted);
+    }
+
+    /* Signature Food (ex-food) */
+    .food-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 11px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .food-left {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .food-tag {
+      flex-shrink: 0;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: var(--accent-amber);
+      background: var(--accent-amber-soft);
+      padding: 2px 6px;
+      border-radius: 5px;
+    }
+
+    .food-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Facility Tags */
+    .facilities-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .facility-pill {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--border-color);
+      border-radius: 7px;
+      padding: 3px 8px;
+    }
+
+    .facility-pill.is-highlighted {
+      background: var(--accent-sky-soft);
+      border-color: var(--accent-sky);
+      color: #e0f2fe;
+    }
+
+    /* Navigation CTA Buttons */
+    .nav-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding-top: 2px;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform 0.12s ease, filter 0.15s ease;
+    }
+
+    .nav-btn:active {
+      transform: scale(0.98);
+    }
+
+    .nav-btn:hover {
+      filter: brightness(1.06);
+    }
+
+    .nav-btn-kakao {
+      background: var(--kakao-bg);
+      color: var(--kakao-text);
+    }
+
+    .nav-btn-naver {
+      background: var(--naver-bg);
+      color: var(--naver-text);
+    }
+
+    /* Empty State */
+    .empty-state {
+      background: var(--bg-surface);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 32px 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .empty-icon {
+      font-size: 32px;
+    }
+
+    .empty-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .empty-desc {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* SEO Summary & FAQ Section */
+    .seo-section {
+      margin: 12px 16px 0;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .seo-block-title {
+      margin: 0 0 10px;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .seo-block-desc {
+      margin: 0 0 12px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+    }
+
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      text-align: left;
+      min-width: 480px;
+    }
+
+    .summary-table th,
+    .summary-table td {
+      padding: 10px 11px;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: top;
+    }
+
+    .summary-table th {
+      background: rgba(15, 23, 42, 0.7);
+      color: var(--accent-sky);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .summary-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .summary-table td:first-child {
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    .summary-table td {
+      color: var(--text-secondary);
+    }
+
+    /* FAQ Static HTML */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .faq-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .faq-item summary {
+      list-style: none;
+      padding: 12px 14px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-item summary::after {
+      content: "+";
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent-sky);
+      flex-shrink: 0;
+    }
+
+    .faq-item[open] summary::after {
+      content: "−";
+      color: var(--accent-amber);
+    }
+
+    .faq-answer {
+      margin: 0;
+      padding: 0 14px 13px;
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 10px;
+    }
+
+    .site-footer {
+      margin: 24px 16px 0;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    /* Toast Notification */
+    .toast-banner {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translate(-50%, 16px);
+      z-index: 60;
+      max-width: calc(100% - 32px);
+      width: max-content;
+      padding: 10px 16px;
+      border-radius: 12px;
+      background: #1e293b;
+      border: 1px solid var(--accent-amber);
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .toast-banner.is-visible {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @media (max-width: 600px) {
+      .table-scroll {
+        overflow-x: visible;
+        border: none;
+        background: transparent;
+        border-radius: 0;
+      }
+
+      .summary-table,
+      .summary-table tbody {
+        display: block;
+        width: 100%;
+        min-width: 0;
+      }
+
+      .summary-table thead {
+        display: none;
+      }
+
+      .summary-table tbody tr {
+        display: block;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 12px 14px;
+        margin-bottom: 10px;
+      }
+
+      .summary-table tbody tr:last-child {
+        margin-bottom: 0;
+      }
+
+      .summary-table tbody td {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 7px 0;
+        border-bottom: 1px solid var(--border-subtle);
+        white-space: normal;
+        word-break: keep-all;
+      }
+
+      .summary-table tbody td:first-child {
+        padding-top: 0;
+        padding-bottom: 8px;
+        margin-bottom: 2px;
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--text-primary);
+      }
+
+      .summary-table tbody td:first-child::before {
+        display: none;
+      }
+
+      .summary-table tbody td:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+
+      .summary-table tbody td::before {
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--accent-sky);
+      }
+    }
+
+    @media (max-width: 390px) {
+      .route-select {
+        width: 112px;
+        font-size: 11.5px;
+        padding: 6px 22px 6px 8px;
+      }
+      .route-name {
+        font-size: 11.5px;
+      }
+      .direction-toggle-btn {
+        font-size: 12px;
+        padding: 8px 10px;
+      }
+      .gps-btn {
+        font-size: 12px;
+        padding: 8px 10px;
+      }
+      .persona-chip {
+        font-size: 12px;
+        padding: 7px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Brand Header -->
+    <header class="brand-bar">
+      <div class="brand-title-wrap">
+        <span class="brand-kicker">toollab.org / rest-area</span>
+        <h1 class="brand-title">고속도로 휴게소 네트워크 뷰어</h1>
+      </div>
+      <span class="brand-pill">100% 로컬 연산</span>
+    </header>
+
+    <!-- Sticky Control Panel -->
+    <section class="sticky-controls" aria-label="노선 및 시설 필터 컨트롤">
+      <!-- 1. 노선 선택 가로 스크롤 칩 바 + 전체 21개 노선 드롭다운 -->
+      <div class="route-selector-row">
+        <div id="routeTabs" class="route-tabs" role="tablist" aria-label="고속도로 노선 선택">
+          <button type="button" class="route-tab is-active" role="tab" aria-selected="true" data-route="경부선">
+            <span class="route-no">1호선</span>
+            <span class="route-name">경부선</span>
+          </button>
+          <button type="button" class="route-tab" role="tab" aria-selected="false" data-route="서해안선">
+            <span class="route-no">15호선</span>
+            <span class="route-name">서해안선</span>
+          </button>
+          <button type="button" class="route-tab" role="tab" aria-selected="false" data-route="중부내륙선">
+            <span class="route-no">45호선</span>
+            <span class="route-name">중부내륙선</span>
+          </button>
+          <button type="button" class="route-tab" role="tab" aria-selected="false" data-route="영동선">
+            <span class="route-no">50호선</span>
+            <span class="route-name">영동선</span>
+          </button>
+          <button type="button" class="route-tab" role="tab" aria-selected="false" data-route="중앙선">
+            <span class="route-no">55호선</span>
+            <span class="route-name">중앙선</span>
+          </button>
+          <button type="button" class="route-tab" role="tab" aria-selected="false" data-route="호남선">
+            <span class="route-no">25호선</span>
+            <span class="route-name">호남선</span>
+          </button>
+          <button type="button" class="route-tab" role="tab" aria-selected="false" data-route="남해선">
+            <span class="route-no">10호선</span>
+            <span class="route-name">남해선</span>
+          </button>
+          <button type="button" class="route-tab" role="tab" aria-selected="false" data-route="당진영덕선">
+            <span class="route-no">30호선</span>
+            <span class="route-name">당진영덕선</span>
+          </button>
+          <button type="button" class="route-tab" role="tab" aria-selected="false" data-route="통영대전선">
+            <span class="route-no">35호선</span>
+            <span class="route-name">통영대전선</span>
+          </button>
+          <button type="button" class="route-tab" role="tab" aria-selected="false" data-route="광주대구선">
+            <span class="route-no">12호선</span>
+            <span class="route-name">광주대구선</span>
+          </button>
+          <button type="button" class="route-tab" role="tab" aria-selected="false" data-route="중부선">
+            <span class="route-no">35호선</span>
+            <span class="route-name">중부선</span>
+          </button>
+          <button type="button" class="route-tab" role="tab" aria-selected="false" data-route="평택제천선">
+            <span class="route-no">40호선</span>
+            <span class="route-name">평택제천선</span>
+          </button>
+          <button type="button" class="route-tab" role="tab" aria-selected="false" data-route="순천완주선">
+            <span class="route-no">27호선</span>
+            <span class="route-name">순천완주선</span>
+          </button>
+          <button type="button" class="route-tab" role="tab" aria-selected="false" data-route="동해선">
+            <span class="route-no">65호선</span>
+            <span class="route-name">동해선</span>
+          </button>
+          <button type="button" class="route-tab" role="tab" aria-selected="false" data-route="서울양양선">
+            <span class="route-no">60호선</span>
+            <span class="route-name">서울양양선</span>
+          </button>
+        </div>
+
+        <div class="route-select-wrap">
+          <select id="routeSelect" class="route-select" aria-label="전체 21개 고속도로 노선 빠른 선택">
+            <option value="경부선" selected>1호선 · 경부선</option>
+            <option value="서해안선">15호선 · 서해안선</option>
+            <option value="중부내륙선">45호선 · 중부내륙선</option>
+            <option value="영동선">50호선 · 영동선</option>
+            <option value="중앙선">55호선 · 중앙선</option>
+            <option value="호남선">25호선 · 호남선</option>
+            <option value="남해선">10호선 · 남해선</option>
+            <option value="당진영덕선">30호선 · 당진영덕선</option>
+            <option value="통영대전선">35호선 · 통영대전선</option>
+            <option value="광주대구선">12호선 · 광주대구선</option>
+            <option value="중부선">35호선 · 중부선</option>
+            <option value="평택제천선">40호선 · 평택제천선</option>
+            <option value="순천완주선">27호선 · 순천완주선</option>
+            <option value="동해선">65호선 · 동해선</option>
+            <option value="서울양양선">60호선 · 서울양양선</option>
+            <option value="대구포항선">20호선 · 대구포항선</option>
+            <option value="수도권제1순환선">100호선 · 수도권제1순환선</option>
+            <option value="세종포천선">29호선 · 세종포천선</option>
+            <option value="함양울산선">14호선 · 함양울산선</option>
+            <option value="서천공주선">151호선 · 서천공주선</option>
+            <option value="부산외곽순환선">600호선 · 부산외곽순환선</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 2. 진행 방향 원클릭 토글 + 내 위치 거리순 버튼 -->
+      <div class="action-row">
+        <button
+          type="button"
+          id="directionToggleBtn"
+          class="direction-toggle-btn"
+          aria-label="진행 방향 상행 하행 전환"
+        >
+          <span class="direction-label-group">
+            <span id="directionDot" class="direction-dot" aria-hidden="true"></span>
+            <span id="directionText" class="direction-text">하행 (부산 방면)</span>
+          </span>
+          <span class="direction-swap-hint">방향 전환 ⇄</span>
+        </button>
+
+        <button
+          type="button"
+          id="gpsDistanceBtn"
+          class="gps-btn"
+          aria-pressed="false"
+        >
+          <span aria-hidden="true">📍</span>
+          <span id="gpsBtnLabel">내 위치 거리순</span>
+        </button>
+      </div>
+
+      <!-- 3. 원클릭 페르소나 프리셋 칩 4개 -->
+      <div id="personaChips" class="persona-strip" role="group" aria-label="운전자 페르소나 프리셋">
+        <button type="button" class="persona-chip is-active" data-persona="all" aria-pressed="true">
+          전체
+        </button>
+        <button type="button" class="persona-chip" data-persona="trucker" aria-pressed="false">
+          🚛 화물·장거리
+        </button>
+        <button type="button" class="persona-chip" data-persona="family" aria-pressed="false">
+          👨‍👩‍👧‍👦 가족·나들이
+        </button>
+        <button type="button" class="persona-chip" data-persona="ev" aria-pressed="false">
+          ⚡ 전기·수소차
+        </button>
+      </div>
+
+      <!-- 4. 상세 시설 필터 아코디언 토글 -->
+      <div id="facilityAccordion" class="facility-accordion">
+        <button
+          type="button"
+          id="facilityAccordionBtn"
+          class="accordion-trigger"
+          aria-expanded="false"
+          aria-controls="facilityPanel"
+        >
+          <span class="accordion-trigger-left">
+            <span>상세 시설 필터</span>
+            <span id="facilityFilterCount" class="filter-count-badge" hidden>0</span>
+          </span>
+          <span class="accordion-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div id="facilityPanel" class="accordion-panel">
+          <div id="facilityCheckboxes" class="facility-checkbox-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Status & Reset Bar -->
+    <div class="list-status-bar">
+      <span id="resultSummary">데이터를 불러오는 중...</span>
+      <button type="button" id="resetFiltersBtn" class="reset-filters-btn" hidden>
+        필터 초기화
+      </button>
+    </div>
+
+    <!-- Linear Pipeline Card List -->
+    <main class="pipeline-section" aria-live="polite">
+      <ol id="pipelineList" class="pipeline-list"></ol>
+    </main>
+
+    <!-- SEO & Static Summary Area -->
+    <section class="seo-section" aria-label="고속도로 휴게소 편의시설 요약 및 자주 묻는 질문">
+      <article>
+        <h2 class="seo-block-title">📊 고속도로별 주요 편의시설 요약표</h2>
+        <p class="seo-block-desc">
+          24시 화물차라운지, 반려견 놀이터, 수소충전소 등 주요 거점 휴게소 현황입니다.
+        </p>
+        <div class="table-scroll">
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th scope="col">노선명</th>
+                <th scope="col">24시 화물차라운지</th>
+                <th scope="col">반려견 놀이터</th>
+                <th scope="col">수소충전소</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="노선명">경부선 (1호선)</td>
+                <td data-label="24시 화물차라운지">안성(부산), 망향(부산), 칠곡(서울)</td>
+                <td data-label="반려견 놀이터">죽전(서울)</td>
+                <td data-label="수소충전소">서울만남의광장(부산), 안성(부산), 칠곡(서울)</td>
+              </tr>
+              <tr>
+                <td data-label="노선명">영동선 (50호선)</td>
+                <td data-label="24시 화물차라운지">여주(강릉)</td>
+                <td data-label="반려견 놀이터">덕평자연(양방향), 평창(인천)</td>
+                <td data-label="수소충전소">덕평자연(양방향)</td>
+              </tr>
+              <tr>
+                <td data-label="노선명">중부내륙선 (45호선)</td>
+                <td data-label="24시 화물차라운지">충주(창원), 문경(양평), 선산(양평)</td>
+                <td data-label="반려견 놀이터">충주(창원)</td>
+                <td data-label="수소충전소">충주(창원)</td>
+              </tr>
+              <tr>
+                <td data-label="노선명">서해안선 (15호선)</td>
+                <td data-label="24시 화물차라운지">매송(양방향), 군산(서울)</td>
+                <td data-label="반려견 놀이터">군산(서울)</td>
+                <td data-label="수소충전소">행담도(양방향)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article>
+        <h2 class="seo-block-title">❓ 자주 묻는 질문 (FAQ)</h2>
+        <div class="faq-list">
+          <details class="faq-item" open>
+            <summary>양방향 공용 휴게소는 상행과 하행 중 어느 쪽에서 보이나요?</summary>
+            <p class="faq-answer">
+              영동선 덕평자연휴게소, 서해안선 매송휴게소·행담도휴게소처럼 상·하행선 모두 이용할 수 있는 양방향 공용 거점 휴게소는 상행 또는 하행 중 어느 방향을 선택해도 목록에 함께 노출되며 상단 <strong>양방향</strong> 배지로 구분됩니다.
+            </p>
+          </details>
+          <details class="faq-item">
+            <summary>내 위치 거리순 기능은 위치 정보를 서버로 전송하나요?</summary>
+            <p class="faq-answer">
+              아니요. 사용자의 GPS 좌표는 브라우저 내부의 순수 JavaScript 연산(Haversine 거리 계산 및 도로 굴곡 보정)에만 즉시 사용되며, 외부 서버로 전송되거나 저장되지 않습니다.
+            </p>
+          </details>
+          <details class="faq-item">
+            <summary>위치 권한을 거부하면 어떻게 정렬되나요?</summary>
+            <p class="faq-answer">
+              위치 권한을 허용하지 않거나 GPS를 사용할 수 없는 환경에서는 안내 메시지가 표시된 후, 현재 선택한 노선의 주행 방향(상행/하행)에 맞춰 고속도로 이정표(kmPost) 순서대로 정렬됩니다.
+            </p>
+          </details>
+          <details class="faq-item">
+            <summary>원클릭 페르소나 프리셋 3종은 어떤 기준으로 필터링하나요?</summary>
+            <p class="faq-answer">
+              <strong>🚛 화물·장거리</strong>는 <code>ex-화물차라운지</code>와 <code>24시</code> 운영 조건을, <strong>👨‍👩‍👧‍👦 가족·나들이</strong>는 <code>ex-food</code>와 <code>수유실</code> 보유 조건을, <strong>⚡ 전기·수소차</strong>는 <code>급속충전</code> 또는 <code>수소충전</code> 시설 보유 여부를 기준으로 필터링합니다.
+            </p>
+          </details>
+        </div>
+      </article>
+    </section>
+
+    <footer class="site-footer">
+      <p>© 2026 ToolLab · 고속도로 휴게소 네트워크 뷰어 (toollab.org/rest-area)</p>
+    </footer>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastBanner" class="toast-banner" role="status" aria-live="polite"></div>
+
+  <script type="module">
+    const assetBase =
+      window.location.pathname === '/rest-area' || window.location.pathname.startsWith('/rest-area/')
+        ? '/rest-area'
+        : '.';
+
+    let ROUTE_META = {};
+    let FACILITY_FILTERS = [];
+    let PERSONA_PRESETS = {};
+    let getDirectionEndpointLabel = () => '';
+    let filterRestAreas = () => [];
+
+    const state = {
+      routes: [],
+      restAreas: [],
+      route: '경부선',
+      direction: 'down',
+      persona: null,
+      facilities: [],
+      userLocation: null,
+      isLocating: false
+    };
+
+    const dom = {
+      routeTabs: document.getElementById('routeTabs'),
+      routeSelect: document.getElementById('routeSelect'),
+      directionToggleBtn: document.getElementById('directionToggleBtn'),
+      directionDot: document.getElementById('directionDot'),
+      directionText: document.getElementById('directionText'),
+      gpsDistanceBtn: document.getElementById('gpsDistanceBtn'),
+      gpsBtnLabel: document.getElementById('gpsBtnLabel'),
+      personaChips: document.getElementById('personaChips'),
+      facilityAccordion: document.getElementById('facilityAccordion'),
+      facilityAccordionBtn: document.getElementById('facilityAccordionBtn'),
+      facilityFilterCount: document.getElementById('facilityFilterCount'),
+      facilityCheckboxes: document.getElementById('facilityCheckboxes'),
+      resultSummary: document.getElementById('resultSummary'),
+      resetFiltersBtn: document.getElementById('resetFiltersBtn'),
+      pipelineList: document.getElementById('pipelineList'),
+      toastBanner: document.getElementById('toastBanner')
+    };
+
+    let toastTimer = null;
+
+    function showToast(message) {
+      dom.toastBanner.textContent = message;
+      dom.toastBanner.classList.add('is-visible');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        dom.toastBanner.classList.remove('is-visible');
+      }, 3200);
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderRouteTabs(routesData) {
+      const routeList = Array.isArray(routesData) && routesData.length > 0
+        ? routesData
+        : Object.entries(ROUTE_META).map(([name, meta]) => ({
+            id: meta.id,
+            name,
+            routeNo: meta.routeNo,
+            upLabel: meta.upLabel,
+            downLabel: meta.downLabel
+          }));
+
+      dom.routeTabs.innerHTML = routeList.map((r) => {
+        const active = r.name === state.route;
+        return `
+          <button
+            type="button"
+            class="route-tab ${active ? 'is-active' : ''}"
+            role="tab"
+            aria-selected="${String(active)}"
+            data-route="${escapeHtml(r.name)}"
+          >
+            <span class="route-no">${escapeHtml(r.routeNo)}호선</span>
+            <span class="route-name">${escapeHtml(r.name)}</span>
+          </button>
+        `;
+      }).join('');
+
+      if (dom.routeSelect) {
+        dom.routeSelect.innerHTML = routeList.map((r) => {
+          const selected = r.name === state.route ? 'selected' : '';
+          return `<option value="${escapeHtml(r.name)}" ${selected}>${escapeHtml(r.routeNo)}호선 · ${escapeHtml(r.name)}</option>`;
+        }).join('');
+        dom.routeSelect.value = state.route;
+      }
+    }
+
+    function renderFacilityCheckboxes() {
+      dom.facilityCheckboxes.innerHTML = FACILITY_FILTERS.map((fac) => {
+        const checked = state.facilities.includes(fac) ? 'checked' : '';
+        return `
+          <label class="facility-check-item">
+            <input type="checkbox" value="${escapeHtml(fac)}" ${checked} />
+            <span>${escapeHtml(fac)}</span>
+          </label>
+        `;
+      }).join('');
+    }
+
+    function updateControlUI() {
+      // 노선 탭 및 드롭다운 동기화
+      dom.routeTabs.querySelectorAll('.route-tab').forEach((btn) => {
+        const active = btn.dataset.route === state.route;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-selected', String(active));
+      });
+      if (dom.routeSelect && dom.routeSelect.value !== state.route) {
+        dom.routeSelect.value = state.route;
+      }
+
+      // 진행 방향 라벨 동기화 (getDirectionEndpointLabel 동적 방면 추출 활용)
+      dom.directionText.textContent = getDirectionEndpointLabel(state.route, state.direction, state.restAreas);
+      dom.directionDot.classList.toggle('is-up', state.direction === 'up');
+
+      // GPS 버튼 동기화
+      const hasLocation = Boolean(state.userLocation);
+      dom.gpsDistanceBtn.classList.toggle('is-active', hasLocation);
+      dom.gpsDistanceBtn.classList.toggle('is-loading', state.isLocating);
+      dom.gpsDistanceBtn.setAttribute('aria-pressed', String(hasLocation));
+      if (state.isLocating) {
+        dom.gpsBtnLabel.textContent = '위치 확인 중...';
+      } else if (hasLocation) {
+        dom.gpsBtnLabel.textContent = '거리순 적용됨';
+      } else {
+        dom.gpsBtnLabel.textContent = '내 위치 거리순';
+      }
+
+      // 페르소나 칩 동기화
+      dom.personaChips.querySelectorAll('.persona-chip').forEach((chip) => {
+        const key = chip.dataset.persona;
+        const active = (key === 'all' && state.persona === null) || key === state.persona;
+        chip.classList.toggle('is-active', active);
+        chip.setAttribute('aria-pressed', String(active));
+      });
+
+      // 상세 시설 필터 카운트 배지
+      const count = state.facilities.length;
+      dom.facilityFilterCount.hidden = count === 0;
+      dom.facilityFilterCount.textContent = String(count);
+
+      // 초기화 버튼 노출 여부
+      const hasActiveFilters = state.persona !== null || count > 0;
+      dom.resetFiltersBtn.hidden = !hasActiveFilters;
+    }
+
+    function openNavigationDeepLink(appUrl, webUrl) {
+      if (!appUrl) {
+        window.open(webUrl, '_blank', 'noopener,noreferrer');
+        return;
+      }
+
+      const startTime = Date.now();
+      let didHide = false;
+
+      const onVisibilityChange = () => {
+        if (document.hidden) {
+          didHide = true;
+        }
+      };
+
+      document.addEventListener('visibilitychange', onVisibilityChange, { once: true });
+      window.location.href = appUrl;
+
+      setTimeout(() => {
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+        if (!didHide && Date.now() - startTime < 2200) {
+          window.open(webUrl, '_blank', 'noopener,noreferrer');
+        }
+      }, 1500);
+    }
+
+    function renderList() {
+      updateControlUI();
+
+      const results = filterRestAreas(state.restAreas, {
+        route: state.route,
+        direction: state.direction,
+        persona: state.persona,
+        facilities: state.facilities,
+        userLocation: state.userLocation,
+        onlyAhead: false
+      });
+
+      const dirLabel = getDirectionEndpointLabel(state.route, state.direction, state.restAreas);
+      const sortLabel = state.userLocation ? '전방 거리순' : '이정표순';
+      const personaText = state.persona && PERSONA_PRESETS[state.persona]
+        ? ` · ${PERSONA_PRESETS[state.persona].label}`
+        : '';
+
+      dom.resultSummary.innerHTML = `${escapeHtml(state.route)} ${escapeHtml(dirLabel)}${escapeHtml(personaText)} · <strong>${results.length}곳</strong> (${sortLabel})`;
+
+      if (results.length === 0) {
+        dom.pipelineList.innerHTML = `
+          <li class="empty-state">
+            <span class="empty-icon" aria-hidden="true">🛣️</span>
+            <p class="empty-title">조건에 맞는 휴게소가 없습니다.</p>
+            <p class="empty-desc">선택한 페르소나 또는 상세 시설 필터 조건을 일부 해제해 보세요.</p>
+          </li>
+        `;
+        return;
+      }
+
+      dom.pipelineList.innerHTML = results.map((item, idx) => {
+        const prevItem = idx > 0 ? results[idx - 1] : null;
+        const kmGap = prevItem && typeof prevItem.kmPost === 'number' && typeof item.kmPost === 'number'
+          ? Math.round(Math.abs(item.kmPost - prevItem.kmPost) * 10) / 10
+          : null;
+
+        const isShared = Boolean(item.isShared) || item.direction === 'both';
+        const isBehind = Boolean(state.userLocation && item.distanceKm !== null && !item.isAhead);
+
+        const itemClasses = [
+          'pipeline-item',
+          isShared ? 'is-shared' : '',
+          isBehind ? 'is-behind' : ''
+        ].filter(Boolean).join(' ');
+
+        // 우측 상단 거리 또는 이정표 배지
+        let rightBadgeHtml = `<span class="distance-badge">이정표 ${item.kmPost}km</span>`;
+        if (state.userLocation && item.distanceKm !== null) {
+          const distClass = item.isAhead ? 'is-ahead' : 'is-behind';
+          rightBadgeHtml = `<span class="distance-badge ${distClass}">${escapeHtml(item.distanceLabel)}</span>`;
+        }
+
+        // 다음(이전 기준) 휴게소 간격 표시
+        let intervalHtml = '';
+        if (isBehind) {
+          intervalHtml = `<div class="interval-pill">↩ 지나친 휴게소 · 이정표 ${item.kmPost}km</div>`;
+        } else if (idx === 0) {
+          intervalHtml = `<div class="interval-pill">🚩 구간 첫 번째 거점</div>`;
+        } else if (kmGap !== null) {
+          intervalHtml = `<div class="interval-pill">↓ 이전 휴게소에서 약 ${kmGap}km</div>`;
+        }
+
+        // 시설 태그 목록 (ex-food는 대표 메뉴 영역에서도 강조되므로 전체 태그에서 상태 구분)
+        const facilitiesHtml = (item.facilities || []).map((fac) => {
+          const isMatchedFilter =
+            state.facilities.includes(fac) ||
+            (state.persona === 'trucker' && fac === 'ex-화물차라운지') ||
+            (state.persona === 'family' && (fac === 'ex-food' || fac === '수유실')) ||
+            (state.persona === 'ev' && (fac === '급속충전' || fac === '수소충전'));
+
+          return `<span class="facility-pill ${isMatchedFilter ? 'is-highlighted' : ''}">${escapeHtml(fac)}</span>`;
+        }).join('');
+
+        return `
+          <li class="${itemClasses}">
+            <span class="pipeline-node" aria-hidden="true"></span>
+            ${intervalHtml}
+            <article class="rest-card">
+              <div class="card-top">
+                <div class="card-title-block">
+                  <div class="card-badges-row">
+                    ${isShared ? '<span class="badge badge-shared">⇄ 양방향</span>' : ''}
+                    ${item.is24h ? '<span class="badge badge-24h">24시</span>' : ''}
+                    ${item.isBranch ? `<span class="badge badge-branch" title="${escapeHtml(item.branchName || '지선')}">지선</span>` : ''}
+                    <span class="badge badge-direction">${escapeHtml(item.directionLabel)}</span>
+                  </div>
+                  <h2 class="card-name">${escapeHtml(item.name)}</h2>
+                  <span class="card-meta-sub">${escapeHtml(item.address)}</span>
+                </div>
+                ${rightBadgeHtml}
+              </div>
+
+              <div class="food-box">
+                <div class="food-left">
+                  <span class="food-tag">ex-food</span>
+                  <span class="food-name">${escapeHtml(item.signatureFood || '대표 메뉴 정보 없음')}</span>
+                </div>
+              </div>
+
+              <div class="facilities-wrap" aria-label="보유 편의시설">
+                ${facilitiesHtml}
+              </div>
+
+              <div class="nav-actions">
+                <a
+                  href="${escapeHtml(item.navigationLinks.kakaoWebUrl)}"
+                  class="nav-btn nav-btn-kakao"
+                  data-app-url="${escapeHtml(item.navigationLinks.kakaoAppUrl || '')}"
+                  data-web-url="${escapeHtml(item.navigationLinks.kakaoWebUrl)}"
+                  data-is-mobile="${item.navigationLinks.isMobile ? 'true' : 'false'}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span aria-hidden="true">🧭</span> 카카오내비
+                </a>
+                <a
+                  href="${escapeHtml(item.navigationLinks.naverWebUrl)}"
+                  class="nav-btn nav-btn-naver"
+                  data-app-url="${escapeHtml(item.navigationLinks.naverAppUrl || '')}"
+                  data-web-url="${escapeHtml(item.navigationLinks.naverWebUrl)}"
+                  data-is-mobile="${item.navigationLinks.isMobile ? 'true' : 'false'}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span aria-hidden="true">🗺️</span> 네이버지도
+                </a>
+              </div>
+            </article>
+          </li>
+        `;
+      }).join('');
+    }
+
+    function requestUserLocation() {
+      if (state.userLocation) {
+        // 이미 활성화된 경우 토글하여 이정표순으로 복귀
+        state.userLocation = null;
+        showToast('기본 이정표순 정렬로 전환했습니다.');
+        renderList();
+        return;
+      }
+
+      if (!('geolocation' in navigator)) {
+        showToast('이 브라우저에서는 위치 기능을 지원하지 않아 이정표순을 유지합니다.');
+        return;
+      }
+
+      state.isLocating = true;
+      updateControlUI();
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          state.isLocating = false;
+          state.userLocation = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude
+          };
+          showToast('현재 위치 기준 전방 잔여 거리순으로 정렬했습니다.');
+          renderList();
+        },
+        (err) => {
+          state.isLocating = false;
+          state.userLocation = null;
+          if (err.code === err.PERMISSION_DENIED) {
+            showToast('위치 권한이 거부되어 기본 이정표순 정렬을 유지합니다.');
+          } else {
+            showToast('현재 위치를 확인할 수 없어 기본 이정표순 정렬을 유지합니다.');
+          }
+          renderList();
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 8000,
+          maximumAge: 60000
+        }
+      );
+    }
+
+    function bindEvents() {
+      // 노선 탭
+      dom.routeTabs.addEventListener('click', (e) => {
+        const tab = e.target.closest('.route-tab');
+        if (!tab) return;
+        const nextRoute = tab.dataset.route;
+        if (nextRoute && nextRoute !== state.route) {
+          state.route = nextRoute;
+          tab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+          renderList();
+        }
+      });
+
+      // 전체 21개 노선 드롭다운 선택
+      if (dom.routeSelect) {
+        dom.routeSelect.addEventListener('change', (e) => {
+          const nextRoute = e.target.value;
+          if (nextRoute && nextRoute !== state.route) {
+            state.route = nextRoute;
+            const activeTab = [...dom.routeTabs.querySelectorAll('.route-tab')]
+              .find((btn) => btn.dataset.route === nextRoute);
+            if (activeTab) {
+              activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }
+            renderList();
+          }
+        });
+      }
+
+      // 진행 방향 원클릭 토글
+      dom.directionToggleBtn.addEventListener('click', () => {
+        state.direction = state.direction === 'down' ? 'up' : 'down';
+        renderList();
+      });
+
+      // 내 위치 거리순 버튼
+      dom.gpsDistanceBtn.addEventListener('click', requestUserLocation);
+
+      // 페르소나 프리셋 칩
+      dom.personaChips.addEventListener('click', (e) => {
+        const chip = e.target.closest('.persona-chip');
+        if (!chip) return;
+        const nextPersona = chip.dataset.persona === 'all' ? null : chip.dataset.persona;
+        state.persona = state.persona === nextPersona && nextPersona !== null ? null : nextPersona;
+        renderList();
+      });
+
+      // 상세 시설 필터 아코디언 토글
+      dom.facilityAccordionBtn.addEventListener('click', () => {
+        const isOpen = dom.facilityAccordion.classList.toggle('is-open');
+        dom.facilityAccordionBtn.setAttribute('aria-expanded', String(isOpen));
+      });
+
+      // 상세 시설 체크박스 다중 선택
+      dom.facilityCheckboxes.addEventListener('change', (e) => {
+        if (e.target.type !== 'checkbox') return;
+        const val = e.target.value;
+        if (e.target.checked) {
+          if (!state.facilities.includes(val)) {
+            state.facilities = [...state.facilities, val];
+          }
+        } else {
+          state.facilities = state.facilities.filter((f) => f !== val);
+        }
+        renderList();
+      });
+
+      // 필터 초기화
+      dom.resetFiltersBtn.addEventListener('click', () => {
+        state.persona = null;
+        state.facilities = [];
+        renderFacilityCheckboxes();
+        renderList();
+      });
+
+      // 카카오내비 / 네이버지도 길찾기 클릭 핸들러
+      // 데스크톱에서는 <a> 기본 동작(target="_blank")으로 웹 길찾기 새 탭을 바로 열고,
+      // 모바일(/Android|iPhone|iPad/i)일 때만 앱 딥링크 + 웹 폴백을 실행합니다.
+      dom.pipelineList.addEventListener('click', (e) => {
+        const navBtn = e.target.closest('.nav-btn');
+        if (!navBtn) return;
+        const { appUrl, webUrl, isMobile } = navBtn.dataset;
+        if (isMobile === 'true' && appUrl && webUrl) {
+          e.preventDefault();
+          openNavigationDeepLink(appUrl, webUrl);
+        }
+      });
+    }
+
+    async function init() {
+      try {
+        const engine = await import(`${assetBase}/src/utils/restAreaEngine.js`);
+        ROUTE_META = engine.ROUTE_META;
+        FACILITY_FILTERS = engine.FACILITY_FILTERS;
+        PERSONA_PRESETS = engine.PERSONA_PRESETS;
+        getDirectionEndpointLabel = engine.getDirectionEndpointLabel;
+        filterRestAreas = engine.filterRestAreas;
+
+        renderFacilityCheckboxes();
+        bindEvents();
+
+        const response = await fetch(`${assetBase}/src/data/rest_areas.json`);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        state.routes = Array.isArray(data.routes) ? data.routes : [];
+        state.restAreas = Array.isArray(data.restAreas) ? data.restAreas : [];
+        renderRouteTabs(state.routes);
+        renderList();
+      } catch (error) {
+        console.error('휴게소 데이터 로드 실패:', error);
+        dom.resultSummary.textContent = '휴게소 데이터를 불러오지 못했습니다.';
+        dom.pipelineList.innerHTML = `
+          <li class="empty-state">
+            <span class="empty-icon" aria-hidden="true">⚠️</span>
+            <p class="empty-title">데이터를 불러올 수 없습니다.</p>
+            <p class="empty-desc">정적 서버 환경(Vercel 또는 로컬 HTTP 서버)에서 실행해 주세요.</p>
+          </li>
+        `;
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

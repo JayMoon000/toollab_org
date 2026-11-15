@@ -5,6 +5,10 @@
     {
       "source": "/noise",
       "destination": "/noise/index.html"
+    },
+    {
+      "source": "/rest-area",
+      "destination": "/rest-area/index.html"
     }
   ],
   "headers": [
