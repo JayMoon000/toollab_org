@@ -1057,77 +1057,322 @@
       padding-top: 10px;
     }
 
-    /* Global Footer */
+    /* 푸터 & 법적 정책 모달 (ETF 기준 시스템 이식) */
     .site-footer {
-      margin: 28px 16px 0;
-      padding: 28px 0 4px;
-      border-top: 1px solid var(--border-subtle);
+      margin: 32px 16px 0;
+      padding: 32px 0 4px;
+      border-top: 1px solid var(--border-color);
       text-align: center;
       font-size: 12px;
-      color: #64748b;
+      color: var(--text-muted);
     }
 
     .site-footer-inner {
+      max-width: 100%;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
-      align-items: center;
       gap: 12px;
     }
 
-    .site-footer-nav {
+    .site-footer-links {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: center;
-      gap: 8px 14px;
+      gap: 8px 24px;
       font-size: 12px;
       font-weight: 500;
-      color: var(--text-muted);
+      color: var(--text-secondary);
     }
 
-    .site-footer-nav a {
+    .site-footer-links button {
       color: inherit;
-      text-decoration: none;
+      font-size: inherit;
+      font-weight: inherit;
       transition: color 0.15s ease;
     }
 
-    .site-footer-nav a:hover {
-      color: var(--accent-emerald);
+    .site-footer-links button:hover {
+      color: var(--accent-sky);
+      text-decoration: underline;
     }
 
     .site-footer-sep {
-      color: #334155;
+      color: var(--border-color);
       user-select: none;
     }
 
-    .site-footer-meta {
+    .site-footer-desc {
       display: flex;
       flex-direction: column;
       gap: 4px;
     }
 
-    .site-footer-meta p {
+    .site-footer-desc p {
       margin: 0;
     }
 
-    .site-footer-brand {
-      font-weight: 700;
-      color: var(--text-muted);
+    .site-footer-title {
+      font-weight: 500;
+      color: var(--text-secondary);
     }
 
-    .site-footer-sub {
+    .site-footer-disclaimer {
       font-size: 11px;
-      color: #64748b;
-      line-height: 1.5;
+      color: var(--text-muted);
+      max-width: 42rem;
+      margin: 0 auto;
+      line-height: 1.625;
     }
 
     .site-footer-copy {
-      width: 100%;
       margin: 0;
-      padding-top: 10px;
-      border-top: 1px solid rgba(51, 65, 85, 0.35);
       font-size: 11px;
-      color: #64748b;
+      color: var(--text-muted);
+      padding-top: 8px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* Legal Modal */
+    .legal-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(2, 6, 23, 0.72);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .legal-modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .legal-modal-dialog {
+      width: 100%;
+      max-width: 672px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      text-align: left;
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65);
+    }
+
+    .legal-modal-header {
+      padding: 20px 24px 0;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(30, 41, 59, 0.55);
+    }
+
+    .legal-modal-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+    }
+
+    .legal-modal-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legal-modal-close {
+      padding: 6px 8px;
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1;
+      transition: color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .legal-modal-close:hover {
+      color: var(--text-primary);
+      background: rgba(51, 65, 85, 0.65);
+    }
+
+    .legal-modal-tabs {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .legal-modal-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .legal-tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      color: var(--text-muted);
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    @media (min-width: 640px) {
+      .legal-modal-tabs {
+        gap: 8px;
+      }
+
+      .legal-tab-btn {
+        font-size: 14px;
+      }
+    }
+
+    .legal-tab-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .legal-tab-btn.is-active {
+      border-bottom-color: var(--accent-sky);
+      color: var(--accent-sky);
+      background: #0f172a;
+    }
+
+    .legal-modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      font-size: 14px;
+      line-height: 1.625;
+      color: var(--text-secondary);
+    }
+
+    .legal-tab-panel {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .legal-tab-panel.is-active {
+      display: flex;
+    }
+
+    .legal-tab-panel h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .legal-tab-panel h4 {
+      margin: 6px 0 2px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .legal-tab-panel p {
+      margin: 0;
+    }
+
+    .legal-tab-panel strong {
+      color: var(--text-primary);
+    }
+
+    .legal-card-box {
+      padding: 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .legal-card-heading {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .legal-email-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .legal-email-link {
+      color: var(--accent-sky);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .legal-email-link:hover {
+      text-decoration: underline;
+    }
+
+    .legal-bullet-list {
+      margin: 4px 0 0;
+      padding-left: 4px;
+      list-style: none;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .legal-subtext {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .legal-modal-footer {
+      padding: 14px 24px;
+      border-top: 1px solid var(--border-color);
+      background: rgba(30, 41, 59, 0.45);
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .legal-modal-confirm-btn {
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .legal-modal-confirm-btn:hover {
+      background: var(--bg-surface-hover);
+      border-color: var(--accent-sky);
+    }
+
+    @media print {
+      .no-print {
+        display: none !important;
+      }
     }
 
     /* Toast Notification */
@@ -1508,27 +1753,163 @@
       </article>
     </section>
 
-    <!-- Global Footer (공통 정책 문서 링크 및 저작권 표기) -->
-    <footer class="site-footer">
+    <!-- 푸터 -->
+    <footer class="site-footer no-print">
       <div class="site-footer-inner">
-        <nav aria-label="사이트 정책 및 안내" class="site-footer-nav">
-          <a href="/ko/about.html">소개 (About)</a>
-          <span class="site-footer-sep" aria-hidden="true">·</span>
-          <a href="/ko/contact.html">문의 (Contact)</a>
-          <span class="site-footer-sep" aria-hidden="true">·</span>
-          <a href="/ko/privacy.html">개인정보처리방침</a>
-          <span class="site-footer-sep" aria-hidden="true">·</span>
-          <a href="/ko/terms.html">이용약관</a>
-        </nav>
-
-        <div class="site-footer-meta">
-          <p class="site-footer-brand">ToolLab.org · 고속도로 휴게소 네트워크 뷰어</p>
-          <p class="site-footer-sub">Zero server latency · 100% 브라우저 클라이언트 연산</p>
+        <!-- 정책 링크 4종 -->
+        <div class="site-footer-links">
+          <button type="button" onclick="openLegalModal('about')">
+            About Us
+          </button>
+          <span class="site-footer-sep" aria-hidden="true">|</span>
+          <button type="button" onclick="openLegalModal('contact')">
+            Contact
+          </button>
+          <span class="site-footer-sep" aria-hidden="true">|</span>
+          <button type="button" onclick="openLegalModal('privacy')">
+            Privacy Policy
+          </button>
+          <span class="site-footer-sep" aria-hidden="true">|</span>
+          <button type="button" onclick="openLegalModal('terms')">
+            Terms of Service
+          </button>
         </div>
 
-        <p class="site-footer-copy">© 2026 ToolLab.org. All rights reserved.</p>
+        <!-- 서비스 설명 및 면책 조항 -->
+        <div class="site-footer-desc">
+          <p class="site-footer-title">
+            ToolLab 고속도로 휴게소 네트워크 뷰어 · 한국도로공사 표준데이터 기반 무설치 유틸리티
+          </p>
+          <p class="site-footer-disclaimer">
+            본 서비스는 한국도로공사 표준데이터를 기반으로 전국 고속도로 노선별 휴게소 및 편의시설 정보를 제공하는 참고용 툴킷입니다.
+            노선 공사, 기상 악화 및 입점 매장 사정에 따라 실제 운영 여부가 달라질 수 있으므로 현장 안내를 함께 확인해 주세요.
+          </p>
+        </div>
+
+        <p class="site-footer-copy">
+          © 2026 ToolLab.org. All rights reserved.
+        </p>
       </div>
     </footer>
+  </div>
+
+  <!-- 법적 정책 및 안내 통합 모달 -->
+  <div id="legalModal" class="legal-modal-backdrop no-print">
+    <div class="legal-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="legalModalTitle">
+      <!-- 모달 헤더 & 4대 탭 바 -->
+      <div class="legal-modal-header">
+        <div class="legal-modal-title-row">
+          <h2 id="legalModalTitle" class="legal-modal-title">
+            <span aria-hidden="true">🛡️</span>
+            <span>서비스 안내 및 정책</span>
+          </h2>
+          <button type="button" class="legal-modal-close" onclick="closeLegalModal()" aria-label="닫기">
+            ✕
+          </button>
+        </div>
+
+        <!-- 4단 탭 버튼 -->
+        <div class="legal-modal-tabs" role="tablist" aria-label="안내 및 정책 탭">
+          <button type="button" id="tabBtn-about" class="legal-tab-btn is-active" role="tab" aria-selected="true" onclick="switchLegalTab('about')">
+            <span>About Us</span>
+          </button>
+          <button type="button" id="tabBtn-contact" class="legal-tab-btn" role="tab" aria-selected="false" onclick="switchLegalTab('contact')">
+            <span>Contact</span>
+          </button>
+          <button type="button" id="tabBtn-privacy" class="legal-tab-btn" role="tab" aria-selected="false" onclick="switchLegalTab('privacy')">
+            <span>Privacy</span>
+          </button>
+          <button type="button" id="tabBtn-terms" class="legal-tab-btn" role="tab" aria-selected="false" onclick="switchLegalTab('terms')">
+            <span>Terms</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 모달 본문 영역 (탭 내용) -->
+      <div class="legal-modal-body">
+        <!-- About Us -->
+        <div id="tabContent-about" class="legal-tab-panel is-active" role="tabpanel">
+          <h3>ToolLab 고속도로 휴게소 네트워크 뷰어 소개</h3>
+          <p>
+            ToolLab 고속도로 휴게소 네트워크 뷰어는 복잡한 앱 설치나 회원가입 없이,
+            <strong>한국도로공사 표준데이터 기반의 전국 고속도로 노선별 선형 휴게소 검색 툴</strong>입니다.
+          </p>
+          <p>
+            경부선·영동선·중부내륙선·서해안선 등 전국 주요 고속도로 노선을 상·하행 주행 방향에 맞춘 선형 파이프라인으로 한눈에 정렬하고,
+            화물차라운지(24시), ex-food·수유실, 전기차 급속·수소충전소, 반려견 놀이터 등 핵심 편의시설 필터와 카카오내비·네이버지도 원클릭 길찾기를 제공합니다.
+          </p>
+          <div class="legal-card-box">
+            <p class="legal-card-heading">서비스 핵심 원칙</p>
+            <p>• Zero-Server-Cost: 별도 서버 DB나 추적 없이 브라우저 메모리(Client-Side)에서 100% 독립 연산</p>
+            <p>• Zero-Barrier UX: 로그인이나 앱 설치 없이 주행 중·출발 전 3초 안에 노선·방향별 휴게소 조회</p>
+            <p>• Verified Highway Data: 한국도로공사 표준데이터 기반 이정표(kmPost) 및 양방향 공용 거점 휴게소 반영</p>
+          </div>
+        </div>
+
+        <!-- Contact -->
+        <div id="tabContent-contact" class="legal-tab-panel" role="tabpanel">
+          <h3>문의 및 데이터 제보 (Contact Us)</h3>
+          <p>
+            고속도로 휴게소의 신규 편의시설 개장, 충전소·화물차라운지 운영 시간 변동, 노선 이정표 오류 제보 등 사용자 여러분의 의견으로 서비스가 더욱 정확해집니다.
+          </p>
+          <div class="legal-card-box">
+            <span class="legal-email-label">공식 문의 이메일</span>
+            <a href="mailto:contact@toollab.org" class="legal-email-link">
+              contact@toollab.org
+            </a>
+          </div>
+          <ul class="legal-bullet-list">
+            <li>• 휴게소 편의시설(전기차·수소충전소, 수유실, 화물차라운지 등) 정보 수정 제보</li>
+            <li>• 노선별 상·하행 방향 표기 및 양방향 공용 휴게소 오류 신고</li>
+            <li>• 신규 고속도로 노선 추가 및 기능 개선 제안</li>
+          </ul>
+        </div>
+
+        <!-- Privacy -->
+        <div id="tabContent-privacy" class="legal-tab-panel" role="tabpanel">
+          <h3>개인정보처리방침 (Privacy Policy)</h3>
+          <p>
+            ToolLab은 이용자의 위치정보 및 개인정보를 소중하게 보호하며, 불필요한 일체의 개인정보를 수집하거나 저장하지 않습니다.
+          </p>
+          <div class="legal-subtext">
+            <h4>1. 개인 위치정보(GPS) 미수집 원칙</h4>
+            <p>
+              본 서비스의 ‘내 위치 거리순’ 기능에서 참조하는 GPS 좌표는 사용자의 브라우저 내부 JavaScript(Haversine 거리 계산 및 도로 굴곡 보정) 연산에만 즉시 사용되며, 외부 서버로 전송되거나 데이터베이스에 저장되지 않습니다.
+            </p>
+            <h4>2. 웹 분석 및 광고 게재 쿠키</h4>
+            <p>
+              서비스 안정성 관리와 호스팅 운영을 위해 익명화된 트래픽 통계 도구(Cloudflare Web Analytics) 및 Google AdSense 광고 모듈이 사용될 수 있으며, 사용자는 브라우저 설정을 통해 쿠키 저장을 언제든 거부할 수 있습니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- Terms -->
+        <div id="tabContent-terms" class="legal-tab-panel" role="tabpanel">
+          <h3>이용약관 및 유의사항 (Terms of Service)</h3>
+          <div class="legal-subtext">
+            <h4>1. 데이터 제공의 한계 및 면책 조항</h4>
+            <p>
+              본 서비스에서 제공하는 휴게소 위치, 주행 거리 및 편의시설 정보는 한국도로공사 공공데이터에 기반한 참고용 정보입니다. 휴게소 리모델링, 매장 영업시간 변경, 기상 악화, 도로 통제 등에 따라 실제 현장 운영 현황과 차이가 발생할 수 있으며, 서비스 이용으로 인한 직·간접적 손해에 대해 법적 책임을 지지 않습니다.
+            </p>
+            <h4>2. 외부 링크(내비게이션·지도 서비스) 연결</h4>
+            <p>
+              본 웹사이트에 포함된 카카오내비, 네이버지도 등의 외부 길찾기 링크는 이용자의 편의를 돕기 위한 기능이며, 해당 외부 플랫폼의 경로 안내 결과 및 운영 정책에 대해서는 관여하지 않습니다.
+            </p>
+            <h4>3. 저작권</h4>
+            <p>
+              본 서비스의 웹 UI/UX 디자인, 노선 필터링 및 거리 계산 로직, 자체 콘텐츠에 대한 저작권은 ToolLab에 있습니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 모달 푸터 닫기 버튼 -->
+      <div class="legal-modal-footer">
+        <button type="button" class="legal-modal-confirm-btn" onclick="closeLegalModal()">
+          확인 및 닫기
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Toast Notification -->
@@ -2019,6 +2400,56 @@
     }
 
     init();
+  </script>
+
+  <script>
+    // 푸터 법적 정책 및 안내 통합 모달 제어 (스크롤 락 및 ESC 키 지원)
+    function openLegalModal(tabName) {
+      const modal = document.getElementById('legalModal');
+      if (!modal) return;
+      modal.classList.add('is-open');
+      switchLegalTab(tabName || 'about');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLegalModal() {
+      const modal = document.getElementById('legalModal');
+      if (!modal) return;
+      modal.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    function switchLegalTab(tabKey) {
+      const tabs = ['about', 'contact', 'privacy', 'terms'];
+      const activeTab = tabs.includes(tabKey) ? tabKey : 'about';
+
+      tabs.forEach((t) => {
+        const btn = document.getElementById(`tabBtn-${t}`);
+        const content = document.getElementById(`tabContent-${t}`);
+        const isCurrent = t === activeTab;
+
+        if (btn) {
+          btn.classList.toggle('is-active', isCurrent);
+          btn.setAttribute('aria-selected', isCurrent ? 'true' : 'false');
+        }
+        if (content) {
+          content.classList.toggle('is-active', isCurrent);
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const modal = document.getElementById('legalModal');
+      if (modal) {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) closeLegalModal();
+        });
+      }
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeLegalModal();
+      });
+    });
   </script>
 </body>
 </html>
