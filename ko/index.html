@@ -118,7 +118,7 @@
 
     <!-- Category Pill Filters -->
     <div class="flex flex-wrap items-center justify-center gap-2 mt-5 text-xs font-bold text-slate-400">
-      <button class="cat-filter px-3 py-1.5 rounded-lg bg-emerald-600 text-white transition-colors cursor-pointer" data-category="all">전체보기 (21)</button>
+      <button class="cat-filter px-3 py-1.5 rounded-lg bg-emerald-600 text-white transition-colors cursor-pointer" data-category="all">전체보기 (22)</button>
       <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors cursor-pointer" data-category="featured">🔥 한국 특화</button>
       <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors cursor-pointer" data-category="finance">금융 &amp; 수치</button>
       <button class="cat-filter px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-slate-200 transition-colors cursor-pointer" data-category="developer">개발 &amp; 텍스트</button>
@@ -257,6 +257,16 @@
 
   <script>
     const TOOLS = [
+        {
+          id: "party-calc",
+          title: "총무 전용 초간단 모임·회비 정산기",
+          desc: "1·2차 차등 참석 정산부터 선회비 예치 후 환급·공금 이월 결산까지 10초 컷 계산. 카드 승인 문자 자동 추출 및 영수증 PNG 리포트 저장 지원.",
+          category: "featured",
+          path: "/party",
+          badge: "생활·총무",
+          highlight: true,
+          keywords: "모임 정산기 회비 정산 차등 정산 더치페이 총무 선회비 공금 이월 1차 2차 정산 영수증"
+        },
       // 2. 한국 특화 대표 툴 ('좌판' 제거 완료)
       {
         id: "market-viewer",
