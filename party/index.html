@@ -1,4 +1,4 @@
-<!-- index.html -->
+<!-- /party/index.html -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -281,17 +281,122 @@
     </article>
 
     <footer class="footer">
-      <nav class="footer-links" aria-label="사이트 안내 및 정책">
-        <a href="/about.html">서비스소개</a>
+      <nav class="footer-links" aria-label="서비스 안내 및 정책">
+        <button type="button" class="footer-link-btn" data-policy-tab="about">서비스소개</button>
         <span class="sep">|</span>
-        <a href="/contact.html">문의</a>
+        <button type="button" class="footer-link-btn" data-policy-tab="contact">문의</button>
         <span class="sep">|</span>
-        <a href="/privacy.html">개인정보처리방침</a>
+        <button type="button" class="footer-link-btn" data-policy-tab="privacy">개인정보처리방침</button>
         <span class="sep">|</span>
-        <a href="/terms.html">이용약관</a>
+        <button type="button" class="footer-link-btn" data-policy-tab="terms">이용약관</button>
       </nav>
-      <p>© ToolLab · 서버 저장 없는 100% 브라우저 연산 무료 유틸리티</p>
+      <p>© 2026 ToolLab.org · 서버 저장 없는 100% 브라우저 연산 무료 유틸리티</p>
     </footer>
+  </div>
+
+  <!-- 서비스 안내 및 정책 인페이지 탭 모달 -->
+  <div id="policyModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="policyModalTitle">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-shield">🛡️</span>
+          <h3 id="policyModalTitle">서비스 안내 및 정책</h3>
+        </div>
+        <button type="button" id="closePolicyModalBtn" class="modal-close" aria-label="닫기">✕</button>
+      </div>
+
+      <div class="modal-tabs" role="tablist">
+        <button type="button" class="modal-tab active" data-tab="about" role="tab">서비스소개</button>
+        <button type="button" class="modal-tab" data-tab="contact" role="tab">문의</button>
+        <button type="button" class="modal-tab" data-tab="privacy" role="tab">개인정보처리방침</button>
+        <button type="button" class="modal-tab" data-tab="terms" role="tab">이용약관</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- 탭 1: 서비스소개 -->
+        <div class="tab-panel active" data-panel="about">
+          <h4>ToolLab 총무 전용 모임·회비 정산기 소개</h4>
+          <p>
+            <strong>ToolLab.org</strong>는 회원가입이나 서버 전송 대기시간 없이 브라우저 메모리에서 즉시 동작하는 <strong>서버비 $0 기반의 초경량 웹 유틸리티 툴킷</strong>입니다.
+          </p>
+          <p>
+            총무 전용 모임·회비 정산기는 동창회, 동호회, 부서 회식에서 자주 발생하는 1·2·3차 인원 변동 차등 정산과 선회비 예치 후 환급·공금 이월 결산을 엑셀 없이 10초 만에 처리하고, 단톡방 공지문과 영수증형 리포트 이미지를 즉시 생성할 수 있도록 설계되었습니다.
+          </p>
+          <div class="policy-box">
+            <strong>핵심 개발 원칙</strong>
+            <ul>
+              <li><strong>Zero-Server-Cost:</strong> 일체의 서버 데이터베이스 없이 사용자 브라우저 상에서만 100% 독립 연산</li>
+              <li><strong>Zero-Barrier UX:</strong> 회원가입, 로그인, 개인정보 수집 없이 누구나 접속 즉시 무제한 사용</li>
+              <li><strong>Transparent Accounting:</strong> 차수별 1/N 누적 후 최종 1회 절사·반올림으로 회계 오차 최소화</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 탭 2: 문의 -->
+        <div class="tab-panel" data-panel="contact">
+          <h4>오류 제보 및 기능 개선 문의</h4>
+          <p>
+            정산기 사용 중 계산 예외 케이스 제보, 영수증 리포트 포맷 개선 제안, 또는 새로운 유틸리티 툴 아이디어가 있으시면 아래 공식 채널을 통해 언제든 의견을 남겨주세요.
+          </p>
+          <div class="policy-box">
+            <strong>공식 소통 및 피드백 채널</strong>
+            <ul>
+              <li><strong>툴랩 공식 커뮤니티:</strong> <a href="https://cafe.naver.com/f-e/cafes/31814740/menus/14" target="_blank" rel="noopener noreferrer">로드빌더 툴랩 네이버 카페 피드백 게시판 →</a></li>
+              <li><strong>운영자 이메일:</strong> contact@toollab.org</li>
+              <li><strong>운영 주체:</strong> ToolLab Independent Engineering Project (JN Company)</li>
+            </ul>
+          </div>
+          <p class="policy-note">※ 본 서비스는 무료로 제공되며, 남겨주신 실무 피드백은 정기 업데이트에 적극 반영됩니다.</p>
+        </div>
+
+        <!-- 탭 3: 개인정보처리방침 -->
+        <div class="tab-panel" data-panel="privacy">
+          <h4>개인정보처리방침 (Zero Data Storage 정책)</h4>
+          <p>
+            <strong>ToolLab.org</strong>는 이용자의 개인정보 보호를 최우선으로 하며, 별도의 회원가입 절차나 백엔드 데이터베이스를 운영하지 않습니다.
+          </p>
+          <div class="policy-box">
+            <strong>1. 개인정보 수집 및 서버 전송 없음</strong>
+            <ul>
+              <li>사용자가 입력하는 참석자 이름, 카드 승인 문자 내역, 결제 금액, 계좌번호 등 모든 데이터는 <strong>오직 사용자의 웹 브라우저 메모리 내부(Client-Side)에서만</strong> 일시적으로 연산됩니다.</li>
+              <li>입력된 데이터는 외부 서버로 전송되거나 저장되지 않으며, 브라우저 탭을 닫거나 새로고침하면 메모리에서 즉시 소멸됩니다.</li>
+            </ul>
+          </div>
+          <div class="policy-box">
+            <strong>2. 쿠키(Cookie) 및 방문 통계·광고 안내</strong>
+            <ul>
+              <li>서비스 품질 개선을 위해 개인을 식별하지 않는 익명화된 트래픽 통계(Cloudflare Web Analytics 등)가 활용될 수 있습니다.</li>
+              <li>무료 서비스 운영 유지를 위해 Google AdSense 등 제3자 광고 서비스가 게재될 수 있으며, 광고 사업자는 맞춤형 광고 제공을 위해 브라우저 쿠키를 사용할 수 있습니다. 이용자는 브라우저 설정을 통해 쿠키 저장을 거부할 수 있습니다.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 탭 4: 이용약관 -->
+        <div class="tab-panel" data-panel="terms">
+          <h4>서비스 이용약관</h4>
+          <p>
+            본 약관은 <strong>ToolLab.org</strong>가 제공하는 「총무 전용 모임·회비 정산기」 및 관련 웹 유틸리티 서비스의 이용 조건과 책임 범위를 규정합니다.
+          </p>
+          <div class="policy-box">
+            <strong>1. 서비스의 목적 및 무료 제공</strong>
+            <ul>
+              <li>본 도구는 모임 회비 정산 및 공지문·리포트 작성을 돕기 위한 무료 계산 보조 도구로, 별도의 이용료나 가입 절차 없이 누구나 자유롭게 사용할 수 있습니다.</li>
+            </ul>
+          </div>
+          <div class="policy-box">
+            <strong>2. 계산 결과의 확인 및 면책 조항</strong>
+            <ul>
+              <li>카드 승인 문자 자동 추출 기능은 문자 양식에 따라 상호명이나 금액이 일부 다르게 인식될 수 있으므로, 최종 공지 및 송금 전 사용자가 내역을 반드시 직접 확인해야 합니다.</li>
+              <li>본 서비스는 계산 편의를 위한 참고용 도구이며, 입력 오류나 절사·반올림 옵션 선택으로 인해 발생하는 금전적 차액 및 회원 간 정산 분쟁에 대해 운영자는 법적 책임을 지지 않습니다.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="confirmPolicyModalBtn" class="btn-primary">확인 및 닫기</button>
+      </div>
+    </div>
   </div>
 
   <script src="/party/calculator.js"></script>

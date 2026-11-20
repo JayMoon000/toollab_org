@@ -1,4 +1,4 @@
-/* style.css */
+/* /party/style.css */
 :root {
   --bg: #0b1120;
   --surface: #131c31;
@@ -532,6 +532,7 @@ button {
   color: var(--text-muted);
 }
 
+/* 푸터 및 인페이지 모달 트리거 버튼 */
 .footer {
   text-align: center;
   margin-top: 28px;
@@ -544,24 +545,184 @@ button {
 .footer-links {
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 8px;
 }
 
-.footer-links a {
+.footer-link-btn {
+  background: transparent;
   color: var(--text-muted);
-  text-decoration: none;
-  transition: color 0.15s;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 4px;
+  border-radius: 4px;
 }
 
-.footer-links a:hover {
+.footer-link-btn:hover {
   color: var(--accent);
   text-decoration: underline;
 }
 
 .footer-links .sep {
   color: var(--border);
+}
+
+/* 서비스 안내 및 정책 모달 (단일 다크모드 최적화) */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.78);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 1000;
+}
+
+.modal-box {
+  width: 100%;
+  max-width: 640px;
+  max-height: 86vh;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-title-wrap h3 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.modal-close {
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 16px;
+  padding: 4px 8px;
+}
+
+.modal-close:hover {
+  color: #fff;
+}
+
+.modal-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(11, 17, 32, 0.5);
+  overflow-x: auto;
+}
+
+.modal-tab {
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 12px 14px;
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+}
+
+.modal-tab:hover {
+  color: var(--text);
+}
+
+.modal-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+.tab-panel h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 10px;
+}
+
+.tab-panel p {
+  margin-bottom: 12px;
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+
+.policy-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+
+.policy-box strong {
+  display: block;
+  font-size: 13px;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.policy-box ul {
+  padding-left: 18px;
+}
+
+.policy-box li {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+}
+
+.policy-box a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.policy-note {
+  font-size: 12px !important;
+  color: var(--text-muted);
+}
+
+.modal-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(11, 17, 32, 0.4);
 }
 
 .hidden {

@@ -1,4 +1,4 @@
-// app.js
+// /party/app.js
 // [UI 상태 관리 및 이벤트 바인딩]
 
 const {
@@ -55,6 +55,14 @@ const copyNoticeBtn = document.getElementById("copyNoticeBtn");
 const downloadReceiptBtn = document.getElementById("downloadReceiptBtn");
 const exportToast = document.getElementById("exportToast");
 
+// 정책 안내 모달 요소
+const policyModal = document.getElementById("policyModal");
+const footerPolicyBtns = document.querySelectorAll(".footer-link-btn");
+const modalTabs = document.querySelectorAll(".modal-tab");
+const tabPanels = document.querySelectorAll(".tab-panel");
+const closePolicyModalBtn = document.getElementById("closePolicyModalBtn");
+const confirmPolicyModalBtn = document.getElementById("confirmPolicyModalBtn");
+
 function formatKRW(num) {
   return `${num.toLocaleString("ko-KR")}원`;
 }
@@ -88,6 +96,54 @@ function getBankInfo() {
     easyPayNote: easyPayNoteInput.value,
   };
 }
+
+// 정책 모달 제어 로직
+function openPolicyModal(tabKey) {
+  switchPolicyTab(tabKey || "about");
+  policyModal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closePolicyModal() {
+  policyModal.classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
+function switchPolicyTab(tabKey) {
+  modalTabs.forEach((tab) => {
+    tab.classList.toggle("active", tab.dataset.tab === tabKey);
+  });
+  tabPanels.forEach((panel) => {
+    panel.classList.toggle("active", panel.dataset.panel === tabKey);
+  });
+}
+
+footerPolicyBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    openPolicyModal(btn.dataset.policyTab);
+  });
+});
+
+modalTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    switchPolicyTab(tab.dataset.tab);
+  });
+});
+
+closePolicyModalBtn.addEventListener("click", closePolicyModal);
+confirmPolicyModalBtn.addEventListener("click", closePolicyModal);
+
+policyModal.addEventListener("click", (e) => {
+  if (e.target === policyModal) {
+    closePolicyModal();
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !policyModal.classList.contains("hidden")) {
+    closePolicyModal();
+  }
+});
 
 // 정산 모드 전환
 modeBtns.forEach((btn) => {
