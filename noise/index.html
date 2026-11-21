@@ -587,9 +587,9 @@
   <footer class="w-full max-w-2xl mx-auto px-4 pb-10 pt-2 no-print">
     <div class="border-t border-slate-800/90 pt-5 space-y-3 text-center">
       <nav aria-label="사이트 정책 및 안내" class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-slate-400">
-        <button type="button" onclick="openPolicyModal('about')" class="hover:text-emerald-400 transition cursor-pointer">서비스 소개</button>
+        <button type="button" onclick="openPolicyModal('about')" class="hover:text-emerald-400 transition cursor-pointer">서비스소개</button>
         <span class="text-slate-700">|</span>
-        <button type="button" onclick="openPolicyModal('contact')" class="hover:text-emerald-400 transition cursor-pointer">문의하기</button>
+        <button type="button" onclick="openPolicyModal('contact')" class="hover:text-emerald-400 transition cursor-pointer">문의</button>
         <span class="text-slate-700">|</span>
         <button type="button" onclick="openPolicyModal('privacy')" class="hover:text-emerald-400 transition cursor-pointer">개인정보처리방침</button>
         <span class="text-slate-700">|</span>
@@ -604,14 +604,26 @@
 
   <!-- ==================== 정책 및 안내 상세 모달 ==================== -->
   <div id="policyModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 no-print" role="dialog" aria-modal="true" aria-labelledby="policyModalTitle">
-    <div class="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-700 p-5 sm:p-6 space-y-4 shadow-2xl max-h-[82vh] flex flex-col">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 id="policyModalTitle" class="text-base font-bold text-slate-100">안내</h3>
-        <button type="button" onclick="closePolicyModal()" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs cursor-pointer" aria-label="닫기">
-          닫기 ✕
+    <div class="w-full max-w-xl rounded-2xl bg-slate-900 border border-slate-700 shadow-2xl max-h-[85vh] flex flex-col overflow-hidden">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+        <div class="flex items-center gap-2">
+          <span aria-hidden="true">🛡️</span>
+          <h3 id="policyModalTitle" class="text-base font-bold text-slate-100">서비스 안내 및 정책</h3>
+        </div>
+        <button type="button" onclick="closePolicyModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 text-sm cursor-pointer" aria-label="닫기">
+          ✕
         </button>
       </div>
-      <div id="policyModalBody" class="overflow-y-auto text-xs sm:text-[13px] text-slate-300 leading-relaxed space-y-2.5 pr-1">
+      <div class="flex gap-1 px-5 border-b border-slate-800 bg-slate-950/50 overflow-x-auto" role="tablist">
+        <button type="button" id="policyTab-about" onclick="openPolicyModal('about')" class="px-3.5 py-2.5 text-xs sm:text-sm font-semibold border-b-2 border-sky-400 text-sky-400 whitespace-nowrap cursor-pointer" role="tab">서비스소개</button>
+        <button type="button" id="policyTab-contact" onclick="openPolicyModal('contact')" class="px-3.5 py-2.5 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap cursor-pointer" role="tab">문의</button>
+        <button type="button" id="policyTab-privacy" onclick="openPolicyModal('privacy')" class="px-3.5 py-2.5 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap cursor-pointer" role="tab">개인정보처리방침</button>
+        <button type="button" id="policyTab-terms" onclick="openPolicyModal('terms')" class="px-3.5 py-2.5 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap cursor-pointer" role="tab">이용약관</button>
+      </div>
+      <div id="policyModalBody" class="p-5 overflow-y-auto text-xs sm:text-[13.5px] text-slate-300 leading-relaxed space-y-3">
+      </div>
+      <div class="px-5 py-3.5 border-t border-slate-800 bg-slate-950/40 flex justify-end">
+        <button type="button" onclick="closePolicyModal()" class="px-4 py-2 rounded-lg bg-sky-400 hover:bg-sky-500 text-slate-950 font-semibold text-xs sm:text-sm transition cursor-pointer">확인 및 닫기</button>
       </div>
     </div>
   </div>
@@ -620,35 +632,42 @@
     // ==================== 푸터 정책 모달 데이터 ====================
     const policyContents = {
       about: {
-        title: '서비스 소개',
+        title: '서비스소개',
         html: `
+          <h4 class="text-sm sm:text-base font-bold text-slate-100">ToolLab 층간소음 측정 &amp; 소명 리포트 생성기 소개</h4>
           <p><strong>층간소음 측정 &amp; 소명 리포트 생성기</strong>는 공동주택 거주자가 별도의 유료 앱을 설치하거나 회원가입을 거치지 않고도 스마트폰 웹 브라우저만으로 실내 소음도(dBA)를 객관적으로 기록하고, 관리사무소 및 분쟁조정위원회 제출용 <strong>A4 PDF 소명 리포트</strong>와 현장 녹음 파일을 즉시 발급받을 수 있도록 설계된 무료 마이크로 웹 유틸리티입니다.</p>
           <p>기존 모바일 기기의 통화용 음성 보정(잡음 억제·자동 이득 조절)으로 인해 저주파 충격음이 누락되는 한계를 개선하기 위해 Web Audio API의 원시 스트림 제어 기술을 적용했으며, 환경부·국토교통부 공동부령의 주·야간 법정 기준을 자동으로 대조합니다.</p>
         `
       },
       contact: {
-        title: '문의하기',
+        title: '문의',
         html: `
-          <p>서비스 이용 중 기능 개선 제안, 브라우저 호환성 제보, 또는 콘텐츠 제휴 관련 문의 사항이 있으시면 아래 채널을 통해 연락해 주시기 바랍니다.</p>
-          <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 space-y-1 text-slate-200">
-            <div>· 운영 주체: <strong>ToolLab (툴랩)</strong></div>
-            <div>· 공식 웹사이트: <strong>toollab.org</strong></div>
-            <div>· 이메일 문의: <strong>contact@toollab.org</strong></div>
+          <h4 class="text-sm sm:text-base font-bold text-slate-100">오류 제보 및 기능 개선 문의</h4>
+          <p>층간소음 측정기 사용 중 브라우저 호환성·오류 제보, 소명 리포트 포맷 개선 제안, 또는 새로운 유틸리티 툴 아이디어가 있으시면 아래 공식 채널을 통해 언제든 의견을 남겨주세요.</p>
+          <div class="rounded-xl bg-slate-950 border border-slate-800 p-3.5 space-y-1.5 text-slate-200">
+            <strong class="block text-sky-400 text-xs mb-1">공식 소통 및 피드백 채널</strong>
+            <ul class="list-disc pl-4 space-y-1.5 text-xs text-slate-400">
+              <li><strong class="text-slate-200">툴랩 공식 커뮤니티:</strong> <a href="https://cafe.naver.com/f-e/cafes/31814740/menus/15" target="_blank" rel="noopener noreferrer" class="text-sky-400 underline hover:text-sky-300 font-semibold">로드빌더 툴랩 'Toollab 수정 및 제안' 게시판 →</a></li>
+              <li><strong class="text-slate-200">운영자 이메일:</strong> contact@toollab.org</li>
+              <li><strong class="text-slate-200">운영 주체:</strong> ToolLab Independent Engineering Project (JN Company)</li>
+            </ul>
           </div>
-          <p class="text-slate-400">※ 본 서비스는 계측 도구 제공 목적이며, 개별 세대 간 층간소음 중재나 법률 상담은 한국환경공단 층간소음 이웃사이센터(1661-2642)를 이용해 주시기 바랍니다.</p>
+          <p class="text-xs text-slate-400">※ 본 서비스는 무료로 제공되며, 남겨주신 실무 피드백은 정기 업데이트에 적극 반영됩니다.</p>
         `
       },
       privacy: {
         title: '개인정보처리방침',
         html: `
+          <h4 class="text-sm sm:text-base font-bold text-slate-100">개인정보처리방침 (Zero Data Storage 정책)</h4>
           <p><strong>1. 개인정보 및 오디오 데이터의 비수집 원칙</strong><br />본 서비스는 회원가입 절차가 없으며, 마이크를 통해 입력되는 실시간 오디오 파형, 현장 녹음 파일, 데시벨 측정 결과, 그리고 리포트 출력용으로 입력하는 성명·주소지 등 어떠한 정보도 외부 서버로 전송하거나 데이터베이스에 저장하지 않습니다.</p>
           <p><strong>2. 100% 브라우저 로컬 메모리 처리</strong><br />모든 음성 분석과 PDF 렌더링 연산은 사용자 기기의 웹 브라우저 내부 메모리(Client-Side)에서만 일시적으로 수행되며, 브라우저 탭을 닫거나 새로고침하는 즉시 모든 데이터는 영구 삭제됩니다.</p>
           <p><strong>3. 마이크 권한 사용 및 자동 해제</strong><br />마이크 접근 권한은 오직 사용자가 측정 시작 버튼을 눌렀을 때만 활성화되며, 측정 종료 즉시 기기 연결이 해제되고 기본 통화 설정으로 원상복구됩니다.</p>
         `
       },
       terms: {
-        title: '이용약관 및 면책 조항',
+        title: '이용약관',
         html: `
+          <h4 class="text-sm sm:text-base font-bold text-slate-100">서비스 이용약관 및 면책 조항</h4>
           <p><strong>1. 목적 및 활용 범위</strong><br />본 웹 도구가 제공하는 데시벨(dBA) 수치와 A4 소명 리포트는 입주민의 자체 사실 확인, 관리사무소 민원 접수 및 층간소음 이웃사이센터 방문 계측 신청 시 기초 참고 자료로 활용하기 위한 것입니다.</p>
           <p><strong>2. 계측 오차 및 법적 효력에 대한 면책</strong><br />스마트폰 내장 마이크는 제조사 및 기종별 하드웨어 감도 편차가 존재하므로, 국가공인 형식승인 소음계와 일정 수준의 오차가 발생할 수 있습니다. 따라서 본 측정 결과만으로 법원 소송이나 손해배상 청구의 유일한 공인 감정서 효력을 보장하지 않으며, 운영자는 본 자료의 활용 결과에 대해 법적 책임을 지지 않습니다.</p>
         `
@@ -656,15 +675,25 @@
     };
 
     function openPolicyModal(type) {
-      const data = policyContents[type];
-      if (!data) return;
-      document.getElementById('policyModalTitle').textContent = data.title;
+      const tabKey = policyContents[type] ? type : 'about';
+      const data = policyContents[tabKey];
       document.getElementById('policyModalBody').innerHTML = data.html;
+      ['about', 'contact', 'privacy', 'terms'].forEach((k) => {
+        const btn = document.getElementById(`policyTab-${k}`);
+        if (!btn) return;
+        if (k === tabKey) {
+          btn.className = 'px-3.5 py-2.5 text-xs sm:text-sm font-semibold border-b-2 border-sky-400 text-sky-400 whitespace-nowrap cursor-pointer';
+        } else {
+          btn.className = 'px-3.5 py-2.5 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap cursor-pointer';
+        }
+      });
       document.getElementById('policyModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
     }
 
     function closePolicyModal() {
       document.getElementById('policyModal').classList.add('hidden');
+      document.body.style.overflow = '';
     }
 
     // ==================== 전역 상태 관리 ====================
@@ -1241,9 +1270,14 @@
         checkAudioDevices();
       });
 
-      // 모달 바깥 배경 클릭 닫기
+      // 모달 바깥 배경 클릭 및 ESC 키 닫기
       document.getElementById('policyModal').addEventListener('click', (e) => {
         if (e.target.id === 'policyModal') closePolicyModal();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !document.getElementById('policyModal').classList.contains('hidden')) {
+          closePolicyModal();
+        }
       });
     });
   </script>

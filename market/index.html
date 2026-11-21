@@ -295,19 +295,19 @@
       <!-- 정책 링크 4종 -->
       <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-slate-300">
         <button type="button" onclick="openLegalModal('about')" class="hover:text-sky-400 hover:underline transition-colors cursor-pointer">
-          About Us
+          서비스소개
         </button>
         <span class="text-slate-700">|</span>
         <button type="button" onclick="openLegalModal('contact')" class="hover:text-sky-400 hover:underline transition-colors cursor-pointer">
-          Contact
+          문의
         </button>
         <span class="text-slate-700">|</span>
         <button type="button" onclick="openLegalModal('privacy')" class="hover:text-sky-400 hover:underline transition-colors cursor-pointer">
-          Privacy Policy
+          개인정보처리방침
         </button>
         <span class="text-slate-700">|</span>
         <button type="button" onclick="openLegalModal('terms')" class="hover:text-sky-400 hover:underline transition-colors cursor-pointer">
-          Terms of Service
+          이용약관
         </button>
       </div>
 
@@ -347,16 +347,16 @@
         <!-- 4단 탭 버튼 -->
         <div class="flex gap-1 sm:gap-2" role="tablist" aria-label="안내 및 정책 탭">
           <button type="button" id="tabBtn-about" role="tab" aria-selected="true" onclick="switchLegalTab('about')" class="flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-semibold border-b-2 border-sky-400 text-sky-400 bg-slate-900 rounded-t-lg transition-colors cursor-pointer">
-            <span>About Us</span>
+            <span>서비스소개</span>
           </button>
           <button type="button" id="tabBtn-contact" role="tab" aria-selected="false" onclick="switchLegalTab('contact')" class="flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-colors cursor-pointer">
-            <span>Contact</span>
+            <span>문의</span>
           </button>
           <button type="button" id="tabBtn-privacy" role="tab" aria-selected="false" onclick="switchLegalTab('privacy')" class="flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-colors cursor-pointer">
-            <span>Privacy</span>
+            <span>개인정보처리방침</span>
           </button>
           <button type="button" id="tabBtn-terms" role="tab" aria-selected="false" onclick="switchLegalTab('terms')" class="flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-colors cursor-pointer">
-            <span>Terms</span>
+            <span>이용약관</span>
           </button>
         </div>
       </div>
@@ -385,23 +385,19 @@
 
         <!-- Contact -->
         <div id="tabContent-contact" class="hidden space-y-3" role="tabpanel">
-          <h3 class="text-base font-bold text-slate-100">문의 및 데이터 제보 (Contact Us)</h3>
+          <h3 class="text-base font-bold text-slate-100">오류 제보 및 기능 개선 문의</h3>
           <p>
-            전통 5일장의 개장 주기 변경, 신규 장터 제보, 주차 시설 정보 업데이트 등 여러분의 제보로 데이터가 더욱 풍성해집니다.
+            전국 5일장 검색기 사용 중 장날 주기·편의시설 데이터 오류 제보, 기능 개선 제안, 또는 새로운 유틸리티 툴 아이디어가 있으시면 아래 공식 채널을 통해 언제든 의견을 남겨주세요.
           </p>
-          <div class="space-y-2 mt-3">
-            <div class="p-3 bg-slate-800/70 rounded-xl border border-slate-700/80">
-              <span class="block text-xs font-semibold text-slate-400 uppercase">공식 문의 이메일</span>
-              <a href="mailto:contact@toollab.org" class="text-sky-400 font-bold hover:underline">
-                contact@toollab.org
-              </a>
-            </div>
-            <ul class="text-xs text-slate-400 space-y-1 pl-1">
-              <li>• 전국 5일장 장날 주기(예: 4일·9일장 등) 변동 제보</li>
-              <li>• 신설 전통시장 및 주차장/화장실 편의시설 정보 수정 요청</li>
-              <li>• 지역 문화 및 오일장 콘텐츠 협업 문의</li>
+          <div class="p-3.5 bg-slate-950/80 rounded-xl border border-slate-800 space-y-2">
+            <strong class="block text-xs font-bold text-sky-400">공식 소통 및 피드백 채널</strong>
+            <ul class="list-disc pl-4 text-xs text-slate-400 space-y-1.5">
+              <li><strong class="text-slate-200">툴랩 공식 커뮤니티:</strong> <a href="https://cafe.naver.com/f-e/cafes/31814740/menus/15" target="_blank" rel="noopener noreferrer" class="text-sky-400 underline hover:text-sky-300 font-semibold">로드빌더 툴랩 'Toollab 수정 및 제안' 게시판 →</a></li>
+              <li><strong class="text-slate-200">운영자 이메일:</strong> contact@toollab.org</li>
+              <li><strong class="text-slate-200">운영 주체:</strong> ToolLab Independent Engineering Project (JN Company)</li>
             </ul>
           </div>
+          <p class="text-xs text-slate-400">※ 본 서비스는 무료로 제공되며, 남겨주신 실무 피드백은 정기 업데이트에 적극 반영됩니다.</p>
         </div>
 
         <!-- Privacy -->
