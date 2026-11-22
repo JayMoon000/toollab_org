@@ -118,6 +118,10 @@
           <button id="retry-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-colors shadow-sm">
             Try Again
           </button>
+          <a href="/arcade" class="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-amber-300 hover:text-amber-200 transition-colors">
+            <span aria-hidden="true">🎮</span>
+            <span>툴랩 아케이드에서 5종 퍼즐 즐기기 &rarr;</span>
+          </a>
         </div>
       </div>
 
@@ -127,6 +131,44 @@
       </div>
 
     </div>
+
+    <!-- ToolLab Arcade Recommendation Card -->
+    <section class="mt-6" aria-label="추천 게임 아케이드">
+      <a href="/arcade" class="group block p-5 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/30 border border-amber-500/45 hover:border-amber-400 shadow-lg hover:shadow-amber-950/40 transition-all">
+        <div class="flex items-center justify-between gap-2 mb-2.5">
+          <div class="flex items-center gap-1.5">
+            <span class="inline-flex items-center gap-1 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded bg-amber-950/70 text-amber-300 border border-amber-700/80">
+              <span aria-hidden="true">🎮</span>
+              <span>GAME · 무설치</span>
+            </span>
+            <span class="text-[10px] font-extrabold tracking-wider px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/80">NEW</span>
+          </div>
+          <svg class="w-4 h-4 text-slate-500 group-hover:text-amber-300 transition-all transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </div>
+
+        <h2 class="text-base font-extrabold text-slate-100 group-hover:text-amber-300 transition-colors">
+          툴랩 아케이드 (ToolLab Arcade)
+        </h2>
+        <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">
+          2048이 재미있으셨나요? 애로우 아웃·개도쿠 등 5가지 무료 퍼즐 게임이 모인 <strong class="text-amber-300 font-bold">툴랩 아케이드</strong>도 즐겨보세요!
+        </p>
+
+        <div class="flex flex-wrap gap-1.5 mt-3">
+          <span class="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-950/80 border border-slate-800 text-slate-400">애로우 아웃</span>
+          <span class="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-950/80 border border-slate-800 text-slate-400">네모로직</span>
+          <span class="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-950/80 border border-slate-800 text-slate-400">워터 소트</span>
+          <span class="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-950/80 border border-slate-800 text-slate-400">블록 9×9</span>
+          <span class="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-950/80 border border-slate-800 text-slate-400">개도쿠</span>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-800/70 flex items-center justify-between text-xs font-bold">
+          <span class="text-slate-400 group-hover:text-slate-200 transition-colors">무설치 브라우저 퍼즐 컬렉션</span>
+          <span class="text-amber-400 group-hover:text-amber-300 transition-colors">아케이드 입장 &rarr;</span>
+        </div>
+      </a>
+    </section>
 
     <!-- Strategy & Reference Guide -->
     <article class="mt-8 space-y-6 text-xs md:text-sm text-slate-400 leading-relaxed">
@@ -324,6 +366,5 @@
 
     window.addEventListener('DOMContentLoaded', initGame);
   </script>
-  <script src="../../js/related-tools-ko.js"></script>
 </body>
 </html>

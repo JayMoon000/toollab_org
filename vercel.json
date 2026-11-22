@@ -9,6 +9,14 @@
     {
       "source": "/rest-area",
       "destination": "/rest-area/index.html"
+    },
+    {
+      "source": "/arcade",
+      "destination": "/arcade/index.html"
+    },
+    {
+      "source": "/arcade/games/(.*)",
+      "destination": "/arcade/index.html"
     }
   ],
   "headers": [
