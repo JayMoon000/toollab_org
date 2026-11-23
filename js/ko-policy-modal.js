@@ -11,6 +11,7 @@
   const MODAL_ID = 'toollab-ko-policy-modal';
   const STYLE_ID = 'toollab-ko-policy-modal-styles';
   const CAFE_URL = 'https://cafe.naver.com/f-e/cafes/31814740/menus/15';
+  const ETF_CAFE_URL = 'https://cafe.naver.com/f-e/cafes/31814740/menus/14';
   const VALID_TABS = ['about', 'contact', 'privacy', 'terms'];
 
   const currentScript = document.currentScript;
@@ -297,19 +298,36 @@
     }
   };
 
-  const UNIFIED_CONTACT_HTML = `
+  function getContactBoardInfo() {
+    const pathname = (typeof window !== 'undefined' && window.location && window.location.pathname) || '';
+    if (pathname.startsWith('/etf')) {
+      return {
+        url: ETF_CAFE_URL,
+        label: "로드빌더 툴랩 'ETF 시뮬레이터 수정 및 제안' 게시판 →"
+      };
+    }
+    return {
+      url: CAFE_URL,
+      label: "로드빌더 툴랩 'Toollab 수정 및 제안' 게시판 →"
+    };
+  }
+
+  function renderContactHtml() {
+    const board = getContactBoardInfo();
+    return `
     <h4>오류 제보 및 기능 개선 문의</h4>
     <p>ToolLab 유틸리티 사용 중 오류 제보, 기존 도구 기능 개선 제안, 또는 새로운 유틸리티 툴 아이디어가 있으시면 아래 공식 채널을 통해 언제든 의견을 남겨주세요.</p>
     <div class="tlkm-box">
       <strong>공식 소통 및 피드백 채널</strong>
       <ul>
-        <li><strong>툴랩 공식 커뮤니티:</strong> <a href="${CAFE_URL}" target="_blank" rel="noopener noreferrer">로드빌더 툴랩 'Toollab 수정 및 제안' 게시판 →</a></li>
+        <li><strong>툴랩 공식 커뮤니티:</strong> <a href="${board.url}" target="_blank" rel="noopener noreferrer">${board.label}</a></li>
         <li><strong>운영자 이메일:</strong> <a href="mailto:contact@toollab.org">contact@toollab.org</a></li>
         <li><strong>운영 주체:</strong> ToolLab Independent Engineering Project (JN Company)</li>
       </ul>
     </div>
     <p class="tlkm-note">※ 본 서비스는 무료로 제공되며, 남겨주신 실무 피드백은 정기 업데이트에 적극 반영됩니다.</p>
   `;
+  }
 
   function detectServiceId() {
     if (currentScript) {
@@ -558,7 +576,7 @@
         </div>
         <div class="tlkm-body">
           <div class="tlkm-panel is-active" data-tlkm-panel="about" role="tabpanel">${svc.about}</div>
-          <div class="tlkm-panel" data-tlkm-panel="contact" role="tabpanel">${UNIFIED_CONTACT_HTML}</div>
+          <div class="tlkm-panel" data-tlkm-panel="contact" role="tabpanel">${renderContactHtml()}</div>
           <div class="tlkm-panel" data-tlkm-panel="privacy" role="tabpanel">${svc.privacy}</div>
           <div class="tlkm-panel" data-tlkm-panel="terms" role="tabpanel">${svc.terms}</div>
         </div>
