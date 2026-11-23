@@ -7,6 +7,7 @@
   <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="../js/analytics.js"></script>
+  <link rel="stylesheet" href="/css/global-bottom-ad-banner.css" />
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-600 selection:text-white">
   <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
@@ -42,12 +43,17 @@
     <div class="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
       <p>© 2026 ToolLab.org. All rights reserved.</p>
       <div class="flex items-center gap-3">
-        <a href="./about.html" class="hover:text-emerald-400">소개</a>·
-        <a href="./contact.html" class="hover:text-emerald-400">문의</a>·
-        <a href="./privacy.html" class="hover:text-emerald-400">개인정보처리방침</a>·
-        <a href="./terms.html" class="hover:text-emerald-400">이용약관</a>
+        <button type="button" class="hover:text-emerald-400 transition cursor-pointer" data-policy-tab="about">서비스소개</button>
+        <span class="text-slate-700">|</span>
+        <button type="button" class="hover:text-emerald-400 transition cursor-pointer" data-policy-tab="contact">문의</button>
+        <span class="text-slate-700">|</span>
+        <button type="button" class="hover:text-emerald-400 transition cursor-pointer" data-policy-tab="privacy">개인정보처리방침</button>
+        <span class="text-slate-700">|</span>
+        <button type="button" class="hover:text-emerald-400 transition cursor-pointer" data-policy-tab="terms">이용약관</button>
       </div>
     </div>
   </footer>
+  <script src="/js/ko-policy-modal.js" defer></script>
+  <script src="/js/global-bottom-ad-banner.js" defer></script>
 </body>
 </html>

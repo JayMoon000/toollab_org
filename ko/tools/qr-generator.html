@@ -285,13 +285,13 @@
   <footer class="w-full max-w-4xl mx-auto px-4 py-8 mt-12 border-t border-slate-800/80 text-xs text-slate-500">
     <div class="space-y-4 text-center">
       <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-medium text-slate-400">
-        <a href="/ko/about.html" class="hover:text-emerald-400 transition">소개</a>
-        <span class="text-slate-800">·</span>
-        <a href="/ko/contact.html" class="hover:text-emerald-400 transition">문의</a>
-        <span class="text-slate-800">·</span>
-        <a href="/ko/privacy.html" class="hover:text-emerald-400 transition">개인정보처리방침</a>
-        <span class="text-slate-800">·</span>
-        <a href="/ko/terms.html" class="hover:text-emerald-400 transition">이용약관</a>
+        <button type="button" class="hover:text-emerald-400 transition cursor-pointer" data-policy-tab="about">서비스소개</button>
+        <span class="text-slate-700">|</span>
+        <button type="button" class="hover:text-emerald-400 transition cursor-pointer" data-policy-tab="contact">문의</button>
+        <span class="text-slate-700">|</span>
+        <button type="button" class="hover:text-emerald-400 transition cursor-pointer" data-policy-tab="privacy">개인정보처리방침</button>
+        <span class="text-slate-700">|</span>
+        <button type="button" class="hover:text-emerald-400 transition cursor-pointer" data-policy-tab="terms">이용약관</button>
       </nav>
       <div class="space-y-1">
         <p class="font-semibold text-slate-400">ToolLab.org · Instant Micro Toolkit</p>
@@ -472,6 +472,7 @@
     window.addEventListener("load", renderQr);
   </script>
   <script src="../../js/related-tools-ko.js"></script>
+  <script src="/js/ko-policy-modal.js" defer></script>
   <script src="/js/global-bottom-ad-banner.js" defer></script>
 </body>
 </html>

@@ -241,13 +241,13 @@
     <div class="space-y-4 text-center">
       <!-- 1행: 가로로 넉넉하게 펼쳐진 정책 링크 -->
       <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-medium text-slate-400">
-        <a href="/ko/about.html" class="hover:text-emerald-400 transition">소개</a>
-        <span class="text-slate-800">·</span>
-        <a href="/ko/contact.html" class="hover:text-emerald-400 transition">문의</a>
-        <span class="text-slate-800">·</span>
-        <a href="/ko/privacy.html" class="hover:text-emerald-400 transition">개인정보처리방침</a>
-        <span class="text-slate-800">·</span>
-        <a href="/ko/terms.html" class="hover:text-emerald-400 transition">이용약관</a>
+        <button type="button" class="hover:text-emerald-400 transition cursor-pointer" data-policy-tab="about">서비스소개</button>
+        <span class="text-slate-700">|</span>
+        <button type="button" class="hover:text-emerald-400 transition cursor-pointer" data-policy-tab="contact">문의</button>
+        <span class="text-slate-700">|</span>
+        <button type="button" class="hover:text-emerald-400 transition cursor-pointer" data-policy-tab="privacy">개인정보처리방침</button>
+        <span class="text-slate-700">|</span>
+        <button type="button" class="hover:text-emerald-400 transition cursor-pointer" data-policy-tab="terms">이용약관</button>
       </nav>
       <!-- 2행: 서비스 정체성 안내 -->
       <div class="space-y-1">
@@ -352,6 +352,7 @@
 
     window.addEventListener('DOMContentLoaded', initGame);
   </script>
+  <script src="/js/ko-policy-modal.js" defer></script>
   <script src="/js/global-bottom-ad-banner.js" defer></script>
 </body>
 </html>

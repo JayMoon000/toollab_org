@@ -170,9 +170,32 @@
       padding-bottom: 48px;
     }
 
+    /* Top Hub Navigation (matches /party) */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px 0;
+      font-size: 12px;
+    }
+
+    .nav-link {
+      color: var(--accent-sky);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .nav-link:hover {
+      text-decoration: underline;
+    }
+
+    .nav-tag {
+      color: var(--text-muted);
+    }
+
     /* Brand Header */
     .brand-bar {
-      padding: 14px 16px 10px;
+      padding: 10px 16px 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -1500,6 +1523,11 @@
 </head>
 <body>
   <div class="app-shell">
+    <nav class="top-nav no-print" aria-label="허브 이동">
+      <a href="/ko" class="nav-link">← ToolLab 한국어 유틸리티 허브</a>
+      <span class="nav-tag">100% 브라우저 연산 · 데이터 저장 없음</span>
+    </nav>
+
     <!-- Brand Header -->
     <header class="brand-bar">
       <div class="brand-title-wrap">
@@ -1797,123 +1825,6 @@
         </p>
       </div>
     </footer>
-  </div>
-
-  <!-- 법적 정책 및 안내 통합 모달 -->
-  <div id="legalModal" class="legal-modal-backdrop no-print">
-    <div class="legal-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="legalModalTitle">
-      <!-- 모달 헤더 & 4대 탭 바 -->
-      <div class="legal-modal-header">
-        <div class="legal-modal-title-row">
-          <h2 id="legalModalTitle" class="legal-modal-title">
-            <span aria-hidden="true">🛡️</span>
-            <span>서비스 안내 및 정책</span>
-          </h2>
-          <button type="button" class="legal-modal-close" onclick="closeLegalModal()" aria-label="닫기">
-            ✕
-          </button>
-        </div>
-
-        <!-- 4단 탭 버튼 -->
-        <div class="legal-modal-tabs" role="tablist" aria-label="안내 및 정책 탭">
-          <button type="button" id="tabBtn-about" class="legal-tab-btn is-active" role="tab" aria-selected="true" onclick="switchLegalTab('about')">
-            <span>서비스소개</span>
-          </button>
-          <button type="button" id="tabBtn-contact" class="legal-tab-btn" role="tab" aria-selected="false" onclick="switchLegalTab('contact')">
-            <span>문의</span>
-          </button>
-          <button type="button" id="tabBtn-privacy" class="legal-tab-btn" role="tab" aria-selected="false" onclick="switchLegalTab('privacy')">
-            <span>개인정보처리방침</span>
-          </button>
-          <button type="button" id="tabBtn-terms" class="legal-tab-btn" role="tab" aria-selected="false" onclick="switchLegalTab('terms')">
-            <span>이용약관</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- 모달 본문 영역 (탭 내용) -->
-      <div class="legal-modal-body">
-        <!-- About Us -->
-        <div id="tabContent-about" class="legal-tab-panel is-active" role="tabpanel">
-          <h3>ToolLab 고속도로 휴게소 네트워크 뷰어 소개</h3>
-          <p>
-            ToolLab 고속도로 휴게소 네트워크 뷰어는 복잡한 앱 설치나 회원가입 없이,
-            <strong>한국도로공사 표준데이터 기반의 전국 고속도로 노선별 선형 휴게소 검색 툴</strong>입니다.
-          </p>
-          <p>
-            경부선·영동선·중부내륙선·서해안선 등 전국 주요 고속도로 노선을 상·하행 주행 방향에 맞춘 선형 파이프라인으로 한눈에 정렬하고,
-            화물차라운지(24시), ex-food·수유실, 전기차 급속·수소충전소, 반려견 놀이터 등 핵심 편의시설 필터와 카카오내비·네이버지도 원클릭 길찾기를 제공합니다.
-          </p>
-          <div class="legal-card-box">
-            <p class="legal-card-heading">서비스 핵심 원칙</p>
-            <p>• Zero-Server-Cost: 별도 서버 DB나 추적 없이 브라우저 메모리(Client-Side)에서 100% 독립 연산</p>
-            <p>• Zero-Barrier UX: 로그인이나 앱 설치 없이 주행 중·출발 전 3초 안에 노선·방향별 휴게소 조회</p>
-            <p>• Verified Highway Data: 한국도로공사 표준데이터 기반 이정표(kmPost) 및 양방향 공용 거점 휴게소 반영</p>
-          </div>
-        </div>
-
-        <!-- Contact -->
-        <div id="tabContent-contact" class="legal-tab-panel" role="tabpanel">
-          <h3>오류 제보 및 기능 개선 문의</h3>
-          <p>
-            고속도로 휴게소 검색기 사용 중 데이터 오류 제보, 편의시설 정보 업데이트 제안, 또는 새로운 유틸리티 툴 아이디어가 있으시면 아래 공식 채널을 통해 언제든 의견을 남겨주세요.
-          </p>
-          <div class="legal-card-box">
-            <p class="legal-card-heading" style="color: var(--accent-sky);">공식 소통 및 피드백 채널</p>
-            <ul class="legal-bullet-list" style="padding-left: 18px; list-style: disc; color: var(--text-muted);">
-              <li><strong>툴랩 공식 커뮤니티:</strong> <a href="https://cafe.naver.com/f-e/cafes/31814740/menus/15" target="_blank" rel="noopener noreferrer" class="legal-email-link" style="text-decoration: underline;">로드빌더 툴랩 'Toollab 수정 및 제안' 게시판 →</a></li>
-              <li><strong>운영자 이메일:</strong> contact@toollab.org</li>
-              <li><strong>운영 주체:</strong> ToolLab Independent Engineering Project (JN Company)</li>
-            </ul>
-          </div>
-          <p style="font-size: 12px; color: var(--text-muted);">※ 본 서비스는 무료로 제공되며, 남겨주신 실무 피드백은 정기 업데이트에 적극 반영됩니다.</p>
-        </div>
-
-        <!-- Privacy -->
-        <div id="tabContent-privacy" class="legal-tab-panel" role="tabpanel">
-          <h3>개인정보처리방침 (Privacy Policy)</h3>
-          <p>
-            ToolLab은 이용자의 위치정보 및 개인정보를 소중하게 보호하며, 불필요한 일체의 개인정보를 수집하거나 저장하지 않습니다.
-          </p>
-          <div class="legal-subtext">
-            <h4>1. 개인 위치정보(GPS) 미수집 원칙</h4>
-            <p>
-              본 서비스의 ‘내 위치 거리순’ 기능에서 참조하는 GPS 좌표는 사용자의 브라우저 내부 JavaScript(Haversine 거리 계산 및 도로 굴곡 보정) 연산에만 즉시 사용되며, 외부 서버로 전송되거나 데이터베이스에 저장되지 않습니다.
-            </p>
-            <h4>2. 웹 분석 및 광고 게재 쿠키</h4>
-            <p>
-              서비스 안정성 관리와 호스팅 운영을 위해 익명화된 트래픽 통계 도구(Cloudflare Web Analytics) 및 Google AdSense 광고 모듈이 사용될 수 있으며, 사용자는 브라우저 설정을 통해 쿠키 저장을 언제든 거부할 수 있습니다.
-            </p>
-          </div>
-        </div>
-
-        <!-- Terms -->
-        <div id="tabContent-terms" class="legal-tab-panel" role="tabpanel">
-          <h3>이용약관 및 유의사항 (Terms of Service)</h3>
-          <div class="legal-subtext">
-            <h4>1. 데이터 제공의 한계 및 면책 조항</h4>
-            <p>
-              본 서비스에서 제공하는 휴게소 위치, 주행 거리 및 편의시설 정보는 한국도로공사 공공데이터에 기반한 참고용 정보입니다. 휴게소 리모델링, 매장 영업시간 변경, 기상 악화, 도로 통제 등에 따라 실제 현장 운영 현황과 차이가 발생할 수 있으며, 서비스 이용으로 인한 직·간접적 손해에 대해 법적 책임을 지지 않습니다.
-            </p>
-            <h4>2. 외부 링크(내비게이션·지도 서비스) 연결</h4>
-            <p>
-              본 웹사이트에 포함된 카카오내비, 네이버지도 등의 외부 길찾기 링크는 이용자의 편의를 돕기 위한 기능이며, 해당 외부 플랫폼의 경로 안내 결과 및 운영 정책에 대해서는 관여하지 않습니다.
-            </p>
-            <h4>3. 저작권</h4>
-            <p>
-              본 서비스의 웹 UI/UX 디자인, 노선 필터링 및 거리 계산 로직, 자체 콘텐츠에 대한 저작권은 ToolLab에 있습니다.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- 모달 푸터 닫기 버튼 -->
-      <div class="legal-modal-footer">
-        <button type="button" class="legal-modal-confirm-btn" onclick="closeLegalModal()">
-          확인 및 닫기
-        </button>
-      </div>
-    </div>
   </div>
 
   <!-- Toast Notification -->
@@ -2405,56 +2316,7 @@
 
     init();
   </script>
-
-  <script>
-    // 푸터 법적 정책 및 안내 통합 모달 제어 (스크롤 락 및 ESC 키 지원)
-    function openLegalModal(tabName) {
-      const modal = document.getElementById('legalModal');
-      if (!modal) return;
-      modal.classList.add('is-open');
-      switchLegalTab(tabName || 'about');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeLegalModal() {
-      const modal = document.getElementById('legalModal');
-      if (!modal) return;
-      modal.classList.remove('is-open');
-      document.body.style.overflow = '';
-    }
-
-    function switchLegalTab(tabKey) {
-      const tabs = ['about', 'contact', 'privacy', 'terms'];
-      const activeTab = tabs.includes(tabKey) ? tabKey : 'about';
-
-      tabs.forEach((t) => {
-        const btn = document.getElementById(`tabBtn-${t}`);
-        const content = document.getElementById(`tabContent-${t}`);
-        const isCurrent = t === activeTab;
-
-        if (btn) {
-          btn.classList.toggle('is-active', isCurrent);
-          btn.setAttribute('aria-selected', isCurrent ? 'true' : 'false');
-        }
-        if (content) {
-          content.classList.toggle('is-active', isCurrent);
-        }
-      });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const modal = document.getElementById('legalModal');
-      if (modal) {
-        modal.addEventListener('click', (e) => {
-          if (e.target === modal) closeLegalModal();
-        });
-      }
-
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeLegalModal();
-      });
-    });
-  </script>
+  <script src="/js/ko-policy-modal.js" data-service-id="rest-area" defer></script>
   <script src="/js/global-bottom-ad-banner.js" defer></script>
 </body>
 </html>
