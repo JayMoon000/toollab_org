@@ -1,0 +1,68 @@
+/* ToolLab Global Bottom Ad Banner Styles
+ * Path: /css/global-bottom-ad-banner.css
+ * Excludes /arcade (body.has-global-bottom-ad is never added on /arcade*)
+ */
+
+ins.adsbygoogle[data-ad-status="unfilled"] {
+  display: none !important;
+}
+
+.global-bottom-ad-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  background: rgba(9, 13, 22, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(51, 65, 85, 0.72);
+  box-shadow: 0 -4px 16px rgba(2, 6, 23, 0.45);
+  padding: 4px 0 calc(4px + env(safe-area-inset-bottom, 0px));
+}
+
+.global-bottom-ad-banner__inner {
+  width: 100%;
+  display: block;
+  text-align: center;
+  line-height: 0;
+  min-height: 50px;
+  max-height: 56px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.global-bottom-ad-banner__ins {
+  display: inline-block;
+  width: 320px;
+  height: 50px;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.global-bottom-ad-banner:has(ins.adsbygoogle[data-ad-status="unfilled"]),
+.global-bottom-ad-banner.is-unfilled {
+  display: none !important;
+}
+
+body.has-global-bottom-ad {
+  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+body.has-global-bottom-ad .teb-toast,
+body.has-global-bottom-ad .toast-banner {
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+@media print {
+  .global-bottom-ad-banner {
+    display: none !important;
+  }
+
+  body.has-global-bottom-ad {
+    padding-bottom: 0 !important;
+  }
+}
