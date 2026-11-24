@@ -1,4 +1,4 @@
-const CACHE_NAME = 'toollab-arcade-v1';
+const CACHE_NAME = 'toollab-arcade-v2';
 const APP_SHELL_URLS = [
   '/arcade',
   '/arcade/manifest.webmanifest',
