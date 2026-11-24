@@ -4,6 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="휴게소 뷰어" />
+  <link rel="manifest" href="/rest-area/manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+  <script>
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      window.__toollabDeferredInstallPrompt = e;
+    });
+  </script>
   <title>고속도로 휴게소 네트워크 뷰어 | 노선·방향별 실시간 시설·거리 조회</title>
   <meta
     name="description"
@@ -222,6 +236,15 @@
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--text-primary);
+    }
+
+    .brand-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 6px;
+      flex-shrink: 0;
     }
 
     .brand-pill {
@@ -1534,7 +1557,10 @@
         <span class="brand-kicker">toollab.org / rest-area</span>
         <h1 class="brand-title">고속도로 휴게소 네트워크 뷰어</h1>
       </div>
-      <span class="brand-pill">100% 로컬 연산</span>
+      <div class="brand-actions">
+        <span class="brand-pill">100% 로컬 연산</span>
+        <span data-pwa-install-slot></span>
+      </div>
     </header>
 
     <!-- Sticky Control Panel -->
@@ -2318,5 +2344,6 @@
   </script>
   <script src="/js/ko-policy-modal.js" data-service-id="rest-area" defer></script>
   <script src="/js/global-bottom-ad-banner.js" defer></script>
+  <script src="/js/pwa-install-button.js" data-app-name="고속도로 휴게소 뷰어" data-sw-scope="/rest-area" defer></script>
 </body>
 </html>

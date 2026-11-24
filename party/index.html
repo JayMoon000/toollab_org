@@ -4,6 +4,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="모임 정산기" />
+  <link rel="manifest" href="/party/manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+  <script>
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      window.__toollabDeferredInstallPrompt = e;
+    });
+  </script>
   <title>총무 전용 초간단 모임·회비 정산기 (1·2차 차등 정산 및 선회비 결산) | ToolLab</title>
   <meta name="description" content="동창회, 동호회, 부서 회식 총무 전용 무료 웹 정산기. 1·2차 차등 참석 정산, 선회비 예치 후 환급·공금 이월 결산, 카드 승인 문자 자동 추출, 카톡 공지 복사 및 영수증형 리포트 PNG 저장을 지원합니다." />
   <meta name="keywords" content="모임 정산기, 회비 정산, 차등 정산, 더치페이 계산기, 총무 정산, 선회비 정산, 공금 이월, 1차 2차 정산" />
@@ -78,7 +93,10 @@
   <div class="container">
     <nav class="top-nav">
       <a href="/ko" class="nav-link">← ToolLab 한국어 유틸리티 허브</a>
-      <span class="nav-tag">100% 브라우저 연산 · 데이터 저장 없음</span>
+      <div class="top-nav-right">
+        <span class="nav-tag">100% 브라우저 연산 · 데이터 저장 없음</span>
+        <span data-pwa-install-slot></span>
+      </div>
     </nav>
 
     <header class="header">
@@ -305,5 +323,6 @@
   <script src="/party/app.js"></script>
   <script src="/js/ko-policy-modal.js" data-service-id="party" defer></script>
   <script src="/js/global-bottom-ad-banner.js" defer></script>
+  <script src="/js/pwa-install-button.js" data-app-name="모임·회비 정산기" data-sw-scope="/party" defer></script>
 </body>
 </html>

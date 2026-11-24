@@ -1,0 +1,41 @@
+{
+  "id": "/market",
+  "name": "전국 5일장 지도 & 장날 뷰어 | ToolLab",
+  "short_name": "전국 5일장",
+  "description": "오늘 내 주변에서 열리는 전국 411개 전통 5일장 주기, 주차장, 편의시설 및 길찾기를 지도에서 1초 만에 확인",
+  "lang": "ko",
+  "dir": "ltr",
+  "start_url": "/market",
+  "scope": "/market",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "categories": ["lifestyle", "navigation", "utilities"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

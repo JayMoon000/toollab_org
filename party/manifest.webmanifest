@@ -1,0 +1,41 @@
+{
+  "id": "/party",
+  "name": "총무 전용 모임·회비 정산기 | ToolLab",
+  "short_name": "모임 정산기",
+  "description": "1·2차 차등 참석 정산, 선회비 예치·환급·공금 이월 결산 및 카톡 공지·영수증 PNG 저장을 지원하는 무료 정산기",
+  "lang": "ko",
+  "dir": "ltr",
+  "start_url": "/party",
+  "scope": "/party",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "categories": ["finance", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

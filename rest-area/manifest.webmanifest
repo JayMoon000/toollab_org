@@ -1,0 +1,41 @@
+{
+  "id": "/rest-area",
+  "name": "고속도로 휴게소 네트워크 뷰어 | ToolLab",
+  "short_name": "휴게소 뷰어",
+  "description": "전국 고속도로 노선·상하행 방향별 휴게소, 24시 화물차라운지·수유실·전기/수소차 충전소 필터 및 원클릭 길찾기",
+  "lang": "ko",
+  "dir": "ltr",
+  "start_url": "/rest-area",
+  "scope": "/rest-area",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "categories": ["travel", "navigation", "utilities"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

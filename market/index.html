@@ -3,6 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="전국 5일장">
+  <link rel="manifest" href="/market/manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+  <script>
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      window.__toollabDeferredInstallPrompt = e;
+    });
+  </script>
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4PH5QD7Y4M"></script>
@@ -150,11 +165,15 @@
   <div class="sticky top-0 z-30 bg-slate-900 shadow-lg">
     <!-- 헤더 -->
     <header class="border-b border-slate-800 px-4 py-3 flex flex-wrap justify-between items-center gap-2">
-      <div class="flex items-center gap-3">
-		<a href="/ko" class="text-xs text-slate-400 hover:text-sky-400 transition">← ToolLab</a>        <h1 class="text-lg sm:text-xl font-bold text-sky-400 tracking-tight">전국 5일장 뷰어</h1>
-        <span id="todayInfo" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full border border-slate-700 hidden sm:inline-block">
-          오늘 날짜 계산 중...
-        </span>
+      <div class="flex items-center justify-between sm:justify-start gap-2.5 w-full sm:w-auto">
+        <div class="flex items-center gap-3 min-w-0">
+          <a href="/ko" class="text-xs text-slate-400 hover:text-sky-400 transition shrink-0">← ToolLab</a>
+          <h1 class="text-lg sm:text-xl font-bold text-sky-400 tracking-tight truncate">전국 5일장 뷰어</h1>
+          <span id="todayInfo" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full border border-slate-700 hidden sm:inline-block shrink-0">
+            오늘 날짜 계산 중...
+          </span>
+        </div>
+        <span data-pwa-install-slot></span>
       </div>
       <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
         <input type="text" id="searchInput" placeholder="시장명 또는 지역(시·군·구) 검색" 
@@ -915,5 +934,6 @@
   </script>
   <script src="/js/ko-policy-modal.js" data-service-id="market" defer></script>
   <script src="/js/global-bottom-ad-banner.js" defer></script>
+  <script src="/js/pwa-install-button.js" data-app-name="전국 5일장 뷰어" data-sw-scope="/market" defer></script>
 </body>
 </html>

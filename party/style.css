@@ -37,8 +37,16 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   margin-bottom: 18px;
   font-size: 12px;
+}
+
+.top-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .nav-link {
@@ -736,5 +744,11 @@ button {
   .export-actions,
   .mode-toggle {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 540px) {
+  .top-nav .nav-tag {
+    display: none;
   }
 }
