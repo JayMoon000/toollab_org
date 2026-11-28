@@ -23,6 +23,10 @@
       "destination": "/rest-area/index.html"
     },
     {
+      "source": "/calc-toolkit",
+      "destination": "/calc-toolkit/index.html"
+    },
+    {
       "source": "/arcade",
       "destination": "/arcade/index.html"
     },
